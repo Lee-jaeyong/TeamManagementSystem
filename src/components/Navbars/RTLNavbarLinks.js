@@ -45,9 +45,8 @@ export default function RTLNavbarLinks() {
             className: classes.margin + " " + classes.search
           }}
           inputProps={{
-            placeholder: "جستجو...",
             inputProps: {
-              "aria-label": "Search"
+              "aria-label": "내 모든 일정 검색"
             }
           }}
         />

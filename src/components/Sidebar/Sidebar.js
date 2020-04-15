@@ -123,7 +123,7 @@ export default function Sidebar(props) {
         <Drawer
           anchor={props.rtlActive ? "right" : "left"}
           variant="permanent"
-          open
+          open={false}
           classes={{
             paper: classNames(classes.drawerPaper, {
               [classes.drawerPaperRTL]: props.rtlActive
