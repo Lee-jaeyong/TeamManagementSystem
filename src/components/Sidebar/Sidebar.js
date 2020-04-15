@@ -31,16 +31,9 @@ export default function Sidebar(props) {
       {routes.map((prop, key) => {
         var activePro = " ";
         var listItemClasses;
-        if (prop.path === "/upgrade-to-pro") {
-          activePro = classes.activePro + " ";
-          listItemClasses = classNames({
-            [" " + classes[color]]: true
-          });
-        } else {
-          listItemClasses = classNames({
-            [" " + classes[color]]: activeRoute(prop.layout + prop.path)
-          });
-        }
+        listItemClasses = classNames({
+          [" " + classes[color]]: activeRoute(prop.layout + prop.path)
+        });
         const whiteFontClasses = classNames({
           [" " + classes.whiteFont]: activeRoute(prop.layout + prop.path)
         });
@@ -83,11 +76,11 @@ export default function Sidebar(props) {
   var brand = (
     <div className={classes.logo}>
       <a
-        href="https://www.creative-tim.com?ref=mdr-sidebar"
+        href=""
         className={classNames(classes.logoLink, {
           [classes.logoLinkRTL]: props.rtlActive
         })}
-        target="_blank"
+        onClick={(e)=>e.preventDefault()}
       >
         <div className={classes.logoImage}>
           <img src={logo} alt="logo" className={classes.img} />

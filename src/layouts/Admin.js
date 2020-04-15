@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
@@ -17,6 +17,9 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/reactlogo.png";
 
+import Dashboard from "@material-ui/icons/Dashboard";
+import DashboardPage from "views/Dashboard/Dashboard.js";
+
 let ps;
 
 const switchRoutes = (
@@ -33,6 +36,9 @@ const switchRoutes = (
       }
       return null;
     })}
+    <Route
+      path={'/login'}
+    />
     <Redirect from="/admin" to="/admin/dashboard" />
   </Switch>
 );
@@ -49,19 +55,59 @@ export default function Admin({ ...rest }) {
   const [color, setColor] = React.useState("blue");
   const [fixedClasses, setFixedClasses] = React.useState("dropdown show");
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const handleImageClick = image => {
-    setImage(image);
-  };
-  const handleColorClick = color => {
-    setColor(color);
-  };
-  const handleFixedClick = () => {
-    if (fixedClasses === "dropdown") {
-      setFixedClasses("dropdown show");
-    } else {
-      setFixedClasses("dropdown");
-    }
-  };
+
+  const [pjtList,setPjtList] = useState([
+    {
+      path: "/dashboard/"+1,
+      name: "C언어 프로젝트",
+      icon: Dashboard,
+      component: DashboardPage,
+      layout: "/admin"
+    },
+    ,{
+      path: "/dashboard/"+2,
+      name: "자바 프로젝트",
+      icon: Dashboard,
+      component: DashboardPage,
+      layout: "/admin"
+    },
+    ,{
+      path: "/dashboard/"+3,
+      name: "시스템 프로젝트",
+      icon: Dashboard,
+      component: DashboardPage,
+      layout: "/admin"
+    },
+    ,{
+      path: "/dashboard/"+4,
+      name: "JPA 프로젝트",
+      icon: Dashboard,
+      component: DashboardPage,
+      layout: "/admin"
+    },
+    ,{
+      path: "/dashboard/"+5,
+      name: "스프링 프로젝트",
+      icon: Dashboard,
+      component: DashboardPage,
+      layout: "/admin"
+    },
+    ,{
+      path: "/dashboard/"+6,
+      name: "REACT 프로젝트",
+      icon: Dashboard,
+      component: DashboardPage,
+      layout: "/admin"
+    },
+    ,{
+      path: "/dashboard/"+7,
+      name: "운영체제 프로젝트",
+      icon: Dashboard,
+      component: DashboardPage,
+      layout: "/admin"
+    },
+  ]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -91,11 +137,15 @@ export default function Admin({ ...rest }) {
       window.removeEventListener("resize", resizeFunction);
     };
   }, [mainPanel]);
+
+  useEffect(()=>{
+  },[]);
+
   return (
     <div className={classes.wrapper}>
       <Sidebar
-        routes={routes}
-        logoText={"Creative Tim"}
+        routes={pjtList}
+        logoText={"Planner System"}
         logo={logo}
         image={image}
         handleDrawerToggle={handleDrawerToggle}
