@@ -7,6 +7,8 @@ import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 // core components
 import styles from "assets/jss/material-dashboard-react/components/footerStyle.js";
+import ChatDialog from "components/ChatDialog/ChatDialog.js"
+
 
 const useStyles = makeStyles(styles);
 
@@ -15,6 +17,7 @@ export default function Footer(props) {
   return (
     <footer className={classes.footer}>
       <div className={classes.container}>
+        <ChatDialog />
         {/* <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
@@ -45,7 +48,7 @@ export default function Footer(props) {
             <a
               href=""
               className={classes.a}
-              onClick={(e)=>e.preventDefault()}
+              onClick={(e) => e.preventDefault()}
             >
               Team Management System
             </a>

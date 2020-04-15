@@ -9,7 +9,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "components/Navbars/Navbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-
 import routes from "routes.js";
 
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
@@ -56,51 +55,51 @@ export default function Admin({ ...rest }) {
   const [fixedClasses, setFixedClasses] = React.useState("dropdown show");
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const [pjtList,setPjtList] = useState([
+  const [pjtList, setPjtList] = useState([
     {
-      path: "/dashboard/"+1,
+      path: "/dashboard/" + 1,
       name: "C언어 프로젝트",
       icon: Dashboard,
       component: DashboardPage,
       layout: "/admin"
     },
-    ,{
-      path: "/dashboard/"+2,
+    , {
+      path: "/dashboard/" + 2,
       name: "자바 프로젝트",
       icon: Dashboard,
       component: DashboardPage,
       layout: "/admin"
     },
-    ,{
-      path: "/dashboard/"+3,
+    , {
+      path: "/dashboard/" + 3,
       name: "시스템 프로젝트",
       icon: Dashboard,
       component: DashboardPage,
       layout: "/admin"
     },
-    ,{
-      path: "/dashboard/"+4,
+    , {
+      path: "/dashboard/" + 4,
       name: "JPA 프로젝트",
       icon: Dashboard,
       component: DashboardPage,
       layout: "/admin"
     },
-    ,{
-      path: "/dashboard/"+5,
+    , {
+      path: "/dashboard/" + 5,
       name: "스프링 프로젝트",
       icon: Dashboard,
       component: DashboardPage,
       layout: "/admin"
     },
-    ,{
-      path: "/dashboard/"+6,
+    , {
+      path: "/dashboard/" + 6,
       name: "REACT 프로젝트",
       icon: Dashboard,
       component: DashboardPage,
       layout: "/admin"
     },
-    ,{
-      path: "/dashboard/"+7,
+    , {
+      path: "/dashboard/" + 7,
       name: "운영체제 프로젝트",
       icon: Dashboard,
       component: DashboardPage,
@@ -138,11 +137,12 @@ export default function Admin({ ...rest }) {
     };
   }, [mainPanel]);
 
-  useEffect(()=>{
-  },[]);
+  useEffect(() => {
+  }, []);
 
   return (
     <div className={classes.wrapper}>
+
       <Sidebar
         routes={pjtList}
         logoText={"Planner System"}
@@ -165,10 +165,11 @@ export default function Admin({ ...rest }) {
             <div className={classes.container}>{switchRoutes}</div>
           </div>
         ) : (
-          <div className={classes.map}>{switchRoutes}</div>
-        )}
+            <div className={classes.map}>{switchRoutes}</div>
+          )}
         {getRoute() ? <Footer /> : null}
       </div>
+
     </div>
   );
 }

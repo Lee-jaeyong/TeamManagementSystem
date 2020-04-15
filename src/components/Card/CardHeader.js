@@ -24,8 +24,10 @@ export default function CardHeader(props) {
     [className]: className !== undefined
   });
   return (
-    <div className={cardHeaderClasses} {...rest}>
-      {children}
+    <div style={{ zIndex: 0 }}>
+      <div className={cardHeaderClasses} {...rest}>
+        {children}
+      </div>
     </div>
   );
 }

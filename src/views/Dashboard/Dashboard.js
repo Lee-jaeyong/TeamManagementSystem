@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
 // react plugin for creating charts
 import ChartistGraph from "react-chartist";
 // @material-ui/core
@@ -46,8 +46,8 @@ const useStyles = makeStyles(styles);
 export default function Dashboard(props) {
   const classes = useStyles();
 
-  useEffect(()=>{
-  },[props.match.params.idx]);
+  useEffect(() => {
+  }, [props.match.params.idx]);
 
   return (
     <div>
@@ -60,7 +60,7 @@ export default function Dashboard(props) {
               </CardIcon>
               <p className={classes.cardCategory}>일 정</p>
               <h3 className={classes.cardTitle}>
-                49/50 <span style={{fontSize:15}}> (건)</span>
+                49/50 <span style={{ fontSize: 15 }}> (건)</span>
               </h3>
             </CardHeader>
             <CardFooter stats>
@@ -116,7 +116,7 @@ export default function Dashboard(props) {
                 <Accessibility />
               </CardIcon>
               <p className={classes.cardCategory}>공지사항</p>
-              <h3 className={classes.cardTitle}>245<span style={{fontSize:15}}> (건)</span></h3>
+              <h3 className={classes.cardTitle}>245<span style={{ fontSize: 15 }}> (건)</span></h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
@@ -145,7 +145,7 @@ export default function Dashboard(props) {
                 <span className={classes.successText}>
                   <ArrowUpward className={classes.upArrowCardCategory} /> 55%
                 </span>{" "}
-                상 승<span style={{fontSize:11}}>(전 7일 까지)</span>
+                상 승<span style={{ fontSize: 11 }}>(전 7일 까지)</span>
               </p>
             </CardBody>
             <CardFooter chart>
@@ -223,7 +223,7 @@ export default function Dashboard(props) {
         </GridItem>
       </GridContainer>
 
-      
+
     </div>
   );
 }
