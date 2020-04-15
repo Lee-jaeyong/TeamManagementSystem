@@ -37,7 +37,6 @@ import { bugs, website, server } from "variables/general.js";
 import {
   dailySalesChart,
   emailsSubscriptionChart,
-  completedTasksChart
 } from "variables/charts.js";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
@@ -146,7 +145,7 @@ export default function Dashboard(props) {
                 <span className={classes.successText}>
                   <ArrowUpward className={classes.upArrowCardCategory} /> 55%
                 </span>{" "}
-                상 승
+                상 승<span style={{fontSize:11}}>(전 7일 까지)</span>
               </p>
             </CardBody>
             <CardFooter chart>
