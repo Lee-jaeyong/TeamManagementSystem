@@ -100,7 +100,7 @@ const dashboardRoutes = [
     icon: Notifications,
     component: schedulerView,
     layout: "/admin"
-  },
+  }
 ];
 
 export default dashboardRoutes;

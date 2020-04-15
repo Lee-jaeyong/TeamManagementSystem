@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
@@ -33,6 +33,9 @@ const switchRoutes = (
       }
       return null;
     })}
+    <Route
+      path={'/login'}
+    />
     <Redirect from="/admin" to="/admin/dashboard" />
   </Switch>
 );
@@ -91,6 +94,10 @@ export default function Admin({ ...rest }) {
       window.removeEventListener("resize", resizeFunction);
     };
   }, [mainPanel]);
+
+  useEffect(()=>{
+  },[]);
+
   return (
     <div className={classes.wrapper}>
       <Sidebar

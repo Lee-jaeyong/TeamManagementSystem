@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 // react plugin for creating charts
 import ChartistGraph from "react-chartist";
 // @material-ui/core
@@ -43,6 +43,9 @@ const useStyles = makeStyles(styles);
 
 export default function Dashboard() {
   const classes = useStyles();
+
+  console.log('Dashbaord Render');
+
   return (
     <div>
       <GridContainer>
