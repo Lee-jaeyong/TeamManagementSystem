@@ -52,8 +52,15 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/table",
-    name: "Table List",
+    path: "/referenceData/:idx",
+    name: "참고자료",
+    icon: "content_paste",
+    component: TableList,
+    layout: "/admin"
+  },
+  {
+    path: "/notice/:idx",
+    name: "공지사항",
     icon: "content_paste",
     component: TableList,
     layout: "/admin"
@@ -87,9 +94,8 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/a",
-    name: "sssss",
-    rtlName: "sssss",
+    path: "/scheduler/:idx",
+    name: "스케줄러",
     icon: Notifications,
     component: schedulerView,
     layout: "/admin"
