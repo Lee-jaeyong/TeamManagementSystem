@@ -16,6 +16,7 @@ import Accessibility from "@material-ui/icons/Accessibility";
 import BugReport from "@material-ui/icons/BugReport";
 import Code from "@material-ui/icons/Code";
 import Cloud from "@material-ui/icons/Cloud";
+
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -29,12 +30,13 @@ import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 
+
+
 import { bugs, website, server } from "variables/general.js";
 
 import {
   dailySalesChart,
   emailsSubscriptionChart,
-  completedTasksChart
 } from "variables/charts.js";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
@@ -45,7 +47,6 @@ export default function Dashboard(props) {
   const classes = useStyles();
 
   useEffect(()=>{
-    alert(props.match.params.idx);
   },[props.match.params.idx]);
 
   return (
@@ -57,18 +58,18 @@ export default function Dashboard(props) {
               <CardIcon color="warning">
                 <Icon>content_copy</Icon>
               </CardIcon>
-              <p className={classes.cardCategory}>Used Space</p>
+              <p className={classes.cardCategory}>일 정</p>
               <h3 className={classes.cardTitle}>
-                49/50 <small>GB</small>
+                49/50 <span style={{fontSize:15}}> (건)</span>
               </h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
                 <Danger>
-                  <Warning />
+                  <Store />
                 </Danger>
                 <a href="#pablo" onClick={e => e.preventDefault()}>
-                  Get more space
+                  내 일정 보기
                 </a>
               </div>
             </CardFooter>
@@ -80,13 +81,13 @@ export default function Dashboard(props) {
               <CardIcon color="success">
                 <Store />
               </CardIcon>
-              <p className={classes.cardCategory}>Revenue</p>
-              <h3 className={classes.cardTitle}>$34,245</h3>
+              <p className={classes.cardCategory}>프로젝트 시작일</p>
+              <h3 className={classes.cardTitle}>2020-04-14</h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
                 <DateRange />
-                Last 24 Hours
+                1 일 경과
               </div>
             </CardFooter>
           </Card>
@@ -97,13 +98,13 @@ export default function Dashboard(props) {
               <CardIcon color="danger">
                 <Icon>info_outline</Icon>
               </CardIcon>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
+              <p className={classes.cardCategory}>프로젝트 최종일</p>
+              <h3 className={classes.cardTitle}>2020-10-10</h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
                 <LocalOffer />
-                Tracked from Github
+                10일 남음
               </div>
             </CardFooter>
           </Card>
@@ -114,20 +115,20 @@ export default function Dashboard(props) {
               <CardIcon color="info">
                 <Accessibility />
               </CardIcon>
-              <p className={classes.cardCategory}>Followers</p>
-              <h3 className={classes.cardTitle}>+245</h3>
+              <p className={classes.cardCategory}>공지사항</p>
+              <h3 className={classes.cardTitle}>245<span style={{fontSize:15}}> (건)</span></h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
                 <Update />
-                Just Updated
+                공지사항 보기
               </div>
             </CardFooter>
           </Card>
         </GridItem>
       </GridContainer>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={4}>
+        <GridItem xs={12} sm={12} md={6}>
           <Card chart>
             <CardHeader color="success">
               <ChartistGraph
@@ -139,22 +140,22 @@ export default function Dashboard(props) {
               />
             </CardHeader>
             <CardBody>
-              <h4 className={classes.cardTitle}>Daily Sales</h4>
+              <h4 className={classes.cardTitle}>프로젝트 통합 진척도</h4>
               <p className={classes.cardCategory}>
                 <span className={classes.successText}>
                   <ArrowUpward className={classes.upArrowCardCategory} /> 55%
                 </span>{" "}
-                increase in today sales.
+                상 승<span style={{fontSize:11}}>(전 7일 까지)</span>
               </p>
             </CardBody>
             <CardFooter chart>
               <div className={classes.stats}>
-                <AccessTime /> updated 4 minutes ago
+                <AccessTime /> 프로젝트 일정 보기
               </div>
             </CardFooter>
           </Card>
         </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
+        <GridItem xs={12} sm={12} md={6}>
           <Card chart>
             <CardHeader color="warning">
               <ChartistGraph
@@ -167,47 +168,25 @@ export default function Dashboard(props) {
               />
             </CardHeader>
             <CardBody>
-              <h4 className={classes.cardTitle}>Email Subscriptions</h4>
-              <p className={classes.cardCategory}>Last Campaign Performance</p>
+              <h4 className={classes.cardTitle}>일정률</h4>
+              <p className={classes.cardCategory}>팀원과 자신의 일정률을 비교할 수 있습니다.</p>
             </CardBody>
             <CardFooter chart>
               <div className={classes.stats}>
-                <AccessTime /> campaign sent 2 days ago
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card chart>
-            <CardHeader color="danger">
-              <ChartistGraph
-                className="ct-chart"
-                data={completedTasksChart.data}
-                type="Line"
-                options={completedTasksChart.options}
-                listener={completedTasksChart.animation}
-              />
-            </CardHeader>
-            <CardBody>
-              <h4 className={classes.cardTitle}>Completed Tasks</h4>
-              <p className={classes.cardCategory}>Last Campaign Performance</p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> campaign sent 2 days ago
+                <AccessTime /> 내 일정에 대한 진척도 보기
               </div>
             </CardFooter>
           </Card>
         </GridItem>
       </GridContainer>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={6}>
+        <GridItem xs={12} sm={12} md={12}>
           <CustomTabs
-            title="Tasks:"
+            title=""
             headerColor="primary"
             tabs={[
               {
-                tabName: "Bugs",
+                tabName: "오늘 일정",
                 tabIcon: BugReport,
                 tabContent: (
                   <Tasks
@@ -218,7 +197,7 @@ export default function Dashboard(props) {
                 )
               },
               {
-                tabName: "Website",
+                tabName: "참고자료",
                 tabIcon: Code,
                 tabContent: (
                   <Tasks
@@ -229,7 +208,7 @@ export default function Dashboard(props) {
                 )
               },
               {
-                tabName: "Server",
+                tabName: "자유게시판",
                 tabIcon: Cloud,
                 tabContent: (
                   <Tasks
@@ -242,29 +221,9 @@ export default function Dashboard(props) {
             ]}
           />
         </GridItem>
-        <GridItem xs={12} sm={12} md={6}>
-          <Card>
-            <CardHeader color="warning">
-              <h4 className={classes.cardTitleWhite}>Employees Stats</h4>
-              <p className={classes.cardCategoryWhite}>
-                New employees on 15th September, 2016
-              </p>
-            </CardHeader>
-            <CardBody>
-              <Table
-                tableHeaderColor="warning"
-                tableHead={["ID", "Name", "Salary", "Country"]}
-                tableData={[
-                  ["1", "Dakota Rice", "$36,738", "Niger"],
-                  ["2", "Minerva Hooper", "$23,789", "Curaçao"],
-                  ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
-                  ["4", "Philip Chaney", "$38,735", "Korea, South"]
-                ]}
-              />
-            </CardBody>
-          </Card>
-        </GridItem>
       </GridContainer>
+
+      
     </div>
   );
 }
