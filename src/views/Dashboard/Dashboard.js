@@ -41,10 +41,12 @@ import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js"
 
 const useStyles = makeStyles(styles);
 
-export default function Dashboard() {
+export default function Dashboard(props) {
   const classes = useStyles();
 
-  console.log('Dashbaord Render');
+  useEffect(()=>{
+    alert(props.match.params.idx);
+  },[props.match.params.idx]);
 
   return (
     <div>
