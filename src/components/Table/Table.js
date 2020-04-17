@@ -14,7 +14,7 @@ const useStyles = makeStyles(styles);
 
 export default function CustomTable(props) {
   const classes = useStyles();
-  const { tableHead, tableData, tableHeaderColor } = props;
+  const { tableHead, tableData, tableHeaderColor, sellClick, pointer } = props;
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -36,17 +36,35 @@ export default function CustomTable(props) {
         ) : null}
         <TableBody>
           {tableData.map((prop, key) => {
-            return (
-              <TableRow key={key} className={classes.tableBodyRow}>
-                {prop.map((prop, key) => {
-                  return (
-                    <TableCell className={classes.tableCell} key={key}>
-                      {prop}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
+            if (pointer) {
+              return (
+                <TableRow
+                  onClick={() => sellClick(prop[0])}
+                  style={{ cursor: 'pointer' }}
+                  hover key={key} className={classes.tableBodyRow}>
+                  {prop.map((prop, key) => {
+                    return (
+                      <TableCell className={classes.tableCell} key={key}>
+                        {prop}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            } else {
+              return (
+                <TableRow
+                  hover key={key} className={classes.tableBodyRow}>
+                  {prop.map((prop, key) => {
+                    return (
+                      <TableCell className={classes.tableCell} key={key}>
+                        {prop}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            }
           })}
         </TableBody>
       </Table>
