@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // nodejs library to set properties for components
@@ -18,19 +18,31 @@ import styles from "assets/jss/material-dashboard-react/components/customTabsSty
 const useStyles = makeStyles(styles);
 
 export default function CustomTabs(props) {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [headColor, setHeadColor] = useState("primary");
   const handleChange = (event, value) => {
     setValue(value);
   };
   const classes = useStyles();
-  const { headerColor, plainTabs, tabs, title, rtlActive } = props;
+  const { plainTabs, tabs, title, rtlActive } = props;
   const cardTitle = classNames({
     [classes.cardTitle]: true,
-    [classes.cardTitleRTL]: rtlActive
+    [classes.cardTitleRTL]: rtlActive,
   });
+  useEffect(() => {
+    if (!props["containsPaging"]) return;
+    if (value === 0) {
+      setHeadColor("primary");
+    } else if (value === 1) {
+      setHeadColor("success");
+    } else if (value === 2) {
+      setHeadColor("danger");
+    }
+    props["handleChange"](value);
+  }, [value]);
   return (
     <Card plain={plainTabs}>
-      <CardHeader color={headerColor} plain={plainTabs}>
+      <CardHeader color={headColor} plain={plainTabs}>
         {title !== undefined ? <div className={cardTitle}>{title}</div> : null}
         <Tabs
           value={value}
@@ -38,7 +50,7 @@ export default function CustomTabs(props) {
           classes={{
             root: classes.tabsRoot,
             indicator: classes.displayNone,
-            scrollButtons: classes.displayNone
+            scrollButtons: classes.displayNone,
           }}
           variant="scrollable"
           scrollButtons="auto"
@@ -47,7 +59,7 @@ export default function CustomTabs(props) {
             var icon = {};
             if (prop.tabIcon) {
               icon = {
-                icon: <prop.tabIcon />
+                icon: <prop.tabIcon />,
               };
             }
             return (
@@ -55,7 +67,7 @@ export default function CustomTabs(props) {
                 classes={{
                   root: classes.tabRootButton,
                   selected: classes.tabSelected,
-                  wrapper: classes.tabWrapper
+                  wrapper: classes.tabWrapper,
                 }}
                 key={key}
                 label={prop.tabName}
@@ -84,16 +96,16 @@ CustomTabs.propTypes = {
     "danger",
     "info",
     "primary",
-    "rose"
+    "rose",
   ]),
   title: PropTypes.string,
   tabs: PropTypes.arrayOf(
     PropTypes.shape({
       tabName: PropTypes.string.isRequired,
       tabIcon: PropTypes.object,
-      tabContent: PropTypes.node.isRequired
+      tabContent: PropTypes.node.isRequired,
     })
   ),
   rtlActive: PropTypes.bool,
-  plainTabs: PropTypes.bool
+  plainTabs: PropTypes.bool,
 };

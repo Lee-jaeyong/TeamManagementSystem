@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -66,16 +66,51 @@ const theme = createMuiTheme({
   },
 });
 
-const useStyles = makeStyles(styles);
-
 export default function TableList() {
-  const classes = useStyles();
+  const [pagingTheme, setPagingTheme] = useState(
+    createMuiTheme({
+      overrides: {
+        // Style sheet name ⚛️
+        MuiPaginationItem: {
+          // Name of the rule
+          page: {
+            "&:hover": {
+              backgroundColor: "#9c27b0",
+              color: "white",
+            },
+          },
+        },
+      },
+    })
+  );
+
   const [dialogHandle, setDialogHandle] = useState(false);
   const [contentsSeq, setContentsSeq] = useState();
   const viewBoard = (seq) => {
     setContentsSeq(seq);
     setDialogHandle(true);
   };
+
+  const pagingAreaChange = (value) => {
+    let color = ["#9c27b0", "#57af5b", "#e63d39"];
+    setPagingTheme(
+      createMuiTheme({
+        overrides: {
+          // Style sheet name ⚛️
+          MuiPaginationItem: {
+            // Name of the rule
+            page: {
+              "&:hover": {
+                backgroundColor: color[value],
+                color: "white",
+              },
+            },
+          },
+        },
+      })
+    );
+  };
+
   return (
     <div>
       <BoardView
@@ -87,7 +122,8 @@ export default function TableList() {
         <GridItem xs={12} sm={12} md={12}>
           <CustomTabs
             title=""
-            headerColor="primary"
+            containsPaging
+            handleChange={(value) => pagingAreaChange(value)}
             tabs={[
               {
                 tabName: "공지사항",
@@ -138,7 +174,7 @@ export default function TableList() {
                 tabIcon: PermDataSettingIcon,
                 tabContent: (
                   <Table
-                    tableHeaderColor="primary"
+                    tableHeaderColor="success"
                     tableHead={["No.", "이름", "제목", "날짜"]}
                     tableData={[
                       ["1", "이재용", "튜터링 2차 참고자료.", "2020.04.16"],
@@ -180,7 +216,7 @@ export default function TableList() {
                 tabIcon: FormatListBulletedIcon,
                 tabContent: (
                   <Table
-                    tableHeaderColor="primary"
+                    tableHeaderColor="danger"
                     tableHead={["No.", "이름", "제목", "날짜"]}
                     tableData={[
                       [
@@ -228,7 +264,7 @@ export default function TableList() {
       </GridContainer>
       <GridContainer direction="column" alignItems="center" justify="center">
         <GridItem xs={12} sm={12} md={12}>
-          <ThemeProvider theme={theme}>
+          <ThemeProvider theme={pagingTheme}>
             <Pagination count={11} defaultPage={1} boundaryCount={2} />
           </ThemeProvider>
         </GridItem>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -9,6 +9,10 @@ import MuiDialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import Slide from "@material-ui/core/Slide";
+
 ///////////////////////////////////////////
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
@@ -25,10 +29,11 @@ import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import sampleImg from "assets/img/sidebar-2.jpg";
+import { useForkRef } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,
+    maxWidth: 800,
   },
   media: {
     height: 0,
@@ -49,69 +54,61 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: "absolute",
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
-});
-
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          className={classes.closeButton}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
-
+const mockData = {
+  name: "윤지원",
+  date: "2020-04-18",
+  content:
+    "Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet Heat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillover medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.",
+  img: [
+    "/images/sidebar-1.jpg",
+    "/images/sidebar-2.jpg",
+    "/images/sidebar-5.jpg",
+  ],
+  userImg: "img",
+};
 export default function BoardView(props) {
   const [open, setOpen] = useState(props["open"]);
 
   const cardClasses = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const cardImgRef = useRef();
+  const [imgNum, setImgNum] = useState(0);
+  const [slide, setSlide] = useState(true);
+  const [slideDirection, setSlideDirection] = useState("left");
+
+  // Prev And Next Button Handle
+  const prevAndNextHandle = (type) => {
+    if (!slide) return;
+    let direction = type;
+    let opDirection = type === "left" ? "right" : "left";
+    setSlideDirection(direction);
+    setSlide(false);
+    setTimeout(() => {
+      type === "left" ? setImgNum(imgNum + 1) : setImgNum(imgNum - 1);
+      setSlideDirection(opDirection);
+      setSlide(true);
+    }, 300);
+  };
+
+  // Prev And Next Button Click Event
+  const imgSliderHandle = (type) => {
+    if (type === "prev") {
+      if (imgNum == 0) return;
+      prevAndNextHandle("right");
+    } else {
+      if (imgNum >= mockData.img.length - 1) return;
+      prevAndNextHandle("left");
+    }
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
     props.handleClose();
     setOpen(false);
   };
-
   useEffect(() => {
     setOpen(props["open"]);
   }, [props["open"]]);
@@ -123,6 +120,7 @@ export default function BoardView(props) {
         aria-labelledby="customized-dialog-title"
         open={open}
         maxWidth="md"
+        scroll="body"
       >
         <Card className={cardClasses.root}>
           <CardHeader
@@ -139,17 +137,50 @@ export default function BoardView(props) {
             title="Shrimp and Chorizo Paella"
             subheader="September 14, 2016"
           />
-          <CardMedia
-            className={cardClasses.media}
-            image={sampleImg}
-            title="Paella dish"
-          />
+          {mockData.img ? (
+            mockData.img.length === 1 ? (
+              <CardMedia
+                ref={cardImgRef}
+                className={cardClasses.media}
+                image={mockData.img}
+                title="Paella dish"
+              />
+            ) : (
+              <Grid container>
+                <Grid item xs={2} md={1} sm={1}>
+                  <Button
+                    onClick={() => imgSliderHandle("prev")}
+                    style={{ height: "100%" }}
+                  >
+                    <ChevronLeftIcon fontSize="large" />
+                  </Button>
+                </Grid>
+                <Grid item xs={8} md={10} sm={10}>
+                  <Slide direction={slideDirection} in={slide} mountOnEnter>
+                    <CardMedia
+                      style={{ borderRadius: "2%" }}
+                      ref={cardImgRef}
+                      className={cardClasses.media}
+                      image={mockData.img[imgNum]}
+                      title="Paella dish"
+                    />
+                  </Slide>
+                </Grid>
+                <Grid item xs={2} md={1} sm={1}>
+                  <Button
+                    onClick={() => imgSliderHandle("next")}
+                    style={{ height: "100%" }}
+                  >
+                    <ChevronRightIcon fontSize="large" />
+                  </Button>
+                </Grid>
+              </Grid>
+            )
+          ) : null}
+
           <CardContent>
-            <Typography variant="body2" color="textSecondary" component="p">
-              This impressive paella is a perfect party dish and a fun meal to
-              cook together with your guests. Add 1 cup of frozen peas along
-              with the mussels, if you like.
-            </Typography>
+            {/* <Typography variant="body2" component="p"> */}
+            <Typography paragraph>{mockData.content}</Typography>
           </CardContent>
           <CardActions disableSpacing>
             <IconButton aria-label="add to favorites">
@@ -176,83 +207,9 @@ export default function BoardView(props) {
                 Heat 1/2 cup of the broth in a pot until simmering, add saffron
                 and set aside for 10 minutes.
               </Typography>
-              <Typography paragraph>
-                Heat oil in a (14- to 16-inch) paella pan or a large, deep
-                skillet over medium-high heat. Add chicken, shrimp and chorizo,
-                and cook, stirring occasionally until lightly browned, 6 to 8
-                minutes. Transfer shrimp to a large plate and set aside, leaving
-                chicken and chorizo in the pan. Add pimentón, bay leaves,
-                garlic, tomatoes, onion, salt and pepper, and cook, stirring
-                often until thickened and fragrant, about 10 minutes. Add
-                saffron broth and remaining 4 1/2 cups chicken broth; bring to a
-                boil.
-              </Typography>
-              <Typography paragraph>
-                Add rice and stir very gently to distribute. Top with artichokes
-                and peppers, and cook without stirring, until most of the liquid
-                is absorbed, 15 to 18 minutes. Reduce heat to medium-low, add
-                reserved shrimp and mussels, tucking them down into the rice,
-                and cook again without stirring, until mussels have opened and
-                rice is just tender, 5 to 7 minutes more. (Discard any mussels
-                that don’t open.)
-              </Typography>
-              <Typography>
-                Set aside off of the heat to let rest for 10 minutes, and then
-                serve.
-              </Typography>
             </CardContent>
           </Collapse>
         </Card>
-        {/* <Dialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-        maxWidth="md"
-      >
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          {props.seq}번 글
-        </DialogTitle>
-        <DialogContent dividers>
-          <Grid container>
-            <Grid item xs={12}>
-              <img
-                width="200"
-                height="200"
-                src="D:\TeamManagementSystem\src\assets\img\ssidebar-2.jpg"
-              />
-            </Grid>
-          </Grid>
-          <Typography gutterBottom>
-            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
-            ac consectetur ac, vestibulum at eros.
-          </Typography>
-          <Typography gutterBottom>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor
-            auctor.
-          </Typography>
-          <Typography gutterBottom>
-            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo
-            cursus magna, vel scelerisque nisl consectetur et. Donec sed odio
-            dui. Donec ullamcorper nulla non metus auctor fringilla.
-          </Typography>
-          <Typography gutterBottom>
-            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo
-            cursus magna, vel scelerisque nisl consectetur et. Donec sed odio
-            dui. Donec ullamcorper nulla non metus auctor fringilla.
-          </Typography>
-          <Typography gutterBottom>
-            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo
-            cursus magna, vel scelerisque nisl consectetur et. Donec sed odio
-            dui. Donec ullamcorper nulla non metus auctor fringilla.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
-            Save changes
-          </Button>
-        </DialogActions> */}
       </Dialog>
     </div>
   );
