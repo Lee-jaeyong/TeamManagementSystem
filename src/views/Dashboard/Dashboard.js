@@ -45,6 +45,10 @@ export default function Dashboard(props) {
 
   useEffect(() => {}, [props.match.params.idx]);
 
+  const showSearchResult = () => {
+    props["history"].push("/admin/search");
+  };
+
   const showScheduler = () => {
     props["history"].push("/admin/scheduler/" + props.match.params.idx);
   };

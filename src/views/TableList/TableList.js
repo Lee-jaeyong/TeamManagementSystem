@@ -174,6 +174,8 @@ export default function TableList() {
                 tabIcon: PermDataSettingIcon,
                 tabContent: (
                   <Table
+                    sellClick={viewBoard}
+                    pointer
                     tableHeaderColor="success"
                     tableHead={["No.", "이름", "제목", "날짜"]}
                     tableData={[
@@ -216,6 +218,8 @@ export default function TableList() {
                 tabIcon: FormatListBulletedIcon,
                 tabContent: (
                   <Table
+                    sellClick={viewBoard}
+                    pointer
                     tableHeaderColor="danger"
                     tableHead={["No.", "이름", "제목", "날짜"]}
                     tableData={[

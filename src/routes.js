@@ -30,9 +30,9 @@ import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
 import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
-import Maps from "views/Maps/Maps.js";
+import SearchResult from "views/SearchResult/SearchResult.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
-import schedulerView from 'views/Canendal/Calendal.js';
+import schedulerView from "views/Canendal/Calendal.js";
 // core components/views for RTL layout
 import RTLPage from "views/RTLPage/RTLPage.js";
 
@@ -42,64 +42,64 @@ const dashboardRoutes = [
     name: "Dashboard",
     icon: Dashboard,
     component: DashboardPage,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/user",
     name: "User Profile",
     icon: Person,
     component: UserProfile,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/referenceData/:idx",
     name: "참고자료",
     icon: "content_paste",
     component: TableList,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/notice/:idx",
     name: "공지사항",
     icon: "content_paste",
     component: TableList,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/typography",
     name: "Typography",
     icon: LibraryBooks,
     component: Typography,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/icons",
     name: "Icons",
     icon: BubbleChart,
     component: Icons,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
-    path: "/maps",
-    name: "Maps",
+    path: "/search/:search",
+    name: "SearchResult",
     icon: LocationOn,
-    component: Maps,
-    layout: "/admin"
+    component: SearchResult,
+    layout: "/admin",
   },
   {
     path: "/notifications",
     name: "Notifications",
     icon: Notifications,
     component: NotificationsPage,
-    layout: "/admin"
+    layout: "/admin",
   },
   {
     path: "/scheduler/:idx",
     name: "스케줄러",
     icon: Notifications,
     component: schedulerView,
-    layout: "/admin"
-  }
+    layout: "/admin",
+  },
 ];
 
 export default dashboardRoutes;

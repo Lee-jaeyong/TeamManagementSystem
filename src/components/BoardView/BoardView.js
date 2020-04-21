@@ -12,6 +12,11 @@ import Typography from "@material-ui/core/Typography";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import Slide from "@material-ui/core/Slide";
+import SpeedDial from "@material-ui/lab/SpeedDial";
+import CreateIcon from "@material-ui/icons/Create";
+import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 
 ///////////////////////////////////////////
 import { makeStyles } from "@material-ui/core/styles";
@@ -30,6 +35,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import sampleImg from "assets/img/sidebar-2.jpg";
 import { useForkRef } from "@material-ui/core";
+
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
 const mockData = {
   name: "윤지원",
   date: "2020-04-18",
+  title: "오늘은 이러이러한 일과를 설정했습니다 확인해주세요",
   content:
     "Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet Heat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillHeat oil in a (14- to 16-inch) paella pan or a large, deep skillover medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.",
   img: [
@@ -68,12 +76,13 @@ const mockData = {
 };
 export default function BoardView(props) {
   const [open, setOpen] = useState(props["open"]);
-
+  const [speedDialopen, setSpeedDialopen] = useState(false);
   const cardClasses = useStyles();
   const [expanded, setExpanded] = useState(false);
   const cardImgRef = useRef();
   const [imgNum, setImgNum] = useState(0);
   const [slide, setSlide] = useState(true);
+  const [hidden, setHidden] = useState(false);
   const [slideDirection, setSlideDirection] = useState("left");
 
   // Prev And Next Button Handle
@@ -84,7 +93,7 @@ export default function BoardView(props) {
     setSlideDirection(direction);
     setSlide(false);
     setTimeout(() => {
-      type === "left" ? setImgNum(imgNum + 1) : setImgNum(imgNum - 1);
+      type === "left" ? setImgNum(imgNum - 1) : setImgNum(imgNum + 1);
       setSlideDirection(opDirection);
       setSlide(true);
     }, 300);
@@ -94,10 +103,10 @@ export default function BoardView(props) {
   const imgSliderHandle = (type) => {
     if (type === "prev") {
       if (imgNum == 0) return;
-      prevAndNextHandle("right");
+      prevAndNextHandle("left");
     } else {
       if (imgNum >= mockData.img.length - 1) return;
-      prevAndNextHandle("left");
+      prevAndNextHandle("right");
     }
   };
 
@@ -107,8 +116,38 @@ export default function BoardView(props) {
 
   const handleClose = () => {
     props.handleClose();
+    setImgNum(0);
     setOpen(false);
   };
+
+  const speedDialhandleClose = () => {
+    setSpeedDialopen(false);
+  };
+
+  const speedDialhandleOpen = () => {
+    setSpeedDialopen(true);
+  };
+
+  const theme = createMuiTheme({
+    overrides: {
+      // Style sheet name ⚛️
+      MuiSpeedDial: {
+        // Name of the rule
+        fab: {
+          // Some CSS
+          backgroundColor: "#FFFFFF",
+          boxShadow: "0px 0px 7px #150150150",
+          width: "50px",
+          height: "50px",
+          color: "#8C8C8C",
+          "&:hover": {
+            backgroundColor: "#FFFFFF",
+          },
+        },
+      },
+    },
+  });
+
   useEffect(() => {
     setOpen(props["open"]);
   }, [props["open"]]);
@@ -126,16 +165,37 @@ export default function BoardView(props) {
           <CardHeader
             avatar={
               <Avatar aria-label="recipe" className={cardClasses.avatar}>
-                R
+                {mockData.userImg}
               </Avatar>
             }
             action={
-              <IconButton aria-label="settings">
-                <MoreVertIcon />
-              </IconButton>
+              <ThemeProvider theme={theme}>
+                <SpeedDial
+                  ariaLabel="SpeedDial example"
+                  hidden={hidden}
+                  onClose={speedDialhandleClose}
+                  onOpen={speedDialhandleOpen}
+                  open={speedDialopen}
+                  direction="left"
+                  icon={<SpeedDialIcon openIcon={<CloseIcon />} />}
+                >
+                  <SpeedDialAction
+                    icon={<CreateIcon />}
+                    tooltipTitle="수정"
+                    tooltipPlacement="bottom-end"
+                    onClick={speedDialhandleClose}
+                  />
+                  <SpeedDialAction
+                    icon={<DeleteForeverIcon />}
+                    tooltipTitle="삭제"
+                    tooltipPlacement="bottom-end"
+                    onClick={speedDialhandleClose}
+                  />
+                </SpeedDial>
+              </ThemeProvider>
             }
-            title="Shrimp and Chorizo Paella"
-            subheader="September 14, 2016"
+            title={mockData.title}
+            subheader={mockData.date}
           />
           {mockData.img ? (
             mockData.img.length === 1 ? (
@@ -177,7 +237,6 @@ export default function BoardView(props) {
               </Grid>
             )
           ) : null}
-
           <CardContent>
             {/* <Typography variant="body2" component="p"> */}
             <Typography paragraph>{mockData.content}</Typography>
