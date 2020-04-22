@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 // react plugin for creating charts
 import ChartistGraph from "react-chartist";
 // @material-ui/core
@@ -32,6 +32,12 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import Fade from "@material-ui/core/Fade";
 
+import SchedulerSection from './component/Scheduler';
+import TodoListSection from './component/TodoList';
+import FreeBoardSection from './component/FreeBoard';
+import ChartSection from './component/ChartSection';
+import SignUpListSection from './component/SignUpList';
+
 import { bugs, website, server } from "variables/general.js";
 
 import { dailySalesChart, emailsSubscriptionChart } from "variables/charts.js";
@@ -42,6 +48,8 @@ const useStyles = makeStyles(styles);
 
 export default function Dashboard(props) {
   const classes = useStyles();
+
+  const [signUpList,setSignUplist] = useState(false);
 
   useEffect(() => {}, [props.match.params.idx]);
 
@@ -65,131 +73,25 @@ export default function Dashboard(props) {
     <div>
       <GridContainer>
         <GridItem xs={12} sm={12} md={6}>
-          <div>
-            <Card>
-              <CardActionArea onClick={showScheduler}>
-                <CardHeader color="info" stats icon>
-                  <CardIcon color="info">
-                    <Icon>content_copy</Icon>
-                  </CardIcon>
-                  <p className={classes.cardCategory}>Scheduler</p>
-                  <h3 className={classes.cardTitle}>스케줄러</h3>
-                  <br />
-                </CardHeader>
-                <CardBody>
-                  <Fade in timeout={200}>
-                    <FullCalendar
-                      events={[
-                        { title: "event 1", date: "2020-04-01" },
-                        {
-                          title: "이재용의 스케쥴러",
-                          start: "2020-04-03",
-                          end: "2020-04-06",
-                          color: "red",
-                        },
-                      ]}
-                      buttonText={{
-                        today: "today",
-                      }}
-                      titleFormat={{ year: "numeric", month: "long" }}
-                      defaultView="dayGridMonth"
-                      plugins={[dayGridPlugin, interactionPlugin]}
-                      titleFormat={{
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      }}
-                      header={{
-                        left: "",
-                        center: "",
-                        right: "",
-                      }}
-                    />
-                  </Fade>
-                </CardBody>
-                <CardFooter chart></CardFooter>
-              </CardActionArea>
-            </Card>
-          </div>
+          <SchedulerSection onClick={showScheduler}/>
         </GridItem>
         <GridItem xs={12} sm={12} md={6}>
           <GridContainer>
-            <GridItem xs={12} sm={12} md={6}>
-              <Card>
-                <CardActionArea onClick={showScheduler}>
-                  <CardHeader color="danger" stats icon>
-                    <CardIcon color="danger">
-                      <Icon>content_copy</Icon>
-                    </CardIcon>
-                    <p className={classes.cardCategory}>Todo List</p>
-                    <h3 className={classes.cardTitle}>나의 TODO리스트</h3>
-                    <br />
-                  </CardHeader>
-                  <CardFooter stats>
-                    <div className={classes.stats}>
-                      <Danger>
-                        <Store />
-                      </Danger>
-                      <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                        일정 보기
-                      </a>
-                    </div>
-                  </CardFooter>
-                </CardActionArea>
-              </Card>
+            <GridItem xs={12} sm={12} md={4}>
+              <TodoListSection onClick={showScheduler}/>
             </GridItem>
-            <GridItem xs={12} sm={12} md={6}>
-              <Card>
-                <CardActionArea onClick={showReferenceData}>
-                  <CardHeader color="success" stats icon>
-                    <CardIcon color="success">
-                      <Store />
-                    </CardIcon>
-                    <p className={classes.cardCategory}>Board</p>
-                    <h3 className={classes.cardTitle}>자유게시판</h3>
-                    <br />
-                  </CardHeader>
-                  <CardFooter stats>
-                    <div className={classes.stats}>
-                      <Danger>
-                        <DateRange />
-                      </Danger>
-                      공지, 자료, 게시글
-                    </div>
-                  </CardFooter>
-                </CardActionArea>
-              </Card>
+            <GridItem xs={12} sm={12} md={4}>
+              <FreeBoardSection onClick={showReferenceData}/>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={4}>
+              <SignUpListSection location={props}/>
             </GridItem>
           </GridContainer>
           <GridItem xs={12} sm={12} md={12}>
-            <Card chart>
-              <CardHeader color="warning">
-                <ChartistGraph
-                  style={{ height: 380 }}
-                  className="ct-chart"
-                  data={emailsSubscriptionChart.data}
-                  type="Bar"
-                  options={emailsSubscriptionChart.options}
-                  responsiveOptions={emailsSubscriptionChart.responsiveOptions}
-                  listener={emailsSubscriptionChart.animation}
-                />
-              </CardHeader>
-              <CardBody>
-                <h4 className={classes.cardTitle}>개인별 진척도</h4>
-                <p className={classes.cardCategory}>
-                  팀원과 자신의 진척도를 비교할 수 있습니다.
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>
-                  <AccessTime /> 내 일정에 대한 진척도 보기
-                </div>
-              </CardFooter>
-            </Card>
+            <ChartSection/>
           </GridItem>
         </GridItem>
       </GridContainer>
-
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <CustomTabs
