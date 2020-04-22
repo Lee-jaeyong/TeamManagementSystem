@@ -10,7 +10,6 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import styles from "assets/jss/material-dashboard-react/views/iconsStyle.js";
-import ChatDialog from "components/ChatDialog/ChatDialog.js";
 const useStyles = makeStyles(styles);
 
 export default function Icons() {
@@ -61,9 +60,7 @@ export default function Icons() {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem xs={12} sm={12} md={12}>
-          <ChatDialog />
-        </GridItem>
+        <GridItem xs={12} sm={12} md={12}></GridItem>
       </GridContainer>
     </div>
   );

@@ -47,9 +47,49 @@ const theme = createMuiTheme({
 
 export default function SimpleCard(props) {
   const contents = props["list"];
-  const markTestStr =
-    "메인1contents메인2contents메인3contents메인4contents메인5contents메인6contents메인7메인contents메인contents메인contents메인contents";
-  const delMarkArr = markTestStr.split(props["search"]);
+
+  const colors = ["#FFFF24", "#53FF4C", "#48FFFF", "#FF36FF", "#DD7EFF"];
+
+  function markText(searchText, originText) {
+    let searchTextArr = searchText.split(" ");
+    let result = "";
+    for (let i = 0; i < originText.length; i++) {
+      let chk = false;
+      for (let j = 0; j < searchTextArr.length; j++) {
+        if (originText[i] === searchTextArr[j][0]) {
+          if (
+            checkText(
+              originText.substring(i, i + searchTextArr[j].length),
+              searchTextArr[j]
+            )
+          ) {
+            result +=
+              "<span style='background:" +
+              colors[j % 5] +
+              "'><strong>" +
+              searchTextArr[j] +
+              "</strong></span>";
+            i += searchTextArr[j].length - 1;
+            chk = true;
+            break;
+          }
+        }
+      }
+      if (!chk) {
+        result += originText[i];
+      }
+    }
+
+    return result;
+
+    function checkText(originText, text) {
+      if (text !== originText) {
+        return false;
+      }
+      return true;
+    }
+  }
+
   const classes = useStyles();
   return (
     <Card className={classes.root}>
@@ -77,21 +117,11 @@ export default function SimpleCard(props) {
                     const delSearchStr = list.split(props["search"]);
                     return (
                       <li>
-                        {" "}
-                        {delSearchStr
-                          ? delSearchStr.map((str, idx) => {
-                              // return <p key={idx}>{str}</p>;
-                              if (idx === delSearchStr.length - 1) {
-                                return <span key={idx}>{str}</span>;
-                              }
-                              return (
-                                <span key={idx}>
-                                  {str}
-                                  <mark>{props["search"]}</mark>
-                                </span>
-                              );
-                            })
-                          : null}
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: markText(props["search"], list),
+                          }}
+                        ></div>
                       </li>
                     );
                   })
