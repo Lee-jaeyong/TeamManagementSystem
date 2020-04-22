@@ -16,7 +16,9 @@ import SpeedDial from "@material-ui/lab/SpeedDial";
 import CreateIcon from "@material-ui/icons/Create";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import Chip from "@material-ui/core/Chip";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
+import GetAppIcon from "@material-ui/icons/GetApp";
 
 ///////////////////////////////////////////
 import { makeStyles } from "@material-ui/core/styles";
@@ -73,6 +75,7 @@ const mockData = {
     "/images/sidebar-5.jpg",
   ],
   userImg: "img",
+  file: ["다음주 일정 정리표.xlsx", "결과 보고서 양식.hwp"],
 };
 export default function BoardView(props) {
   const [open, setOpen] = useState(props["open"]);
@@ -197,6 +200,24 @@ export default function BoardView(props) {
             title={mockData.title}
             subheader={mockData.date}
           />
+          {mockData.file
+            ? mockData.file.map((file, idx) => {
+                return (
+                  <Chip
+                    key={idx}
+                    style={{ marginBottom: 10, marginLeft: 15 }}
+                    avatar={<GetAppIcon />}
+                    label={file}
+                    onClick={() => {
+                      alert("파일 다운로드url;");
+                    }}
+                    size="small"
+                    variant="outlined"
+                  />
+                );
+              })
+            : null}
+
           {mockData.img ? (
             mockData.img.length === 1 ? (
               <CardMedia
