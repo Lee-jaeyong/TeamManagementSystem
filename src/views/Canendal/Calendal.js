@@ -7,6 +7,8 @@ import Paper from "@material-ui/core/Paper";
 import Fade from "@material-ui/core/Fade";
 import AddPlanSelectedDateDlo from "components/AddPlanSelectedDateDlg/AddPlanSelectedDateDlg";
 
+import SelectDateDialog from './components/SelectDateDialog';
+
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 
@@ -65,6 +67,8 @@ const mockData = [
 export default function App() {
   useEffect(() => {}, []);
   const [selectedDateBtnOpen, setSelectedDateBtnOpen] = useState(false);
+  const [selectDateDialog,setSelectDateDialog] = useState(false);
+  const [selectDate,setSelectDate] = useState();
 
   const [plan,setPlan] = useState([]);
 
@@ -96,7 +100,10 @@ export default function App() {
               today: "today",
             }}
             titleFormat={{ year: "numeric", month: "long" }}
-            dateClick={(date) => alert(date["dateStr"])}
+            dateClick={(date) => {
+              setSelectDate(date);
+              setSelectDateDialog(true);
+            }}
             selectable={true}
             droppable={true}
             select={(e) => console.log(e)}
@@ -129,6 +136,7 @@ export default function App() {
         open={selectedDateBtnOpen}
         handleClose={() => setSelectedDateBtnOpen(false)}
       />
+      <SelectDateDialog open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)}/>
     </div>
   );
 }
