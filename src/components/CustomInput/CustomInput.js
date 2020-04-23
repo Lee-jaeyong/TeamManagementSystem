@@ -24,6 +24,8 @@ export default function CustomInput(props) {
     inputProps,
     error,
     success,
+    inputRef,
+    enterClick
   } = props;
 
   const labelClasses = classNames({
@@ -59,7 +61,12 @@ export default function CustomInput(props) {
           underline: underlineClasses,
         }}
         id={id}
+        inputRef={inputRef}
         {...inputProps}
+        onKeyUp={(e)=>{
+          if(window.event.keyCode===13)
+            enterClick();
+        }}
       />
       {error ? (
         <Clear className={classes.feedback + " " + classes.labelRootError} />

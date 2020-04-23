@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef,useEffect } from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -29,13 +29,12 @@ import styles from "assets/jss/material-dashboard-react/components/headerLinksSt
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks(props) {
+  const inputRef = useRef();
   const classes = useStyles();
-  const [searchText, setSearchText] = React.useState("");
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
   const [joinTeamDialogState,setJoinTeamDialog] = React.useState(false);
   const [createTeamDialogState,setCreateTeamDialogState] = React.useState(false);
-
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -57,15 +56,26 @@ export default function AdminNavbarLinks(props) {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
+  
   const showSearchResult = () => {
-    props["history"].push(
-      "/admin/search/" + document.getElementById("searchFilled").value
-    );
+    if(inputRef.current.value === ''){
+      alert('검색어를 입력해주세요.');
+      return;
+    }
+    const search = encodeURI('/admin/search/'+inputRef.current.value)
+    props["history"].push(search);
   };
+  
+  const logout = () => {
+    props["history"].push("/login");
+  }
+
   return (
     <div>
       <div className={classes.searchWrapper}>
         <CustomInput
+          enterClick={showSearchResult}
+          inputRef={inputRef}
           formControlProps={{
             className: classes.margin + " " + classes.search,
           }}
@@ -253,7 +263,7 @@ export default function AdminNavbarLinks(props) {
                     </MenuItem>
                     <Divider light />
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={logout}
                       className={classes.dropdownItem}
                     >
                       로그아웃
