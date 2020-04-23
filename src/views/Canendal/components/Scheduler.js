@@ -25,7 +25,7 @@ export default function Scheduler(props) {
         }
     });
   return (
-    <div>
+    <div id="planList">
       <Fade in timeout={200}>
         <Paper style={{ padding: 30 }} elevation={3}>
           <FullCalendar
@@ -54,11 +54,17 @@ export default function Scheduler(props) {
                   alert("clicked the custom button!");
                 },
               },
+              print: {
+                text: "일정 인쇄",
+                click: function() {
+                  window.print();
+                },
+              },
             }}
             header={{
               left: "prev,next today",
               center: "title",
-              right: "addSchedule showMyTodoList",
+              right: "print addSchedule showMyTodoList",
             }}
           />
         </Paper>

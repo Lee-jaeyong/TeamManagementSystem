@@ -17,7 +17,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Slider from '@material-ui/core/Slider';
 import Chip from '@material-ui/core/Chip';
 import Tooltip from '@material-ui/core/Tooltip';
-import CardHeader from "components/Card/CardHeader.js";
+import Divider from '@material-ui/core/Divider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,9 +90,8 @@ export default function SelectDateDialog(props) {
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle id="alert-dialog-slide-title">{props['selectDate']} 일정 리스트</DialogTitle>
+        <Divider/>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-          </DialogContentText>
           {props['eventList'].map((event,idx)=>{
             return (
             <div key={idx}>
@@ -130,11 +129,6 @@ export default function SelectDateDialog(props) {
             )
           })}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            확 인
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );
