@@ -90,6 +90,10 @@ export default function App() {
     }
   }
 
+  function openDialog(){
+    setSelectDateDialog(true)
+  } 
+
   return (
     <div>
       <Fade in timeout={200}>
@@ -100,10 +104,9 @@ export default function App() {
               today: "today",
             }}
             titleFormat={{ year: "numeric", month: "long" }}
-            dateClick={(date) => {
-              setSelectDate(date);
-              setSelectDateDialog(true);
-            }}
+            dateClick={(date) => 
+              openDialog()
+            }
             selectable={true}
             droppable={true}
             select={(e) => console.log(e)}
@@ -136,7 +139,7 @@ export default function App() {
         open={selectedDateBtnOpen}
         handleClose={() => setSelectedDateBtnOpen(false)}
       />
-      <SelectDateDialog open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)}/>
+      {/* <SelectDateDialog open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)}/> */}
     </div>
   );
 }
