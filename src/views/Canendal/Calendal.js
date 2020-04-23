@@ -8,39 +8,41 @@ import Fade from "@material-ui/core/Fade";
 import AddPlanSelectedDateDlo from "components/AddPlanSelectedDateDlg/AddPlanSelectedDateDlg";
 
 import SelectDateDialog from './components/SelectDateDialog';
+import SchedulerSection from './components/Scheduler';
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
+
 
 const mockData = [
   {"seq" : 1,
   "tag" : "4주차 wiringPi( ) 함수-디지털 입력",
   "content" : "수정한 콘텐츠",
   "start" : "2020-04-01",
-  "end" : "2020-4-10",
+  "end" : "2020-04-10",
   "teamPlan" : null,
-  "progress" : 0},
+  "progress" : 10},
   {"seq" : 2,
   "tag" : "4주차 강의자료 입니다 참고하세요",
   "content" : "수정한 콘텐츠",
   "start" : "2020-04-05",
   "end" : "2020-04-10",
   "teamPlan" : null,
-  "progress" : 0},
+  "progress" : 20},
   {"seq" : 4,
   "tag" : "오늘 수업은 1시부터 실시간 수업으로 진행할 예정입니다",
   "content" : "수정한 콘텐츠",
   "start" : "2020-04-11",
   "end" : "2020-04-13",
   "teamPlan" : null,
-  "progress" : 0},
+  "progress" : 30},
   {"seq" : 5,
   "tag" : "자세한 사항은 수업에서 다시 설명하겠습니다",
   "content" : "수정한 콘텐츠",
   "start" : "2020-04-20",
   "end" : "2020-04-25",
   "teamPlan" : null,
-  "progress" : 0},
+  "progress" : 40},
   {"seq" : 6,
   "tag" : "여기 게시판이 아닌 수업 게시판에 링크를 공지하겠습니다",
   "content" : "수정한 콘텐츠",
@@ -69,17 +71,10 @@ export default function App() {
   const [selectedDateBtnOpen, setSelectedDateBtnOpen] = useState(false);
   const [selectDateDialog,setSelectDateDialog] = useState(false);
   const [selectDate,setSelectDate] = useState();
+  const [fileterEventList,setFilterEventList] = useState([]);
 
   const [plan,setPlan] = useState([]);
-
-  useEffect(()=>{
-    let planArr = [];
-    for(let i =0;i<mockData.length;i++){
-      planArr.push(parsePlan(mockData[i]));
-    }
-    setPlan(planArr);
-  },[]);
-
+  
   const parsePlan = (plan) => {
     let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
     return {
@@ -89,57 +84,42 @@ export default function App() {
       color : colors[plan['seq'] % colors.length]
     }
   }
+  
+  function handleDateClick(date){
+    setSelectDate(date);
+    fileterEvent(date);
+    setSelectDateDialog(true);
+  }
 
-  function openDialog(){
-    setSelectDateDialog(true)
-  } 
+  function fileterEvent(date){
+    let eventArr = [];
+    for(let i =0;i<mockData.length;i++){
+      let start = getTime(mockData[i]['start']);
+      let end = getTime(mockData[i]['end']);
+      let checkDate = getTime(date);
+      if(start <= checkDate && end > checkDate){
+        eventArr.push(mockData[i]);
+      }
+    }
+    setFilterEventList(eventArr);
+  }
+
+  function getTime(value){
+    return new Date(value).getTime();
+  }
+
+  useEffect(()=>{
+    let planArr = [];
+    for(let i =0;i<mockData.length;i++){
+      planArr.push(parsePlan(mockData[i]));
+    }
+    setPlan(planArr);
+  },[]);
 
   return (
     <div>
-      <Fade in timeout={200}>
-        <Paper style={{ padding: 30 }} elevation={3}>
-          <FullCalendar
-            events={plan}
-            buttonText={{
-              today: "today",
-            }}
-            titleFormat={{ year: "numeric", month: "long" }}
-            dateClick={(date) => 
-              openDialog()
-            }
-            selectable={true}
-            droppable={true}
-            select={(e) => console.log(e)}
-            defaultView="dayGridMonth"
-            plugins={[dayGridPlugin, interactionPlugin]}
-            titleFormat={{ year: "numeric", month: "short", day: "numeric" }}
-            customButtons={{
-              addSchedule: {
-                text: "선택 일정 등록",
-                click: function() {
-                  setSelectedDateBtnOpen(true);
-                },
-              },
-              showMyTodoList: {
-                text: "나의 TODO 리스트",
-                click: function() {
-                  alert("clicked the custom button!");
-                },
-              },
-            }}
-            header={{
-              left: "prev,next today",
-              center: "title",
-              right: "addSchedule showMyTodoList",
-            }}
-          />
-        </Paper>
-      </Fade>
-      <AddPlanSelectedDateDlo
-        open={selectedDateBtnOpen}
-        handleClose={() => setSelectedDateBtnOpen(false)}
-      />
-      {/* <SelectDateDialog open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)}/> */}
+      <SelectDateDialog open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)} selectDate={selectDate} eventList={fileterEventList}/>
+      <SchedulerSection plan={plan} dateClick={handleDateClick}/>
     </div>
   );
 }
