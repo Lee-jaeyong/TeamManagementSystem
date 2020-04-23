@@ -66,7 +66,7 @@ const mockData = [
   "progress" : 0},
 ]
 
-export default function App() {
+export default function App(props) {
   useEffect(() => {}, []);
   const [selectedDateBtnOpen, setSelectedDateBtnOpen] = useState(false);
   const [selectDateDialog,setSelectDateDialog] = useState(false);
@@ -78,6 +78,7 @@ export default function App() {
   const parsePlan = (plan) => {
     let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
     return {
+      groupId:plan['seq'],
       title:plan['tag'],
       start:plan['start'],
       end:plan['end'],
@@ -119,7 +120,7 @@ export default function App() {
   return (
     <div>
       <SelectDateDialog open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)} selectDate={selectDate} eventList={fileterEventList}/>
-      <SchedulerSection plan={plan} dateClick={handleDateClick}/>
+      <SchedulerSection location={props.match.params.idx} history={props['history']} plan={plan} dateClick={handleDateClick}/>
     </div>
   );
 }

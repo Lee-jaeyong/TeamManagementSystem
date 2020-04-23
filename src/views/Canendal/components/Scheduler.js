@@ -7,12 +7,21 @@ import Paper from "@material-ui/core/Paper";
 import Fade from "@material-ui/core/Fade";
 
 import AddPlanSelectedDateDlo from 'components/AddPlanSelectedDateDlg/AddPlanSelectedDateDlg';
+import ShowSelectEvent from './ShowSelectEvent';
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 
 export default function Scheduler(props) {
     const [selectedDateBtnOpen, setSelectedDateBtnOpen] = useState(false);
+    const [showSelectEventState,setShowSelectEventState] = useState(false);
+    const [selectEvent,setSelectEvent] = useState();
+
+    function selectEventHandle(eventTarget){
+      setSelectEvent(eventTarget);
+      setShowSelectEventState(true);
+    }
+
     useEffect(() => {
         let a = document.getElementsByClassName("fc-day fc-widget-content");
         for(let i =0;i<a.length;i++){
@@ -35,7 +44,7 @@ export default function Scheduler(props) {
             }}
             editable={true}
             dateClick={(date) => props['dateClick'](date['dateStr'])}
-            eventClick={(event)=>alert(event)}
+            eventClick={(event)=>selectEventHandle(event['event']['_def']['groupId'])}
             droppable={true}
             rerenderEvent={props['plan']}
             defaultView="dayGridMonth"
@@ -51,7 +60,7 @@ export default function Scheduler(props) {
               showMyTodoList: {
                 text: "나의 TODO 리스트",
                 click: function() {
-                  alert("clicked the custom button!");
+                  props['history'].push("/admin/todoList/" + props['location']);
                 },
               },
               print: {
@@ -73,6 +82,7 @@ export default function Scheduler(props) {
         open={selectedDateBtnOpen}
         handleClose={() => setSelectedDateBtnOpen(false)}
       />
+      <ShowSelectEvent open={showSelectEventState} handleClose={()=>setShowSelectEventState(false)}/>
     </div>
   );
 }

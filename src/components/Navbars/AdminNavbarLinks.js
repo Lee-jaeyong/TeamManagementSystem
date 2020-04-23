@@ -13,11 +13,16 @@ import Divider from "@material-ui/core/Divider";
 // @material-ui/icons
 import Person from "@material-ui/icons/Person";
 import Notifications from "@material-ui/icons/Notifications";
-import Dashboard from "@material-ui/icons/Dashboard";
 import Search from "@material-ui/icons/Search";
 // core components
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import LanguageIcon from '@material-ui/icons/Language';
+import Tooltip from '@material-ui/core/Tooltip';
+
+import JoinTeamDialog from './component/JoinTeamDialog';
+import CreateTeamDialog from './component/CreateTeamDialog';
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 
@@ -28,6 +33,9 @@ export default function AdminNavbarLinks(props) {
   const [searchText, setSearchText] = React.useState("");
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+  const [joinTeamDialogState,setJoinTeamDialog] = React.useState(false);
+  const [createTeamDialogState,setCreateTeamDialogState] = React.useState(false);
+
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -81,6 +89,42 @@ export default function AdminNavbarLinks(props) {
       </div>
       <div className={classes.manager}>
         <Button
+            color={window.innerWidth > 959 ? "transparent" : "white"}
+            justIcon={window.innerWidth > 959}
+            simple={!(window.innerWidth > 959)}
+            aria-owns={openNotification ? "notification-menu-list-grow" : null}
+            aria-haspopup="true"
+            className={classes.buttonLink}
+            onClick={()=>setCreateTeamDialogState(true)}
+          >
+            <Tooltip title="팀 생성">
+              <AddCircleIcon className={classes.icons} />
+            </Tooltip>
+            <Hidden mdUp implementation="css">
+              <p className={classes.linkText}>
+                팀 생성
+              </p>
+            </Hidden>
+          </Button>
+          <Button
+            color={window.innerWidth > 959 ? "transparent" : "white"}
+            justIcon={window.innerWidth > 959}
+            simple={!(window.innerWidth > 959)}
+            aria-owns={openNotification ? "notification-menu-list-grow" : null}
+            aria-haspopup="true"
+            className={classes.buttonLink}
+            onClick={()=>setJoinTeamDialog(true)}
+          >
+              <Tooltip title="팀 신청">
+                <LanguageIcon className={classes.icons} />
+              </Tooltip>
+              <Hidden mdUp implementation="css">
+                <p className={classes.linkText}>
+                  팀 신청
+                </p>
+              </Hidden>
+          </Button>
+        <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
           simple={!(window.innerWidth > 959)}
@@ -93,7 +137,7 @@ export default function AdminNavbarLinks(props) {
           <span className={classes.notifications}>5</span>
           <Hidden mdUp implementation="css">
             <p onClick={handleCloseNotification} className={classes.linkText}>
-              Notification
+              알 림
             </p>
           </Hidden>
         </Button>
@@ -124,31 +168,31 @@ export default function AdminNavbarLinks(props) {
                       onClick={handleCloseNotification}
                       className={classes.dropdownItem}
                     >
-                      Mike John responded to your email
+                      C언어 프로젝트 공지사항이 등록되었습니다.
                     </MenuItem>
                     <MenuItem
                       onClick={handleCloseNotification}
                       className={classes.dropdownItem}
                     >
-                      You have 5 new tasks
+                      C언어 프로젝트 공지사항이 등록되었습니다.
                     </MenuItem>
                     <MenuItem
                       onClick={handleCloseNotification}
                       className={classes.dropdownItem}
                     >
-                      You{"'"}re now friend with Andrew
+                      시스템 프로젝트 공지사항이 등록되었습니다.
                     </MenuItem>
                     <MenuItem
                       onClick={handleCloseNotification}
                       className={classes.dropdownItem}
                     >
-                      Another Notification
+                      스프링 프로젝트 참고자료가 등록되었습니다.
                     </MenuItem>
                     <MenuItem
                       onClick={handleCloseNotification}
                       className={classes.dropdownItem}
                     >
-                      Another One
+                      운영체제 프로젝트 참고자료가 등록되었습니다.
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
@@ -199,20 +243,20 @@ export default function AdminNavbarLinks(props) {
                       onClick={handleCloseProfile}
                       className={classes.dropdownItem}
                     >
-                      Profile
+                      내 정보
                     </MenuItem>
                     <MenuItem
                       onClick={handleCloseProfile}
                       className={classes.dropdownItem}
                     >
-                      Settings
+                      나의 모든 일정 보기
                     </MenuItem>
                     <Divider light />
                     <MenuItem
                       onClick={handleCloseProfile}
                       className={classes.dropdownItem}
                     >
-                      Logout
+                      로그아웃
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
@@ -221,6 +265,8 @@ export default function AdminNavbarLinks(props) {
           )}
         </Poppers>
       </div>
+      <JoinTeamDialog open={joinTeamDialogState} handleClose={()=>setJoinTeamDialog(false)}/>
+      <CreateTeamDialog open={createTeamDialogState} handleClose={()=>setCreateTeamDialogState(false)}/>
     </div>
   );
 }

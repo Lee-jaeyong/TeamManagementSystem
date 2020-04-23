@@ -37,6 +37,10 @@ export default function Dashboard(props) {
     props["history"].push("/admin/search");
   };
 
+  const showTotoList = () => {
+    props["history"].push("/admin/todoList/" + props.match.params.idx);
+  }
+
   const showScheduler = () => {
     props["history"].push("/admin/scheduler/" + props.match.params.idx);
   };
@@ -58,7 +62,7 @@ export default function Dashboard(props) {
         <GridItem xs={12} sm={12} md={6}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={4}>
-              <TodoListSection onClick={showScheduler}/>
+              <TodoListSection onClick={showTotoList}/>
             </GridItem>
             <GridItem xs={12} sm={12} md={4}>
               <FreeBoardSection onClick={showReferenceData}/>

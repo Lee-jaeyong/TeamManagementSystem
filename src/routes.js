@@ -33,6 +33,8 @@ import Icons from "views/Icons/Icons.js";
 import SearchResult from "views/SearchResult/SearchResult.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import schedulerView from "views/Canendal/Calendal.js";
+import TodoListPage from 'views/TodoList/TodoList';
+
 // core components/views for RTL layout
 import RTLPage from "views/RTLPage/RTLPage.js";
 
@@ -42,6 +44,13 @@ const dashboardRoutes = [
     name: "Dashboard",
     icon: Dashboard,
     component: DashboardPage,
+    layout: "/admin",
+  },
+  {
+    path: "/todoList/:idx",
+    name: "Todo 리스트",
+    icon: Dashboard,
+    component: TodoListPage,
     layout: "/admin",
   },
   {

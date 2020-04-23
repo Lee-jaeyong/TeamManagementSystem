@@ -22,6 +22,7 @@ export default function CustomTabs(props) {
   const [headColor, setHeadColor] = useState("primary");
   const handleChange = (event, value) => {
     setValue(value);
+    props['handleChange'](value);
   };
   const classes = useStyles();
   const { plainTabs, tabs, title, rtlActive } = props;
@@ -31,6 +32,16 @@ export default function CustomTabs(props) {
   });
   useEffect(() => {
     if (!props["containsPaging"]) return;
+
+    if(props['color']){
+      if (value === 0) {
+        setHeadColor("warning");
+      } else if (value === 1) {
+        setHeadColor("danger");
+      }
+      return;  
+    }
+
     if (value === 0) {
       setHeadColor("primary");
     } else if (value === 1) {
