@@ -21,7 +21,10 @@ import routes from "routes.js";
 
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
-import bgImage from "assets/img/sidebar-2.jpg";
+import bgImage from "assets/img/sidebar-5.jpg";
+
+import MessageBox from 'components/MessageBox/MessageBox';
+import * as Oauth from '@oauth/oauth';
 
 let ps;
 
@@ -46,7 +49,17 @@ const switchRoutes = (
 const useStyles = makeStyles(styles);
 
 export default function Admin({ ...rest }) {
+  const id = useRef();
+  const pass = useRef();
   const classes = useStyles();
+  const [showMessageState,setShowMessageState] = useState(false);
+  const [MessageBoxState,setMessageBoxState] = useState(
+    {
+      content : "",
+      level : "success",
+      time : 2000
+    }
+  );
   const mainPanel = React.createRef();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [joinDialogOpen,setJoinDialogOpen] = useState(false);
@@ -58,6 +71,36 @@ export default function Admin({ ...rest }) {
   };
 
   const loginHandle = () => {
+    if(id.current.value.trim() === ''){
+      messageBoxHandle(true,"아이디를 입력해주세요.",2000,'error');
+      id.current.focus();
+      return;
+    }else if(pass.current.value.trim() === ''){
+      messageBoxHandle(true,"비밀번호를 입력해주세요.",2000,'error');
+      pass.current.focus();
+      return;
+    }
+    const user = {
+      id : id.current.value,
+      pass : pass.current.value
+    }
+    Oauth.getAccessToken(user,loginSuccess,loginError);
+  }
+  
+  const messageBoxHandle = (show,content,time,level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content : content,
+      time : time,
+      level : level
+    })
+  }
+
+  const loginError = () => {
+    messageBoxHandle(true,"아이디 혹은 비밀번호가 일치하지 않습니다.",2000,'error');
+  }
+  
+  const loginSuccess = () => {
     rest['history'].push('/admin/dashboard/1');
   }
 
@@ -80,12 +123,11 @@ export default function Admin({ ...rest }) {
     };
   }, [mainPanel]);
   return (
-  <div ref={mainPanel}>
-    {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
+  <div ref={mainPanel} style={{backgroundImage:"url(" +bgImage+ ")", backgroundSize:'cover', backgroundRepeat:'noReat'}}>
       <div className={classes.content} style={{marginTop:170}}>
         <GridContainer>
-          <GridItem xs={12} sm={12} md={3}/>
-          <GridItem xs={12} sm={12} md={6}>
+          <GridItem xs={12} sm={12} md={4}/>
+          <GridItem xs={12} sm={12} md={4}>
             <Card profile>
               <CardAvatar profile>
                 <img src={avatar} style={{height:130}}/>
@@ -96,22 +138,26 @@ export default function Admin({ ...rest }) {
                 <br/>
                 <br/>
                 <TextField
+                  inputRef={id}
                   id="outlined-password-input"
                   label="아이디"
                   autoComplete="current-password"
                   variant="outlined"
                   fullWidth
                   style={{marginBottom:10}}
+                  onKeyUp={()=>{if(window.event.keyCode === 13)loginHandle()}}
                 />
                 <TextField
+                  inputRef={pass}
                   id="outlined-password-input"
                   label="비밀번호"
                   type="password"
                   autoComplete="current-password"
                   variant="outlined"
                   fullWidth
+                  onKeyUp={()=>{if(window.event.keyCode === 13)loginHandle()}}
                 />
-                <Button color="primary" round fullWidth onClick={loginHandle}>
+                <Button color="primary" round fullWidth onClick={loginHandle} style={{marginTop:20}}>
                   로그인
                 </Button>
                 <Button round fullWidth>
@@ -127,7 +173,14 @@ export default function Admin({ ...rest }) {
           </GridItem>
         </GridContainer>
       </div>
-      <JoinDialog open={joinDialogOpen} handleClose={()=>setJoinDialogOpen(false)}/>
+      <JoinDialog messageBoxHandle={messageBoxHandle} open={joinDialogOpen} handleClose={()=>setJoinDialogOpen(false)}/>
+      <MessageBox
+        open={showMessageState}
+        content={MessageBoxState['content']}
+        level={MessageBoxState['level']}
+        time={MessageBoxState['time']}
+        handleClose={()=>setShowMessageState(false)}
+      />
     </div>
   );
 }

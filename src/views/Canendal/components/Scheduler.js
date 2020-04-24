@@ -17,8 +17,18 @@ export default function Scheduler(props) {
     const [showSelectEventState,setShowSelectEventState] = useState(false);
     const [selectEvent,setSelectEvent] = useState();
 
+    function selectEventFilter(groupId){
+      let planLength = props['plan'].length;
+      for(let i =0;i<planLength;i++){
+        if(props['plan'][i]['groupId'] === parseInt(groupId)){
+          setSelectEvent(props['plan'][i]);
+          break;
+        }
+      }
+    }
+
     function selectEventHandle(eventTarget){
-      setSelectEvent(eventTarget);
+      selectEventFilter(eventTarget);
       setShowSelectEventState(true);
     }
 
@@ -82,7 +92,7 @@ export default function Scheduler(props) {
         open={selectedDateBtnOpen}
         handleClose={() => setSelectedDateBtnOpen(false)}
       />
-      <ShowSelectEvent open={showSelectEventState} handleClose={()=>setShowSelectEventState(false)}/>
+      <ShowSelectEvent event={selectEvent} open={showSelectEventState} handleClose={()=>setShowSelectEventState(false)}/>
     </div>
   );
 }

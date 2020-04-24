@@ -17,6 +17,7 @@ const useStyles = makeStyles(styles);
 export default function CustomInput(props) {
   const classes = useStyles();
   const {
+    type,
     formControlProps,
     labelText,
     id,
@@ -25,7 +26,8 @@ export default function CustomInput(props) {
     error,
     success,
     inputRef,
-    enterClick
+    enterClick,
+    onKeyUp
   } = props;
 
   const labelClasses = classNames({
@@ -55,6 +57,7 @@ export default function CustomInput(props) {
         </InputLabel>
       ) : null}
       <Input
+        type={type}
         classes={{
           root: marginTop,
           disabled: classes.disabled,
@@ -64,8 +67,11 @@ export default function CustomInput(props) {
         inputRef={inputRef}
         {...inputProps}
         onKeyUp={(e)=>{
-          if(window.event.keyCode===13)
+          if(enterClick && window.event.keyCode===13)
             enterClick();
+          if(onKeyUp){
+            onKeyUp(e);
+          }
         }}
       />
       {error ? (

@@ -118,6 +118,11 @@ export default function Admin({ ...rest }) {
       setMobileOpen(false);
     }
   };
+
+  const getTeams = () => {
+    alert('aaaaaa');
+  }
+
   // initialize and destroy the PerfectScrollbar plugin
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -155,6 +160,7 @@ export default function Admin({ ...rest }) {
       />
       <div className={classes.mainPanel} ref={mainPanel}>
         <Navbar
+          menuUpdate={getTeams}
           routes={routes}
           handleDrawerToggle={handleDrawerToggle}
           {...rest}
@@ -169,7 +175,6 @@ export default function Admin({ ...rest }) {
           )}
         {getRoute() ? <Footer /> : null}
       </div>
-
     </div>
   );
 }

@@ -12,7 +12,7 @@ export async function getNotContainsData(URL,func){
     );
 }
 
-export async function getContainsData(URL,func,data){
+export async function getContainsData(URL,func,data,auth){
     let _dataArr = [];
     for(let key in data){
         _dataArr.push(key);
@@ -23,14 +23,25 @@ export async function getContainsData(URL,func,data){
         if(i !== _dataArr.length-1)
         addURL += '&';
     }
-    axios({
-        url: URL+addURL,
-        method: 'get',
-        data: data,
-        headers : {
-            Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
-        }
-    }).then(
-        res=>func(res.data)
-    );
+    if(auth){
+        axios({
+            url: URL+addURL,
+            method: 'get',
+            data: data,
+            headers : {
+                Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
+            }
+        }).then(
+            res=>func(res.data)
+        );
+    }else
+    {
+        axios({
+            url: URL+addURL,
+            method: 'get',
+            data: data,
+        }).then(
+            res=>func(res.data)
+        );
+    }
 }

@@ -49,12 +49,11 @@ export default function Dashboard(props) {
     props["history"].push("/admin/referenceData/" + props.match.params.idx);
   };
 
-  const showNotice = () => {
-    props["history"].push("/admin/notice/" + props.match.params.idx);
-  };
+  useEffect(()=>{
+  },[]);
 
   return (
-    <div>
+    <div id="section">
       <GridContainer>
         <GridItem xs={12} sm={12} md={6}>
           <SchedulerSection onClick={showScheduler}/>

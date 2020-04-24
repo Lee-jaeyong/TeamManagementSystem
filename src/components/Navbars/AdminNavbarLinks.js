@@ -1,4 +1,4 @@
-import React, { useRef,useEffect } from "react";
+import React, { useRef,useEffect,useState } from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -23,18 +23,39 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import JoinTeamDialog from './component/JoinTeamDialog';
 import CreateTeamDialog from './component/CreateTeamDialog';
+import MessageBox from 'components/MessageBox/MessageBox';
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
+
+import * as Oauth from '@oauth/oauth';
 
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks(props) {
   const inputRef = useRef();
   const classes = useStyles();
-  const [openNotification, setOpenNotification] = React.useState(null);
-  const [openProfile, setOpenProfile] = React.useState(null);
-  const [joinTeamDialogState,setJoinTeamDialog] = React.useState(false);
-  const [createTeamDialogState,setCreateTeamDialogState] = React.useState(false);
+  const [openNotification, setOpenNotification] = useState(null);
+  const [openProfile, setOpenProfile] = useState(null);
+  const [joinTeamDialogState,setJoinTeamDialog] = useState(false);
+  const [createTeamDialogState,setCreateTeamDialogState] = useState(false);
+  const [showMessageState,setShowMessageState] = useState(false);
+  const [MessageBoxState,setMessageBoxState] = useState(
+    {
+      content : "",
+      level : "success",
+      time : 2000
+    }
+  );
+
+  const messageBoxHandle = (show,content,time,level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content : content,
+      time : time,
+      level : level
+    })
+  }
+
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -58,8 +79,8 @@ export default function AdminNavbarLinks(props) {
   };
   
   const showSearchResult = () => {
-    if(inputRef.current.value === ''){
-      alert('검색어를 입력해주세요.');
+    if(inputRef.current.value.trim() === ''){
+      messageBoxHandle(true,"검색어를 입력해주세요",2000,'error');
       return;
     }
     const search = encodeURI('/admin/search/'+inputRef.current.value)
@@ -67,6 +88,8 @@ export default function AdminNavbarLinks(props) {
   };
   
   const logout = () => {
+    localStorage.clear();
+    Oauth.revokeToken();
     props["history"].push("/login");
   }
 
@@ -275,8 +298,15 @@ export default function AdminNavbarLinks(props) {
           )}
         </Poppers>
       </div>
-      <JoinTeamDialog open={joinTeamDialogState} handleClose={()=>setJoinTeamDialog(false)}/>
-      <CreateTeamDialog open={createTeamDialogState} handleClose={()=>setCreateTeamDialogState(false)}/>
+      <JoinTeamDialog messageBoxHandle={messageBoxHandle} open={joinTeamDialogState} handleClose={()=>setJoinTeamDialog(false)}/>
+      <CreateTeamDialog messageBoxHandle={messageBoxHandle} menuUpdate={props['menuUpdate']} open={createTeamDialogState} handleClose={()=>setCreateTeamDialogState(false)}/>
+      <MessageBox
+          open={showMessageState}
+          content={MessageBoxState['content']}
+          level={MessageBoxState['level']}
+          time={MessageBoxState['time']}
+          handleClose={()=>setShowMessageState(false)}
+        />
     </div>
   );
 }

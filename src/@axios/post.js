@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-export async function postNotContainsData(URL,func){
-    axios.post(URL,{
+export async function postNotContainsData(URL,func,error){
+    axios.post(URL,{},{
         headers: {
             Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
         }
-    }).then(res=>func(res.data));
+    }).then(res=>func(res.data)).catch(res=>error(res));
 }
 
 export async function postFileUpload(URL,func,formData){
@@ -16,11 +16,12 @@ export async function postFileUpload(URL,func,formData){
     }).then(res=>func(res.data));
 }
 
-export async function postContainsData(URL,func,data){
+export async function postContainsData(URL,func,error,data){
     axios.post(URL,data,{
         headers: {
-            'Content-Type': 'application/json',
-            Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
+            Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token'),
+            'Content-Type': 'application/json'
         }
-    }).then(res=>func(res.data));
+    }).then(res=>func(res.data))
+    .catch(res=>{error(res)});
 }

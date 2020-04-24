@@ -19,6 +19,8 @@ import Chip from '@material-ui/core/Chip';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 
+import UpdatePlan from './UpdatePlan';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width:500,
@@ -64,7 +66,7 @@ const PrettoSlider = withStyles({
 
 export default function SelectDateDialog(props) {
   const classes = useStyles();
-
+  const [updatePlanState,setUpdatePlanState] = React.useState(false);
   const [open, setOpen] = React.useState(props['open']);
   const handleClose = () => {
     setOpen(false);
@@ -113,7 +115,7 @@ export default function SelectDateDialog(props) {
               </div>
               <div style={{float:'right',marginTop:-20}}>
                 <Tooltip title="수정" aria-label="add">
-                  <IconButton color="primary" aria-label="upload picture" component="span">
+                  <IconButton onClick={()=>setUpdatePlanState(true)} color="primary" aria-label="upload picture" component="span">
                     <EditIcon />
                   </IconButton>
                 </Tooltip>
@@ -130,6 +132,7 @@ export default function SelectDateDialog(props) {
           })}
         </DialogContent>
       </Dialog>
+      <UpdatePlan open={updatePlanState} handleClose={()=>setUpdatePlanState(false)}/>
     </div>
   );
 }

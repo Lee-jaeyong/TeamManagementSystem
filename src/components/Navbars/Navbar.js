@@ -29,7 +29,7 @@ export default function Header(props) {
       <Toolbar className={classes.container}>
         <div className={classes.flex}></div>
         <Hidden smDown implementation="css">
-          <AdminNavbarLinks history={props["history"]} />
+          <AdminNavbarLinks menuUpdate={props['menuUpdate']} history={props["history"]} />
         </Hidden>
         <Hidden mdUp implementation="css">
           <IconButton
