@@ -6,7 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import Paper from "@material-ui/core/Paper";
 import Fade from "@material-ui/core/Fade";
 
-import AddPlanSelectedDateDlo from 'components/AddPlanSelectedDateDlg/AddPlanSelectedDateDlg';
+import AddPlanSelectedDateDlo from './AddPlanSelectedDateDlg';
 import ShowSelectEvent from './ShowSelectEvent';
 
 import "@fullcalendar/core/main.css";
@@ -89,6 +89,7 @@ export default function Scheduler(props) {
         </Paper>
       </Fade>
       <AddPlanSelectedDateDlo
+        idx={props['location']}
         open={selectedDateBtnOpen}
         handleClose={() => setSelectedDateBtnOpen(false)}
       />

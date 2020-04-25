@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import Paper from "@material-ui/core/Paper";
 import Fade from "@material-ui/core/Fade";
-import AddPlanSelectedDateDlo from "components/AddPlanSelectedDateDlg/AddPlanSelectedDateDlg";
+import AddPlanSelectedDateDlo from "./components/AddPlanSelectedDateDlg";
 
 import SelectDateDialog from './components/SelectDateDialog';
 import SchedulerSection from './components/Scheduler';
@@ -67,7 +67,6 @@ const mockData = [
 ]
 
 export default function App(props) {
-  useEffect(() => {}, []);
   const [selectedDateBtnOpen, setSelectedDateBtnOpen] = useState(false);
   const [selectDateDialog,setSelectDateDialog] = useState(false);
   const [selectDate,setSelectDate] = useState();

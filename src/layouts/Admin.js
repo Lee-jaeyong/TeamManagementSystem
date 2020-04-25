@@ -19,6 +19,8 @@ import logo from "assets/img/logo.png";
 import Dashboard from "@material-ui/icons/Dashboard";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 
+import * as axiosGet from '@axios/get';
+
 let ps;
 
 const switchRoutes = (
@@ -120,7 +122,25 @@ export default function Admin({ ...rest }) {
   };
 
   const getTeams = () => {
-    alert('aaaaaa');
+    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage",getTeamSuccess)
+  }
+
+  const getTeamSuccess = (res) => {
+    const content = res['_embedded']['content'];
+    let contentArr = [];
+    for(let i =0;i<content.length;i++){
+      contentArr.push(
+        {
+          path: "/dashboard/" + content[i]['seq'],
+          name: content[i]['name'],
+          code : content[i]['code'],
+          icon: Dashboard,
+          component: DashboardPage,
+          layout: "/admin"
+        }
+      )
+    }
+    setPjtList(contentArr);
   }
 
   // initialize and destroy the PerfectScrollbar plugin
@@ -143,6 +163,7 @@ export default function Admin({ ...rest }) {
   }, [mainPanel]);
 
   useEffect(() => {
+    getTeams();
   }, []);
 
   return (
