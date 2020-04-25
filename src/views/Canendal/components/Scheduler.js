@@ -8,14 +8,47 @@ import Fade from "@material-ui/core/Fade";
 
 import AddPlanSelectedDateDlo from './AddPlanSelectedDateDlg';
 import ShowSelectEvent from './ShowSelectEvent';
+import MessageBox from 'components/MessageBox/MessageBox';
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 
+const dateMonthCheck = (value) => {
+  const check = value + '';
+  if(check.length === 1)
+    return "0"+check;
+  return check;
+}
+
+const parseDate = (date) => {
+  const year = date.getFullYear();
+  const month = dateMonthCheck(date.getMonth() + 1);
+  const day = dateMonthCheck(date.getDate());
+  return year + "-" + month + "-" + day;
+}
+
 export default function Scheduler(props) {
+    const [date,setDate] = useState(parseDate(new Date()));
     const [selectedDateBtnOpen, setSelectedDateBtnOpen] = useState(false);
     const [showSelectEventState,setShowSelectEventState] = useState(false);
     const [selectEvent,setSelectEvent] = useState();
+    const [showMessageState,setShowMessageState] = useState(false);
+    const [MessageBoxState,setMessageBoxState] = useState(
+      {
+        content : "",
+        level : "success",
+        time : 2000
+      }
+    );
+
+    const messageBoxHandle = (show,content,time,level) => {
+      setShowMessageState(show);
+      setMessageBoxState({
+        content : content,
+        time : time,
+        level : level
+      })
+    }
 
     function selectEventFilter(groupId){
       let planLength = props['plan'].length;
@@ -30,6 +63,10 @@ export default function Scheduler(props) {
     function selectEventHandle(eventTarget){
       selectEventFilter(eventTarget);
       setShowSelectEventState(true);
+    }
+
+    function updatePlanList(){
+      props.updatePlanList();
     }
 
     useEffect(() => {
@@ -89,11 +126,20 @@ export default function Scheduler(props) {
         </Paper>
       </Fade>
       <AddPlanSelectedDateDlo
+        updatePlanList={props.updatePlanList}
+        messageBoxHandle={messageBoxHandle}
         idx={props['location']}
         open={selectedDateBtnOpen}
         handleClose={() => setSelectedDateBtnOpen(false)}
       />
       <ShowSelectEvent event={selectEvent} open={showSelectEventState} handleClose={()=>setShowSelectEventState(false)}/>
+      <MessageBox
+          open={showMessageState}
+          content={MessageBoxState['content']}
+          level={MessageBoxState['level']}
+          time={MessageBoxState['time']}
+          handleClose={()=>setShowMessageState(false)}
+        />
     </div>
   );
 }

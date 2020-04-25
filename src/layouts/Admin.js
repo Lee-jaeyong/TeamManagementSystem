@@ -131,7 +131,7 @@ export default function Admin({ ...rest }) {
     for(let i =0;i<content.length;i++){
       contentArr.push(
         {
-          path: "/dashboard/" + content[i]['seq'],
+          path: "/dashboard/" + content[i]['code'],
           name: content[i]['name'],
           code : content[i]['code'],
           icon: Dashboard,
@@ -168,7 +168,6 @@ export default function Admin({ ...rest }) {
 
   return (
     <div className={classes.wrapper}>
-
       <Sidebar
         routes={pjtList}
         logoText={"Planner System"}

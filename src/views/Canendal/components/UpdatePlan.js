@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -17,6 +17,9 @@ import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import DateFnsUtils from "@date-io/date-fns";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import MessageBox from 'components/MessageBox/MessageBox';
+
+import * as axiosPut from '@axios/put';
 
 import {
   MuiPickersUtilsProvider,
@@ -61,11 +64,29 @@ const PrettoSlider = withStyles({
 })(Slider);
 
 export default function UpdatePlan(props) {
+  const tag = useRef();
   const classes = useStyles();
   const [open, setOpen] = useState(props["open"]);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [progressValue, setProgressValue] = useState(0);
+  const [startDate, setStartDate] = useState(props['plan'] ? props['plan']['start'] : new Date());
+  const [endDate, setEndDate] = useState(props['plan'] ? props['plan']['end'] : new Date());
+  const [progressValue, setProgressValue] = useState(props['plan'] ? props['plan']['progress'] : 0);
+  const [showMessageState,setShowMessageState] = useState(false);
+  const [MessageBoxState,setMessageBoxState] = useState(
+    {
+      content : "",
+      level : "success",
+      time : 2000
+    }
+  );
+
+  const messageBoxHandle = (show,content,time,level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content : content,
+      time : time,
+      level : level
+    })
+  }
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -78,10 +99,6 @@ export default function UpdatePlan(props) {
   const handleClose = () => {
     props.handleClose();
     setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
   };
 
   const handleBlur = () => {
@@ -102,7 +119,40 @@ export default function UpdatePlan(props) {
     setProgressValue(newValue);
   };
 
+  const updatePlanHandle = () => {
+    if(tag.current.value.trim() === ''){
+      messageBoxHandle(true,"일정 태그를 입력해주세요.",2000,'error');
+      tag.current.focus();
+    }else if(startDate + ''.trim() === ''){
+      messageBoxHandle(true,"일정 시작일을 입력해주세요.",2000,'error');
+    }else if(endDate + ''.trim() === ''){
+      messageBoxHandle(true,"일정 마감일을 입력해주세요.",2000,'error');
+    }else{
+      const updatePlan = {
+        tag:tag.current.value,
+        content:'',
+        start:startDate,
+        end:endDate,
+        progress:progressValue
+      }
+      axiosPut.putContainsData("http://localhost:8090/api/teamManage/plan/"+props['plan']['groupId'],updatePlanSuccess,updatePlanError,updatePlan);
+    }
+  }
+
+  const updatePlanSuccess = (res) => {
+    alert('aaaa');
+  }
+
+  const updatePlanError = (res) => {
+    alert('bbbb');
+  }
+
   useEffect(() => {
+    if(props['open']){
+      setStartDate(props['plan'] ? props['plan']['start'] : new Date())
+      setEndDate(props['plan'] ? props['plan']['end'] : new Date())
+      setProgressValue(props['plan'] ? props['plan']['progress'] : 0)
+    }
     setOpen(props["open"]);
   }, [props["open"]]);
 
@@ -167,8 +217,10 @@ export default function UpdatePlan(props) {
           </MuiPickersUtilsProvider>
 
           <TextField
+            inputRef={tag}
             id="standard-basic"
             label="태그"
+            defaultValue={props['plan'] ? props['plan']['title'] : null}
             variant="outlined"
             style={{ width: "100%", marginTop: 15 }}
           />
@@ -214,11 +266,19 @@ export default function UpdatePlan(props) {
               background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
             }}
             variant="contained"
+            onClick={updatePlanHandle}
           >
             일정 수정하기
           </Button>
         </CardFooter>
       </Card>
+      <MessageBox
+          open={showMessageState}
+          content={MessageBoxState['content']}
+          level={MessageBoxState['level']}
+          time={MessageBoxState['time']}
+          handleClose={()=>setShowMessageState(false)}
+        />
     </Dialog>
   );
 }

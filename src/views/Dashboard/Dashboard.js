@@ -33,10 +33,6 @@ export default function Dashboard(props) {
 
   useEffect(() => {}, [props.match.params.idx]);
 
-  const showSearchResult = () => {
-    props["history"].push("/admin/search");
-  };
-
   const showTotoList = () => {
     props["history"].push("/admin/todoList/" + props.match.params.idx);
   }
@@ -50,6 +46,7 @@ export default function Dashboard(props) {
   };
 
   useEffect(()=>{
+    console.log(props);
   },[]);
 
   return (

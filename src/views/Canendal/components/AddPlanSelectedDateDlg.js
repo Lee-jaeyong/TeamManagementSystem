@@ -102,10 +102,6 @@ export default function AddPlanSelectedDateDlg(props) {
     setOpen(false);
   };
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
   const handleBlur = () => {
     if (progressValue < 0) {
       setProgressValue(0);
@@ -160,11 +156,13 @@ export default function AddPlanSelectedDateDlg(props) {
   }
 
   const createPlanSuccess = (res) => {
-    alert('aaaa');
+    props.messageBoxHandle(true,"일정 등록 완료",2000,'success');
+    props.updatePlanList();
+    handleClose();
   }
   
   const createPlanError = (res) => {
-    alert('bbb');
+    messageBoxHandle(true,"일정 등록 중 문제가 발생했습니다.",2000,'error');
   }
 
   useEffect(() => {

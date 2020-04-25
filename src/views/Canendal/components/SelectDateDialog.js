@@ -67,18 +67,32 @@ const PrettoSlider = withStyles({
 export default function SelectDateDialog(props) {
   const classes = useStyles();
   const [updatePlanState,setUpdatePlanState] = React.useState(false);
+  const [selectPlan,setSelectPlan] = React.useState();
   const [open, setOpen] = React.useState(props['open']);
   const handleClose = () => {
     setOpen(false);
     props['handleClose']();
   };
+  
+  const selectUpdatePlan = (seq) => {
+    filterEvent(seq);
+    setUpdatePlanState(true);
+  }
+
+  const filterEvent = (seq) => {
+    for(let i = 0;i<props['eventList'].length;i++){
+      if(props['eventList'][i]['groupId'] === seq){
+        setSelectPlan(props['eventList'][i]);
+        return;
+      }      
+    }
+  }
 
   useEffect(()=>{
     setOpen(props['open'])
   },[props['open']]);
   
   useEffect(()=>{
-    console.log(props['eventList'])
   },[props['eventList']]);
 
   return (
@@ -100,7 +114,7 @@ export default function SelectDateDialog(props) {
             <Card className={classes.root}>
               <CardContent>
               <Typography className={classes.pos} color="textSecondary">
-                #{event['content']}
+                #{event['title']}
               </Typography>
               <Typography variant="h6" component="h2">
                 {event['tag']}
@@ -110,12 +124,12 @@ export default function SelectDateDialog(props) {
               </Typography>
               <div>
                 <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={event['progress']} />
-                <Chip label={"윤지원"} style={{marginRight:10}} color="secondary"/>
+                <Chip label={event['user']['name']} style={{marginRight:10}} color="secondary"/>
                 <Chip label={100-event['progress'] + "% 남음"} color="primary"/>
               </div>
               <div style={{float:'right',marginTop:-20}}>
                 <Tooltip title="수정" aria-label="add">
-                  <IconButton onClick={()=>setUpdatePlanState(true)} color="primary" aria-label="upload picture" component="span">
+                  <IconButton onClick={()=>selectUpdatePlan(event['groupId'])} color="primary" aria-label="upload picture" component="span">
                     <EditIcon />
                   </IconButton>
                 </Tooltip>
@@ -132,7 +146,7 @@ export default function SelectDateDialog(props) {
           })}
         </DialogContent>
       </Dialog>
-      <UpdatePlan open={updatePlanState} handleClose={()=>setUpdatePlanState(false)}/>
+      <UpdatePlan plan={selectPlan} open={updatePlanState} handleClose={()=>setUpdatePlanState(false)}/>
     </div>
   );
 }

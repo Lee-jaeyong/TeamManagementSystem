@@ -13,6 +13,7 @@ import SchedulerSection from './components/Scheduler';
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 
+import * as axiosGet from '@axios/get';
 
 const mockData = [
   {"seq" : 1,
@@ -73,7 +74,7 @@ export default function App(props) {
   const [fileterEventList,setFilterEventList] = useState([]);
 
   const [plan,setPlan] = useState([]);
-  
+
   const parsePlan = (plan) => {
     let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
     return {
@@ -81,10 +82,29 @@ export default function App(props) {
       title:plan['tag'],
       start:plan['start'],
       end:plan['end'],
+      user:plan['user'],
+      progress:plan['progress'],
       color : colors[plan['seq'] % colors.length]
     }
   }
   
+  const updatePlanList = () => {
+    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/all",getPlanSuccess)
+  }
+
+  const getPlanSuccess = (res) => {
+    if(!res['_embedded'])
+      return;
+    const content = res['_embedded']['planByUserList'];
+    let planList = [];
+    for(let i =0;i<content.length;i++){
+      planList.push(
+        parsePlan(content[i])
+      );
+    }
+    setPlan(planList);
+  }
+
   function handleDateClick(date){
     setSelectDate(date);
     fileterEvent(date);
@@ -93,12 +113,12 @@ export default function App(props) {
 
   function fileterEvent(date){
     let eventArr = [];
-    for(let i =0;i<mockData.length;i++){
-      let start = getTime(mockData[i]['start']);
-      let end = getTime(mockData[i]['end']);
+    for(let i =0;i<plan.length;i++){
+      let start = getTime(plan[i]['start']);
+      let end = getTime(plan[i]['end']);
       let checkDate = getTime(date);
-      if(start <= checkDate && end > checkDate){
-        eventArr.push(mockData[i]);
+      if(start <= checkDate && end >= checkDate){
+        eventArr.push(plan[i]);
       }
     }
     setFilterEventList(eventArr);
@@ -114,12 +134,13 @@ export default function App(props) {
       planArr.push(parsePlan(mockData[i]));
     }
     setPlan(planArr);
+    updatePlanList();
   },[]);
 
   return (
     <div>
-      <SelectDateDialog open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)} selectDate={selectDate} eventList={fileterEventList}/>
-      <SchedulerSection location={props.match.params.idx} history={props['history']} plan={plan} dateClick={handleDateClick}/>
+      <SelectDateDialog updatePlanList={updatePlanList} open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)} selectDate={selectDate} eventList={fileterEventList}/>
+      <SchedulerSection updatePlanList={updatePlanList} location={props.match.params.idx} history={props['history']} plan={plan} dateClick={handleDateClick}/>
     </div>
   );
 }

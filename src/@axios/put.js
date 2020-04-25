@@ -8,13 +8,13 @@ export async function putFileUpload(URL,func,formData){
     }).then(res=>func(res.data));
 }
 
-export async function putContainsData(URL,func,data){
+export async function putContainsData(URL,func,error,data){
     axios.put(URL,data,{
         headers: {
             'Content-Type': 'application/json',
             Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
         }
-    }).then(res=>func(res.data));
+    }).then(res=>func(res.data)).catch(res=>error(res));
 }
 
 export async function putNotContainsData(URL,func){
