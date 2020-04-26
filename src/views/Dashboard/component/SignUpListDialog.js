@@ -10,20 +10,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import PersonIcon from '@material-ui/icons/Person';
-import AddIcon from '@material-ui/icons/Add';
-import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
+import MessageBox from 'components/MessageBox/MessageBox';
 
-const mockData = [
-  {seq:"1",id:"dlwodyd202",name:"이재용",email:"wodyd202@naver.com"},
-  {seq:"1",id:"dlwodyd202",name:"윤지원",email:"wodyd202@naver.com"},
-  {seq:"1",id:"dlwodyd202",name:"장유나",email:"wodyd202@naver.com"},
-  {seq:"1",id:"dlwodyd202",name:"박선규",email:"wodyd202@naver.com"},
-  {seq:"1",id:"dlwodyd202",name:"홍지환",email:"wodyd202@naver.com"},
-  {seq:"1",id:"dlwodyd202",name:"박남일",email:"wodyd202@naver.com"},
-  {seq:"1",id:"dlwodyd202",name:"조성택",email:"wodyd202@naver.com"},
-  {seq:"1",id:"dlwodyd202",name:"심일식",email:"wodyd202@naver.com"}
-]
+import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
+import FaildSignUp from './component/FaildSignUp';
+
+import * as axiosPatch from '@axios/patch';
 
 const useStyles = makeStyles({
   avatar: {
@@ -35,11 +28,55 @@ const useStyles = makeStyles({
 export default function SimpleDialogDemo(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(props['open']);
+  const [selectSignUp,setSelectSignUp] = useState();
+  const [faildSignUpState,setFaildSignUpState] = useState(false);
+  const [confirmState,setConfirmState] = useState(false);
+  const [confirmInfo,setConfirmInfo] = useState({
+    title : '승인신청',
+    content : '승인신청하시겠습니까?'
+  });
+  const [showMessageState,setShowMessageState] = useState(false);
+  const [MessageBoxState,setMessageBoxState] = useState(
+    {
+      content : "",
+      level : "success",
+      time : 2000
+    }
+  );
+
+  const messageBoxHandle = (show,content,time,level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content : content,
+      time : time,
+      level : level
+    })
+  }
+
+  const {signUpList} = props;
 
   const handleClose = () => {
     setOpen(false);
     props['handleClose']();
   };
+
+  const yesClickHandle = () => {
+    axiosPatch.patchNotContainsData("http://localhost:8090/api/teamManage/" + selectSignUp + "/joinTeam",signUpSuccess);
+  }
+
+  const signUpSuccess = (res) => {
+    props.updateList();
+  }
+
+  const selectHandle = (value) => {
+    setSelectSignUp(value);
+    setConfirmState(true);
+  }
+
+  const setFaildSignUp = (value) => {
+    setSelectSignUp(value);
+    setFaildSignUpState(true);
+  }
 
   useEffect(()=>{
     setOpen(props['open']);
@@ -49,7 +86,7 @@ export default function SimpleDialogDemo(props) {
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
     <DialogTitle id="simple-dialog-title">신청 현황</DialogTitle>
     <List>
-      {mockData.map((user,idx) => (
+      {signUpList.map((user,idx) => (
         <ListItem key={idx}>
           <ListItemAvatar>
             <Avatar className={classes.avatar}>
@@ -58,17 +95,26 @@ export default function SimpleDialogDemo(props) {
           </ListItemAvatar>
           <ListItemText>
             <span style={{marginRight:30}}>
-              {user['id']}
+              {user['user']['id']}
             </span>
             <span style={{marginRight:30}}>
-              {user['name']}
+              {user['user']['name']}
             </span>
-            <Button variant="outlined" color="primary" style={{marginRight:10}}>승인</Button>
-            <Button variant="outlined" color="secondary">거절</Button>
+            <Button variant="outlined" color="primary" style={{marginRight:10}} onClick={()=>selectHandle(user['seq'])}>승인</Button>
+            <Button variant="outlined" color="secondary" onClick={()=>setFaildSignUp(user['seq'])}>반려</Button>
           </ListItemText>
         </ListItem>
       ))}
     </List>
+    <ConfirmDialog yseClick={yesClickHandle} handleClose={()=>setConfirmState(false)} open={confirmState} title={confirmInfo['title']} content={confirmInfo['content']}/>
+    <FaildSignUp open={faildSignUpState} messageBoxHandle={messageBoxHandle} updateList={props['updateList']} handleClose={()=>setFaildSignUpState(false)} signUpSeq={selectSignUp}/>
+    <MessageBox
+      open={showMessageState}
+      content={MessageBoxState['content']}
+      level={MessageBoxState['level']}
+      time={MessageBoxState['time']}
+      handleClose={()=>setShowMessageState(false)}
+    />
   </Dialog>
   );
 }

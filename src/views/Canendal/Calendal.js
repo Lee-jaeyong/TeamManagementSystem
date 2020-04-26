@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import Paper from "@material-ui/core/Paper";
-import Fade from "@material-ui/core/Fade";
-import AddPlanSelectedDateDlo from "./components/AddPlanSelectedDateDlg";
-
 import SelectDateDialog from './components/SelectDateDialog';
 import SchedulerSection from './components/Scheduler';
 import MessageBox from 'components/MessageBox/MessageBox';
@@ -92,7 +85,6 @@ export default function App(props) {
       level : level
     })
   }
-
 
   const parsePlan = (plan) => {
     let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
