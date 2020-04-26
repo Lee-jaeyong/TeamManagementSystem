@@ -1,4 +1,4 @@
-import React, { useRef,useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -17,12 +17,12 @@ import Search from "@material-ui/icons/Search";
 // core components
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import LanguageIcon from '@material-ui/icons/Language';
-import Tooltip from '@material-ui/core/Tooltip';
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import LanguageIcon from "@material-ui/icons/Language";
+import Tooltip from "@material-ui/core/Tooltip";
 
-import JoinTeamDialog from './component/JoinTeamDialog';
-import CreateTeamDialog from './component/CreateTeamDialog';
+import JoinTeamDialog from "./component/JoinTeamDialog";
+import CreateTeamDialog from "./component/CreateTeamDialog";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 
@@ -33,8 +33,10 @@ export default function AdminNavbarLinks(props) {
   const classes = useStyles();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
-  const [joinTeamDialogState,setJoinTeamDialog] = React.useState(false);
-  const [createTeamDialogState,setCreateTeamDialogState] = React.useState(false);
+  const [joinTeamDialogState, setJoinTeamDialog] = React.useState(false);
+  const [createTeamDialogState, setCreateTeamDialogState] = React.useState(
+    false
+  );
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -56,19 +58,23 @@ export default function AdminNavbarLinks(props) {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
-  
+  const showMyPage = () => {
+    const mypage = encodeURI("/admin/myPage");
+    props["history"].push(mypage);
+  };
+
   const showSearchResult = () => {
-    if(inputRef.current.value === ''){
-      alert('검색어를 입력해주세요.');
+    if (inputRef.current.value === "") {
+      alert("검색어를 입력해주세요.");
       return;
     }
-    const search = encodeURI('/admin/search/'+inputRef.current.value)
+    const search = encodeURI("/admin/search/" + inputRef.current.value);
     props["history"].push(search);
   };
-  
+
   const logout = () => {
     props["history"].push("/login");
-  }
+  };
 
   return (
     <div>
@@ -99,41 +105,37 @@ export default function AdminNavbarLinks(props) {
       </div>
       <div className={classes.manager}>
         <Button
-            color={window.innerWidth > 959 ? "transparent" : "white"}
-            justIcon={window.innerWidth > 959}
-            simple={!(window.innerWidth > 959)}
-            aria-owns={openNotification ? "notification-menu-list-grow" : null}
-            aria-haspopup="true"
-            className={classes.buttonLink}
-            onClick={()=>setCreateTeamDialogState(true)}
-          >
-            <Tooltip title="팀 생성">
-              <AddCircleIcon className={classes.icons} />
-            </Tooltip>
-            <Hidden mdUp implementation="css">
-              <p className={classes.linkText}>
-                팀 생성
-              </p>
-            </Hidden>
-          </Button>
-          <Button
-            color={window.innerWidth > 959 ? "transparent" : "white"}
-            justIcon={window.innerWidth > 959}
-            simple={!(window.innerWidth > 959)}
-            aria-owns={openNotification ? "notification-menu-list-grow" : null}
-            aria-haspopup="true"
-            className={classes.buttonLink}
-            onClick={()=>setJoinTeamDialog(true)}
-          >
-              <Tooltip title="팀 신청">
-                <LanguageIcon className={classes.icons} />
-              </Tooltip>
-              <Hidden mdUp implementation="css">
-                <p className={classes.linkText}>
-                  팀 신청
-                </p>
-              </Hidden>
-          </Button>
+          color={window.innerWidth > 959 ? "transparent" : "white"}
+          justIcon={window.innerWidth > 959}
+          simple={!(window.innerWidth > 959)}
+          aria-owns={openNotification ? "notification-menu-list-grow" : null}
+          aria-haspopup="true"
+          className={classes.buttonLink}
+          onClick={() => setCreateTeamDialogState(true)}
+        >
+          <Tooltip title="팀 생성">
+            <AddCircleIcon className={classes.icons} />
+          </Tooltip>
+          <Hidden mdUp implementation="css">
+            <p className={classes.linkText}>팀 생성</p>
+          </Hidden>
+        </Button>
+        <Button
+          color={window.innerWidth > 959 ? "transparent" : "white"}
+          justIcon={window.innerWidth > 959}
+          simple={!(window.innerWidth > 959)}
+          aria-owns={openNotification ? "notification-menu-list-grow" : null}
+          aria-haspopup="true"
+          className={classes.buttonLink}
+          onClick={() => setJoinTeamDialog(true)}
+        >
+          <Tooltip title="팀 신청">
+            <LanguageIcon className={classes.icons} />
+          </Tooltip>
+          <Hidden mdUp implementation="css">
+            <p className={classes.linkText}>팀 신청</p>
+          </Hidden>
+        </Button>
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
@@ -250,7 +252,7 @@ export default function AdminNavbarLinks(props) {
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role="menu">
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={showMyPage}
                       className={classes.dropdownItem}
                     >
                       내 정보
@@ -262,10 +264,7 @@ export default function AdminNavbarLinks(props) {
                       나의 모든 일정 보기
                     </MenuItem>
                     <Divider light />
-                    <MenuItem
-                      onClick={logout}
-                      className={classes.dropdownItem}
-                    >
+                    <MenuItem onClick={logout} className={classes.dropdownItem}>
                       로그아웃
                     </MenuItem>
                   </MenuList>
@@ -275,8 +274,14 @@ export default function AdminNavbarLinks(props) {
           )}
         </Poppers>
       </div>
-      <JoinTeamDialog open={joinTeamDialogState} handleClose={()=>setJoinTeamDialog(false)}/>
-      <CreateTeamDialog open={createTeamDialogState} handleClose={()=>setCreateTeamDialogState(false)}/>
+      <JoinTeamDialog
+        open={joinTeamDialogState}
+        handleClose={() => setJoinTeamDialog(false)}
+      />
+      <CreateTeamDialog
+        open={createTeamDialogState}
+        handleClose={() => setCreateTeamDialogState(false)}
+      />
     </div>
   );
 }

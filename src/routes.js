@@ -33,7 +33,8 @@ import Icons from "views/Icons/Icons.js";
 import SearchResult from "views/SearchResult/SearchResult.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import schedulerView from "views/Canendal/Calendal.js";
-import TodoListPage from 'views/TodoList/TodoList';
+import TodoListPage from "views/TodoList/TodoList";
+import MyPage from "views/MyPage/MyPage.js";
 
 // core components/views for RTL layout
 import RTLPage from "views/RTLPage/RTLPage.js";
@@ -82,10 +83,10 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
-    path: "/icons",
-    name: "Icons",
+    path: "/myPage",
+    name: "MyPage",
     icon: BubbleChart,
-    component: Icons,
+    component: MyPage,
     layout: "/admin",
   },
   {
