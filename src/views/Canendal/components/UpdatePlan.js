@@ -140,11 +140,13 @@ export default function UpdatePlan(props) {
   }
 
   const updatePlanSuccess = (res) => {
-    alert('aaaa');
+    props.messageBoxHandle(true,"일정 수정 완료.",2000,'success');
+    props.updatePlanList();
+    handleClose();
   }
 
   const updatePlanError = (res) => {
-    alert('bbbb');
+    messageBoxHandle(true,"일정 수정 중 오류가 발생했습니다.",2000,'error');
   }
 
   useEffect(() => {

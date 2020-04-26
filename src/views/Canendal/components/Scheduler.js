@@ -132,7 +132,7 @@ export default function Scheduler(props) {
         open={selectedDateBtnOpen}
         handleClose={() => setSelectedDateBtnOpen(false)}
       />
-      <ShowSelectEvent event={selectEvent} open={showSelectEventState} handleClose={()=>setShowSelectEventState(false)}/>
+      <ShowSelectEvent messageBoxHandle={messageBoxHandle} updatePlanList={updatePlanList} event={selectEvent} open={showSelectEventState} handleClose={()=>setShowSelectEventState(false)}/>
       <MessageBox
           open={showMessageState}
           content={MessageBoxState['content']}

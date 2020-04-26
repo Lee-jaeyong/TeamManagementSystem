@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useState} from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -18,6 +18,9 @@ import Slider from '@material-ui/core/Slider';
 import Chip from '@material-ui/core/Chip';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
+import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
+
+import * as axiosDelete from '@axios/delete';
 
 import UpdatePlan from './UpdatePlan';
 
@@ -66,9 +69,14 @@ const PrettoSlider = withStyles({
 
 export default function SelectDateDialog(props) {
   const classes = useStyles();
+  const [deleteState,setDeleteState] = useState(false);
   const [updatePlanState,setUpdatePlanState] = React.useState(false);
   const [selectPlan,setSelectPlan] = React.useState();
   const [open, setOpen] = React.useState(props['open']);
+
+  const messageBoxHandle = (show,content,time,level) => {
+   props.messageBoxHandle(show,content,time,level);
+  }
   const handleClose = () => {
     setOpen(false);
     props['handleClose']();
@@ -86,6 +94,25 @@ export default function SelectDateDialog(props) {
         return;
       }      
     }
+  }
+
+  const deletePlanClickHandle = (idx) => {
+    setSelectPlan(idx);
+    setDeleteState(true);
+  }
+
+  const deletePlan = () => {
+    axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/plan/" + selectPlan,deletePlanSuccess);
+  }
+
+  const deletePlanSuccess = () => {
+    props.messageBoxHandle(true,"일정 삭제 완료",2000,'success');
+    updatePlanList();
+  }
+
+  const updatePlanList = () => {
+    props.updatePlanList();
+    handleClose();
   }
 
   useEffect(()=>{
@@ -134,7 +161,7 @@ export default function SelectDateDialog(props) {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="삭제" aria-label="add">
-                  <IconButton color="primary" aria-label="upload picture" component="span">
+                  <IconButton onClick={()=>deletePlanClickHandle(event['groupId'])} color="primary" aria-label="upload picture" component="span">
                     <DeleteIcon />
                   </IconButton>
                 </Tooltip>
@@ -146,7 +173,8 @@ export default function SelectDateDialog(props) {
           })}
         </DialogContent>
       </Dialog>
-      <UpdatePlan plan={selectPlan} open={updatePlanState} handleClose={()=>setUpdatePlanState(false)}/>
+      <UpdatePlan updatePlanList={updatePlanList} messageBoxHandle={messageBoxHandle} plan={selectPlan} open={updatePlanState} handleClose={()=>setUpdatePlanState(false)}/>
+      <ConfirmDialog yseClick={deletePlan} title={"삭제"} content={"위 일정을 정말 삭제하시겠습니까?"}  open={deleteState} handleClose={()=>setDeleteState(false)}/>
     </div>
   );
 }

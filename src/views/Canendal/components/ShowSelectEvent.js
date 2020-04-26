@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useState} from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Chip from '@material-ui/core/Chip';
@@ -9,6 +9,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import UpdatePlan from './UpdatePlan';
+import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
+import * as axiosDelete from '@axios/delete';
 
 const PrettoSlider = withStyles({
   root: {
@@ -60,10 +62,15 @@ const useStyles = makeStyles({
 export default function ShowSelectEvent(props) {
   const classes = useStyles();
 
+  const [deleteState,setDeleteState] = useState(false);
   const [updatePlanState,setUpdatePlanState] = React.useState(false);
   const [open, setOpen] = React.useState(props['open']);
   const [checkDate,setCheckDate] = React.useState(0);
   const {event} = props;
+
+  const messageBoxHandle = (show,content,time,level) => {
+    props.messageBoxHandle(show,content,time,level);
+  }
 
   const handleClose = () => {
     setOpen(false);
@@ -84,6 +91,20 @@ export default function ShowSelectEvent(props) {
     if(_now < _target){
       return parseInt((_now-_target)/86400000);
     }
+  }
+
+  const updatePlanList = () => {
+    props.updatePlanList();
+    handleClose();
+  }
+
+  const deletePlan = () => {
+    axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/plan/" + props['event']['groupId'],deletePlanSuccess);
+  }
+
+  const deletePlanSuccess = () => {
+    props.messageBoxHandle(true,"일정 삭제 완료",2000,'success');
+    updatePlanList();
   }
 
   useEffect(()=>{
@@ -111,9 +132,9 @@ export default function ShowSelectEvent(props) {
       >
         <Card className={classes.root}>
           <CardContent>
-            <Chip label="이재용" color="primary" style={{marginBottom:30,marginRight:10}}/>
+            <Chip label={props['event'] ? props['event']['user']['name'] : null} color="primary" style={{marginBottom:30,marginRight:10}}/>
             <Chip label={checkDate} color="info" style={{marginBottom:30,marginRight:10}}/>
-            <Chip label="10% 진행" color="secondary" style={{marginBottom:30}}/>
+            <Chip label={props['event'] ? props['event']['progress'] + "% 진행" : null} color="secondary" style={{marginBottom:30}}/>
             <Typography variant="h6" component="h3">
               {event ? event['title'] : null}
               <br />
@@ -126,11 +147,12 @@ export default function ShowSelectEvent(props) {
           </CardContent>
           <CardActions style={{float:'right'}}>
             <Button size="small" onClick={()=>setUpdatePlanState(true)}>수정</Button>
-            <Button size="small">삭제</Button>
+            <Button size="small" onClick={()=>setDeleteState(true)}>삭제</Button>
           </CardActions>
         </Card>
       </Dialog>
-      <UpdatePlan open={updatePlanState} handleClose={setUpdatePlanState}/>
+      <UpdatePlan updatePlanList={updatePlanList} messageBoxHandle={messageBoxHandle} plan={props['event']} open={updatePlanState} handleClose={setUpdatePlanState}/>
+      <ConfirmDialog yseClick={deletePlan} title={"삭제"} content={"위 일정을 정말 삭제하시겠습니까?"}  open={deleteState} handleClose={()=>setDeleteState(false)}/>
     </div>
   );
 }

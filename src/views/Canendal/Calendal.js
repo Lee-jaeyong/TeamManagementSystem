@@ -9,6 +9,7 @@ import AddPlanSelectedDateDlo from "./components/AddPlanSelectedDateDlg";
 
 import SelectDateDialog from './components/SelectDateDialog';
 import SchedulerSection from './components/Scheduler';
+import MessageBox from 'components/MessageBox/MessageBox';
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
@@ -74,6 +75,24 @@ export default function App(props) {
   const [fileterEventList,setFilterEventList] = useState([]);
 
   const [plan,setPlan] = useState([]);
+  const [showMessageState,setShowMessageState] = useState(false);
+  const [MessageBoxState,setMessageBoxState] = useState(
+    {
+      content : "",
+      level : "success",
+      time : 2000
+    }
+  );
+
+  const messageBoxHandle = (show,content,time,level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content : content,
+      time : time,
+      level : level
+    })
+  }
+
 
   const parsePlan = (plan) => {
     let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
@@ -117,7 +136,9 @@ export default function App(props) {
       let start = getTime(plan[i]['start']);
       let end = getTime(plan[i]['end']);
       let checkDate = getTime(date);
-      if(start <= checkDate && end >= checkDate){
+      if(start <= checkDate && end > checkDate){
+        eventArr.push(plan[i]);
+      }else if(start === checkDate && end === checkDate){
         eventArr.push(plan[i]);
       }
     }
@@ -139,8 +160,15 @@ export default function App(props) {
 
   return (
     <div>
-      <SelectDateDialog updatePlanList={updatePlanList} open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)} selectDate={selectDate} eventList={fileterEventList}/>
+      <SelectDateDialog updatePlanList={updatePlanList} messageBoxHandle={messageBoxHandle} open={selectDateDialog} handleClose={()=>setSelectDateDialog(false)} selectDate={selectDate} eventList={fileterEventList}/>
       <SchedulerSection updatePlanList={updatePlanList} location={props.match.params.idx} history={props['history']} plan={plan} dateClick={handleDateClick}/>
+      <MessageBox
+          open={showMessageState}
+          content={MessageBoxState['content']}
+          level={MessageBoxState['level']}
+          time={MessageBoxState['time']}
+          handleClose={()=>setShowMessageState(false)}
+        />
     </div>
   );
 }
