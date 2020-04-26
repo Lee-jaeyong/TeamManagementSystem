@@ -24,14 +24,52 @@ import { bugs, website, server } from "variables/general.js";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
+import * as axiosGet from '@axios/get';
+
 const useStyles = makeStyles(styles);
 
 export default function Dashboard(props) {
   const classes = useStyles();
 
   const [signUpList,setSignUplist] = useState(false);
+  const [plan,setPlan] = useState([]);
 
-  useEffect(() => {}, [props.match.params.idx]);
+  useEffect(() => {
+
+  }, [props.match.params.idx]);
+
+  const updatePlan = () => {
+    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/all",getPlanSuccess)
+  }
+
+  const getPlanSuccess = (res) => {
+    if(!res['_embedded']){
+      setPlan([]);
+      return;
+    }
+    const content = res['_embedded']['planByUserList'];
+    let planList = [];
+    for(let i =0;i<content.length;i++){
+      planList.push(
+        parsePlan(content[i])
+      );
+    }
+    setPlan(planList);
+  }
+
+  const parsePlan = (plan) => {
+    let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
+    return {
+      groupId:plan['seq'],
+      title:plan['tag'],
+      start:plan['start'],
+      end:plan['end'],
+      user:plan['user'],
+      progress:plan['progress'],
+      content : plan['content'],
+      color : colors[plan['seq'] % colors.length]
+    }
+  }
 
   const showTotoList = () => {
     props["history"].push("/admin/todoList/" + props.match.params.idx);
@@ -46,14 +84,14 @@ export default function Dashboard(props) {
   };
 
   useEffect(()=>{
-    console.log(props);
-  },[]);
+    updatePlan();
+  },[props.match.params.idx]);
 
   return (
     <div id="section">
       <GridContainer>
         <GridItem xs={12} sm={12} md={6}>
-          <SchedulerSection onClick={showScheduler}/>
+          <SchedulerSection plan={plan} onClick={showScheduler}/>
         </GridItem>
         <GridItem xs={12} sm={12} md={6}>
           <GridContainer>

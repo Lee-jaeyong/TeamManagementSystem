@@ -154,18 +154,22 @@ export default function SelectDateDialog(props) {
                 <Chip label={event['user']['name']} style={{marginRight:10}} color="secondary"/>
                 <Chip label={100-event['progress'] + "% 남음"} color="primary"/>
               </div>
-              <div style={{float:'right',marginTop:-20}}>
-                <Tooltip title="수정" aria-label="add">
-                  <IconButton onClick={()=>selectUpdatePlan(event['groupId'])} color="primary" aria-label="upload picture" component="span">
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="삭제" aria-label="add">
-                  <IconButton onClick={()=>deletePlanClickHandle(event['groupId'])} color="primary" aria-label="upload picture" component="span">
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </div>
+              {event['user']['id'] === localStorage.getItem('ID') ? 
+              (
+                <div style={{float:'right',marginTop:-20}}>
+                  <Tooltip title="수정" aria-label="add">
+                    <IconButton onClick={()=>selectUpdatePlan(event['groupId'])} color="primary" aria-label="upload picture" component="span">
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="삭제" aria-label="add">
+                    <IconButton onClick={()=>deletePlanClickHandle(event['groupId'])} color="primary" aria-label="upload picture" component="span">
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+              ) : 
+              null}
             </CardContent>
             </Card>
             </div>

@@ -80,7 +80,8 @@ export default function Scheduler(props) {
             }); 
         }
     });
-  return (
+    
+    return (
     <div id="planList">
       <Fade in timeout={200}>
         <Paper style={{ padding: 30 }} elevation={3}>

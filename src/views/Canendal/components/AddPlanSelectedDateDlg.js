@@ -66,10 +66,15 @@ const PrettoSlider = withStyles({
 
 export default function AddPlanSelectedDateDlg(props) {
   const tag = useRef();
+  const content = useRef();
   const classes = useStyles();
   const [open, setOpen] = useState(props["open"]);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  
+  const [startDateError,setStartDateError] = useState('');
+  const [endDateError,setEndDateError] = useState('');
+
   const [progressValue, setProgressValue] = useState(0);
   const [showMessageState,setShowMessageState] = useState(false);
   const [MessageBoxState,setMessageBoxState] = useState(
@@ -90,11 +95,41 @@ export default function AddPlanSelectedDateDlg(props) {
   }
 
   const handleStartDateChange = (date) => {
-    setStartDate(date);
+    if(!endDate){
+      setEndDateError(null);
+      setStartDateError(null);
+      setStartDate(date);
+    }
+      else{
+        let _endDate = new Date(endDate).getTime();
+        if(_endDate < new Date(date).getTime()){
+          setStartDateError("일정 시작일은 종료일보다 작아야합니다.");
+          setStartDate(date);
+        }else{
+          setEndDateError(null);
+          setStartDateError(null);
+          setStartDate(date);
+        }
+    }
   };
 
   const handleEndDateChange = (date) => {
-    setEndDate(date);
+    if(!startDate){
+      setStartDateError(null);
+      setEndDateError(null);
+      setEndDate(date);
+    }
+    else{
+      let _startDate = new Date(startDate).getTime();
+      if(_startDate > new Date(date).getTime()){
+        setEndDateError("일정 종료일은 시작일보다 커야합니다.");
+        setEndDate(date);
+      }else{
+        setStartDateError(null);
+        setEndDateError(null);
+        setEndDate(date);
+      }
+    }
   };
 
   const handleClose = () => {
@@ -124,14 +159,21 @@ export default function AddPlanSelectedDateDlg(props) {
     if(tag.current.value.trim() === ''){
       messageBoxHandle(true,"일정 태그를 입력해주세요.",2000,'error');
       tag.current.focus();
-    }else if(startDate + "".trim() === ''){
+    }else if(content.current.value.trim() === ''){
+      messageBoxHandle(true,"일정 내용을 입력해주세요.",2000,'error');
+      content.current.focus();
+    }else if(!startDate){
       messageBoxHandle(true,"일정 시작일을 입력해주세요.",2000,'error');
-    }else if(endDate + "".trim() === ''){
+    }else if(!endDate){
       messageBoxHandle(true,"일정 마감일을 입력해주세요.",2000,'error');
+    }else if(startDateError){
+      messageBoxHandle(true,"일정 시작일은 마감일보다 작아야합니다.",2000,'error');
+    }else if(endDateError){
+      messageBoxHandle(true,"일정 마감일은 시작일보다 커야합니다.",2000,'error');
     }else{
       const plan = {
         tag:tag.current.value,
-        content : '',
+        content : content.current.value,
         start : dateFormat(startDate + ''),
         end : dateFormat(endDate + ''),
         progress : progressValue
@@ -167,6 +209,9 @@ export default function AddPlanSelectedDateDlg(props) {
 
   useEffect(() => {
     setOpen(props["open"]);
+    setStartDate(new Date());
+    setStartDateError('');
+    setEndDateError('');
   }, [props["open"]]);
 
   return (
@@ -194,6 +239,8 @@ export default function AddPlanSelectedDateDlg(props) {
                   margin="normal"
                   id="startDate"
                   label="시작날짜"
+                  error={startDateError ? true : false}
+                  helperText={startDateError}
                   value={startDate}
                   onChange={handleStartDateChange}
                   KeyboardButtonProps={{
@@ -216,6 +263,8 @@ export default function AddPlanSelectedDateDlg(props) {
                   disableToolbar
                   variant="inline"
                   format="yyyy-MM-dd"
+                  error={endDateError ? true : false}
+                  helperText={endDateError}
                   margin="normal"
                   id="endDate"
                   label="종료날짜"
@@ -234,6 +283,16 @@ export default function AddPlanSelectedDateDlg(props) {
             id="standard-basic"
             label="태그"
             variant="outlined"
+            style={{ width: "100%", marginTop: 15 }}
+          />
+
+          <TextField
+            inputRef={content}
+            id="standard-basic"
+            label="내용"
+            variant="outlined"
+            rows={5}
+            multiline
             style={{ width: "100%", marginTop: 15 }}
           />
 

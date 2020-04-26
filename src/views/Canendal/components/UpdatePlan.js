@@ -65,10 +65,15 @@ const PrettoSlider = withStyles({
 
 export default function UpdatePlan(props) {
   const tag = useRef();
+  const content = useRef();
   const classes = useStyles();
   const [open, setOpen] = useState(props["open"]);
   const [startDate, setStartDate] = useState(props['plan'] ? props['plan']['start'] : new Date());
   const [endDate, setEndDate] = useState(props['plan'] ? props['plan']['end'] : new Date());
+
+  const [startDateError,setStartDateError] = useState('');
+  const [endDateError,setEndDateError] = useState('');
+
   const [progressValue, setProgressValue] = useState(props['plan'] ? props['plan']['progress'] : 0);
   const [showMessageState,setShowMessageState] = useState(false);
   const [MessageBoxState,setMessageBoxState] = useState(
@@ -89,11 +94,41 @@ export default function UpdatePlan(props) {
   }
 
   const handleStartDateChange = (date) => {
-    setStartDate(date);
+    if(!endDate){
+      setEndDateError(null);
+      setStartDateError(null);
+      setStartDate(date);
+    }
+      else{
+        let _endDate = new Date(endDate).getTime();
+        if(_endDate < new Date(date).getTime()){
+          setStartDateError("일정 시작일은 종료일보다 작아야합니다.");
+          setStartDate(date);
+        }else{
+          setEndDateError(null);
+          setStartDateError(null);
+          setStartDate(date);
+        }
+    }
   };
 
   const handleEndDateChange = (date) => {
-    setEndDate(date);
+    if(!startDate){
+      setStartDateError(null);
+      setEndDateError(null);
+      setEndDate(date);
+    }
+    else{
+      let _startDate = new Date(startDate).getTime();
+      if(_startDate > new Date(date).getTime()){
+        setEndDateError("일정 종료일은 시작일보다 커야합니다.");
+        setEndDate(date);
+      }else{
+        setStartDateError(null);
+        setEndDateError(null);
+        setEndDate(date);
+      }
+    }
   };
 
   const handleClose = () => {
@@ -123,16 +158,23 @@ export default function UpdatePlan(props) {
     if(tag.current.value.trim() === ''){
       messageBoxHandle(true,"일정 태그를 입력해주세요.",2000,'error');
       tag.current.focus();
-    }else if(startDate + ''.trim() === ''){
+    }else if(content.current.value.trim() === ''){
+      messageBoxHandle(true,"일정 내용을 입력해주세요.",2000,'error');
+      content.current.focus();
+    }else if(!startDate){
       messageBoxHandle(true,"일정 시작일을 입력해주세요.",2000,'error');
-    }else if(endDate + ''.trim() === ''){
+    }else if(!endDate){
       messageBoxHandle(true,"일정 마감일을 입력해주세요.",2000,'error');
+    }else if(startDateError){
+      messageBoxHandle(true,"일정 시작일은 마감일보다 작아야합니다.",2000,'error');
+    }else if(endDateError){
+      messageBoxHandle(true,"일정 마감일은 시작일보다 커야합니다.",2000,'error');
     }else{
       const updatePlan = {
         tag:tag.current.value,
-        content:'',
-        start:startDate,
-        end:endDate,
+        content:content.current.value,
+        start:dateFormat(startDate),
+        end:dateFormat(endDate),
         progress:progressValue
       }
       axiosPut.putContainsData("http://localhost:8090/api/teamManage/plan/"+props['plan']['groupId'],updatePlanSuccess,updatePlanError,updatePlan);
@@ -147,6 +189,21 @@ export default function UpdatePlan(props) {
 
   const updatePlanError = (res) => {
     messageBoxHandle(true,"일정 수정 중 오류가 발생했습니다.",2000,'error');
+  }
+
+  const dateFormat = (beforeDate) => {
+    let date = new Date(beforeDate);
+    let year = date.getFullYear();
+    let month = dateMonthCheck(date.getMonth() + 1);
+    let day = dateMonthCheck(date.getDate());
+    return year + "-" + month + "-" + day;
+  }
+
+  const dateMonthCheck = (value) => {
+    const check = value + '';
+    if(check.length === 1)
+      return "0"+check;
+    return check;
   }
 
   useEffect(() => {
@@ -183,6 +240,8 @@ export default function UpdatePlan(props) {
                   margin="normal"
                   id="startDate"
                   label="시작날짜"
+                  error={startDateError ? true : false}
+                  helperText={startDateError}
                   value={startDate}
                   onChange={handleStartDateChange}
                   KeyboardButtonProps={{
@@ -208,6 +267,8 @@ export default function UpdatePlan(props) {
                   margin="normal"
                   id="endDate"
                   label="종료날짜"
+                  error={endDateError ? true : false}
+                  helperText={endDateError}
                   value={endDate}
                   onChange={handleEndDateChange}
                   KeyboardButtonProps={{
@@ -224,6 +285,17 @@ export default function UpdatePlan(props) {
             label="태그"
             defaultValue={props['plan'] ? props['plan']['title'] : null}
             variant="outlined"
+            style={{ width: "100%", marginTop: 15 }}
+          />
+          
+          <TextField
+            inputRef={content}
+            id="standard-basic"
+            label="내용"
+            defaultValue={props['plan'] ? props['plan']['content'] : null}
+            variant="outlined"
+            multiline
+            rows={5}
             style={{ width: "100%", marginTop: 15 }}
           />
 

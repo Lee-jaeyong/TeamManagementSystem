@@ -74,15 +74,9 @@ const mockData = [
 export default function Scheduler(props){
     const classes = useStyles();
     const {onClick} = props;
-    const [plan,setPlan] = useState([]);
 
     useEffect(()=>{
-      let planArr = [];
-      for(let i =0;i<mockData.length;i++){
-        planArr.push(parsePlan(mockData[i]));
-      }
-      setPlan(planArr);
-    },[]);
+    },[props['plan']]);
 
     const parsePlan = (plan) => {
       let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
@@ -109,7 +103,7 @@ export default function Scheduler(props){
                 <CardBody>
                   <Fade in timeout={200}>
                     <FullCalendar
-                      events={plan}
+                      events={props['plan']}
                       buttonText={{
                         today: "today",
                       }}

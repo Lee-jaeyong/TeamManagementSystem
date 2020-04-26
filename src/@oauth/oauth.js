@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const accessToken = (res) => {
+const accessToken = (res,user) => {
     localStorage.setItem('access_token',res['access_token']);
     localStorage.setItem('token_type',res['token_type']);
     localStorage.setItem('expires_in',res['expire_in']);
     localStorage.setItem('refresh_token',res['refresh_token']);
+    localStorage.setItem('ID',user['id']);
 }
 
 export async function getAccessToken(user,callBack,error){
@@ -14,7 +15,7 @@ export async function getAccessToken(user,callBack,error){
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     }).then(res=>{
-        accessToken(res['data']);
+        accessToken(res['data'],user);
         callBack(res['data']);
     }).catch(res=>{
         error();

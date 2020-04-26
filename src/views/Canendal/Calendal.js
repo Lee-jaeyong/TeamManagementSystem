@@ -103,6 +103,7 @@ export default function App(props) {
       end:plan['end'],
       user:plan['user'],
       progress:plan['progress'],
+      content : plan['content'],
       color : colors[plan['seq'] % colors.length]
     }
   }
@@ -112,8 +113,10 @@ export default function App(props) {
   }
 
   const getPlanSuccess = (res) => {
-    if(!res['_embedded'])
+    if(!res['_embedded']){
+      setPlan([]);
       return;
+    }
     const content = res['_embedded']['planByUserList'];
     let planList = [];
     for(let i =0;i<content.length;i++){
