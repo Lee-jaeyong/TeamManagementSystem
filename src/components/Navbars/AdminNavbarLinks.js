@@ -1,4 +1,4 @@
-import React, { useRef,useEffect,useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -17,17 +17,17 @@ import Search from "@material-ui/icons/Search";
 // core components
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import LanguageIcon from '@material-ui/icons/Language';
-import Tooltip from '@material-ui/core/Tooltip';
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import LanguageIcon from "@material-ui/icons/Language";
+import Tooltip from "@material-ui/core/Tooltip";
 
-import JoinTeamDialog from './component/JoinTeamDialog';
-import CreateTeamDialog from './component/CreateTeamDialog';
-import MessageBox from 'components/MessageBox/MessageBox';
+import JoinTeamDialog from "./component/JoinTeamDialog";
+import CreateTeamDialog from "./component/CreateTeamDialog";
+import MessageBox from "components/MessageBox/MessageBox";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 
-import * as Oauth from '@oauth/oauth';
+import * as Oauth from "@oauth/oauth";
 
 const useStyles = makeStyles(styles);
 
@@ -36,25 +36,23 @@ export default function AdminNavbarLinks(props) {
   const classes = useStyles();
   const [openNotification, setOpenNotification] = useState(null);
   const [openProfile, setOpenProfile] = useState(null);
-  const [joinTeamDialogState,setJoinTeamDialog] = useState(false);
-  const [createTeamDialogState,setCreateTeamDialogState] = useState(false);
-  const [showMessageState,setShowMessageState] = useState(false);
-  const [MessageBoxState,setMessageBoxState] = useState(
-    {
-      content : "",
-      level : "success",
-      time : 2000
-    }
-  );
+  const [joinTeamDialogState, setJoinTeamDialog] = useState(false);
+  const [createTeamDialogState, setCreateTeamDialogState] = useState(false);
+  const [showMessageState, setShowMessageState] = useState(false);
+  const [MessageBoxState, setMessageBoxState] = useState({
+    content: "",
+    level: "success",
+    time: 2000,
+  });
 
-  const messageBoxHandle = (show,content,time,level) => {
+  const messageBoxHandle = (show, content, time, level) => {
     setShowMessageState(show);
     setMessageBoxState({
-      content : content,
-      time : time,
-      level : level
-    })
-  }
+      content: content,
+      time: time,
+      level: level,
+    });
+  };
 
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
@@ -77,21 +75,25 @@ export default function AdminNavbarLinks(props) {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
-  
+  const showMyPage = () => {
+    const mypage = encodeURI("/admin/myPage");
+    props["history"].push(mypage);
+  };
+
   const showSearchResult = () => {
-    if(inputRef.current.value.trim() === ''){
-      messageBoxHandle(true,"검색어를 입력해주세요",2000,'error');
+    if (inputRef.current.value.trim() === "") {
+      messageBoxHandle(true, "검색어를 입력해주세요", 2000, "error");
       return;
     }
-    const search = encodeURI('/admin/search/'+inputRef.current.value)
+    const search = encodeURI("/admin/search/" + inputRef.current.value);
     props["history"].push(search);
   };
-  
+
   const logout = () => {
     localStorage.clear();
     Oauth.revokeToken();
     props["history"].push("/login");
-  }
+  };
 
   return (
     <div>
@@ -122,41 +124,37 @@ export default function AdminNavbarLinks(props) {
       </div>
       <div className={classes.manager}>
         <Button
-            color={window.innerWidth > 959 ? "transparent" : "white"}
-            justIcon={window.innerWidth > 959}
-            simple={!(window.innerWidth > 959)}
-            aria-owns={openNotification ? "notification-menu-list-grow" : null}
-            aria-haspopup="true"
-            className={classes.buttonLink}
-            onClick={()=>setCreateTeamDialogState(true)}
-          >
-            <Tooltip title="팀 생성">
-              <AddCircleIcon className={classes.icons} />
-            </Tooltip>
-            <Hidden mdUp implementation="css">
-              <p className={classes.linkText}>
-                팀 생성
-              </p>
-            </Hidden>
-          </Button>
-          <Button
-            color={window.innerWidth > 959 ? "transparent" : "white"}
-            justIcon={window.innerWidth > 959}
-            simple={!(window.innerWidth > 959)}
-            aria-owns={openNotification ? "notification-menu-list-grow" : null}
-            aria-haspopup="true"
-            className={classes.buttonLink}
-            onClick={()=>setJoinTeamDialog(true)}
-          >
-              <Tooltip title="팀 신청">
-                <LanguageIcon className={classes.icons} />
-              </Tooltip>
-              <Hidden mdUp implementation="css">
-                <p className={classes.linkText}>
-                  팀 신청
-                </p>
-              </Hidden>
-          </Button>
+          color={window.innerWidth > 959 ? "transparent" : "white"}
+          justIcon={window.innerWidth > 959}
+          simple={!(window.innerWidth > 959)}
+          aria-owns={openNotification ? "notification-menu-list-grow" : null}
+          aria-haspopup="true"
+          className={classes.buttonLink}
+          onClick={() => setCreateTeamDialogState(true)}
+        >
+          <Tooltip title="팀 생성">
+            <AddCircleIcon className={classes.icons} />
+          </Tooltip>
+          <Hidden mdUp implementation="css">
+            <p className={classes.linkText}>팀 생성</p>
+          </Hidden>
+        </Button>
+        <Button
+          color={window.innerWidth > 959 ? "transparent" : "white"}
+          justIcon={window.innerWidth > 959}
+          simple={!(window.innerWidth > 959)}
+          aria-owns={openNotification ? "notification-menu-list-grow" : null}
+          aria-haspopup="true"
+          className={classes.buttonLink}
+          onClick={() => setJoinTeamDialog(true)}
+        >
+          <Tooltip title="팀 신청">
+            <LanguageIcon className={classes.icons} />
+          </Tooltip>
+          <Hidden mdUp implementation="css">
+            <p className={classes.linkText}>팀 신청</p>
+          </Hidden>
+        </Button>
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
@@ -273,7 +271,7 @@ export default function AdminNavbarLinks(props) {
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role="menu">
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={showMyPage}
                       className={classes.dropdownItem}
                     >
                       내 정보
@@ -285,10 +283,7 @@ export default function AdminNavbarLinks(props) {
                       나의 모든 일정 보기
                     </MenuItem>
                     <Divider light />
-                    <MenuItem
-                      onClick={logout}
-                      className={classes.dropdownItem}
-                    >
+                    <MenuItem onClick={logout} className={classes.dropdownItem}>
                       로그아웃
                     </MenuItem>
                   </MenuList>
@@ -298,15 +293,24 @@ export default function AdminNavbarLinks(props) {
           )}
         </Poppers>
       </div>
-      <JoinTeamDialog messageBoxHandle={messageBoxHandle} open={joinTeamDialogState} handleClose={()=>setJoinTeamDialog(false)}/>
-      <CreateTeamDialog messageBoxHandle={messageBoxHandle} menuUpdate={props['menuUpdate']} open={createTeamDialogState} handleClose={()=>setCreateTeamDialogState(false)}/>
+      <JoinTeamDialog
+        messageBoxHandle={messageBoxHandle}
+        open={joinTeamDialogState}
+        handleClose={() => setJoinTeamDialog(false)}
+      />
+      <CreateTeamDialog
+        messageBoxHandle={messageBoxHandle}
+        menuUpdate={props["menuUpdate"]}
+        open={createTeamDialogState}
+        handleClose={() => setCreateTeamDialogState(false)}
+      />
       <MessageBox
-          open={showMessageState}
-          content={MessageBoxState['content']}
-          level={MessageBoxState['level']}
-          time={MessageBoxState['time']}
-          handleClose={()=>setShowMessageState(false)}
-        />
+        open={showMessageState}
+        content={MessageBoxState["content"]}
+        level={MessageBoxState["level"]}
+        time={MessageBoxState["time"]}
+        handleClose={() => setShowMessageState(false)}
+      />
     </div>
   );
 }
