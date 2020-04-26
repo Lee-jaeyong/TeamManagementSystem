@@ -16,13 +16,34 @@ import SignUpListDialog from './SignUpListDialog';
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
+import * as axiosGet from '@axios/get';
+
 const useStyles = makeStyles(styles);
 
 export default function SignUpList(props){
     const classes = useStyles();
     const [signUpList,setSignUplist] = useState(false);
+    const [signUpUserList,setSignUpUserList] = useState([]);
+
+    const getSignUpList = () => {
+        axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/" + props['code'] + "/signUpList",getSignUpListSuccess);
+    }
+
+    const getSignUpListSuccess = (res) => {
+        if(!res['_embedded']){
+            setSignUpUserList([]);
+            return;
+        }
+        let userList = [];
+        const result = res['_embedded']['joinTeamList'];        
+        for(let i =0;i<result.length;i++){
+            userList.push(result[i]);
+        }
+        setSignUpUserList(userList);
+    }
 
     useEffect(()=>{
+        getSignUpList();
         setSignUplist(false);
     },[props['location']]);
 
@@ -46,7 +67,7 @@ export default function SignUpList(props){
                 </div>
             </CardFooter>
             </CardActionArea>
-            <SignUpListDialog open={signUpList} handleClose={()=>setSignUplist(false)}/>
+            <SignUpListDialog updateList={getSignUpList} signUpList={signUpUserList} open={signUpList} handleClose={()=>setSignUplist(false)}/>
         </Card>
     )
 }

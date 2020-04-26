@@ -39,7 +39,12 @@ export default function Dashboard(props) {
   }, [props.match.params.idx]);
 
   const updatePlan = () => {
-    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/all",getPlanSuccess)
+    let page = {
+      year : new Date().getFullYear(),
+      month : new Date().getMonth() + 1,
+      day : new Date().getDate()
+    }
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/all",getPlanSuccess,page,true)
   }
 
   const getPlanSuccess = (res) => {
@@ -102,7 +107,7 @@ export default function Dashboard(props) {
               <FreeBoardSection onClick={showReferenceData}/>
             </GridItem>
             <GridItem xs={12} sm={12} md={4}>
-              <SignUpListSection location={props}/>
+              <SignUpListSection code={props.match.params.idx} location={props}/>
             </GridItem>
           </GridContainer>
           <GridItem xs={12} sm={12} md={12}>
