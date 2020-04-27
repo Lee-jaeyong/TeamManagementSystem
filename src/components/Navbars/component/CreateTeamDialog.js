@@ -8,8 +8,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slider from '@material-ui/core/Slider';
-import Hidden from '@material-ui/core/Hidden';
 import MessageBox from 'components/MessageBox/MessageBox';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import DateFnsUtils from "@date-io/date-fns";
 
 import * as axiosPost from '@axios/post';
 
@@ -51,6 +57,12 @@ export default function FormDialog(props) {
   const description = useRef();
   const progress = useRef();
 
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  
+  const [startDateError,setStartDateError] = useState('');
+  const [endDateError,setEndDateError] = useState('');
+  
   const [open, setOpen] = React.useState(props['open']);
   const [showMessageState,setShowMessageState] = useState(false);
   const [MessageBoxState,setMessageBoxState] = useState(
@@ -79,24 +91,41 @@ export default function FormDialog(props) {
     if(name.current.value.trim() === ''){
       messageBoxHandle(true,"팀명을 입력해주세요",2000,'error');
       name.current.focus();
-    }else if(start.current.value === ''){
-      messageBoxHandle(true,"시작일을 입력해주세요",2000,'error');
-      start.current.focus();
-    }else if(end.current.value === ''){
-      messageBoxHandle(true,"마감일을 입력해주세요",2000,'error');
-      end.current.focus();
+    }else if(!startDate){
+      messageBoxHandle(true,"일정 시작일을 입력해주세요.",2000,'error');
+    }else if(!endDate){
+      messageBoxHandle(true,"일정 마감일을 입력해주세요.",2000,'error');
+    }else if(startDateError){
+      messageBoxHandle(true,"일정 시작일은 마감일보다 작아야합니다.",2000,'error');
+    }else if(endDateError){
+      messageBoxHandle(true,"일정 마감일은 시작일보다 커야합니다.",2000,'error');
     }else if(description.current.value === ''){
       messageBoxHandle(true,"팀 목표를 입력해주세요",2000,'error');
       description.current.focus();
     }else{
       const team = {
         name:name.current.value,
-        startDate:start.current.value,
-        endDate:end.current.value,
+        startDate:dateFormat(startDate + ''),
+        endDate:dateFormat(endDate + ''),
         description:description.current.value
       }
       axiosPost.postContainsData("http://localhost:8090/api/teamManage",createSuccess,createError,team);
     }
+  }
+
+  const dateFormat = (beforeDate) => {
+    let date = new Date(beforeDate);
+    let year = date.getFullYear();
+    let month = dateMonthCheck(date.getMonth() + 1);
+    let day = dateMonthCheck(date.getDate());
+    return year + "-" + month + "-" + day;
+  }
+
+  const dateMonthCheck = (value) => {
+    const check = value + '';
+    if(check.length === 1)
+      return "0"+check;
+    return check;
   }
 
   const createSuccess = (res) => {
@@ -108,6 +137,54 @@ export default function FormDialog(props) {
   const createError = () => {
     messageBoxHandle(true,"팀 생성중 에러가 발생했습니다.",2000,'error');
   }
+
+  const handleStartDateChange = (date) => {
+    if(date.toString() === 'Invalid Date'){
+      setStartDateError("일정을 다시 입력해주세요");
+      setStartDate(null);
+      return;
+    }
+    if(!endDate){
+      setEndDateError(null);
+      setStartDateError(null);
+      setStartDate(date);
+    }
+      else{
+        let _endDate = new Date(endDate).getTime();
+        if(_endDate < new Date(date).getTime()){
+          setStartDateError("일정 시작일은 종료일보다 작아야합니다.");
+          setStartDate(date);
+        }else{
+          setEndDateError(null);
+          setStartDateError(null);
+          setStartDate(date);
+        }
+    }
+  };
+
+  const handleEndDateChange = (date) => {
+    if(date.toString() === 'Invalid Date'){
+      setEndDateError("일정을 다시 입력해주세요");
+      setEndDate(null);
+      return;
+    }
+    if(!startDate){
+      setStartDateError(null);
+      setEndDateError(null);
+      setEndDate(date);
+    }
+    else{
+      let _startDate = new Date(startDate).getTime();
+      if(_startDate > new Date(date).getTime()){
+        setEndDateError("일정 종료일은 시작일보다 커야합니다.");
+        setEndDate(date);
+      }else{
+        setStartDateError(null);
+        setEndDateError(null);
+        setEndDate(date);
+      }
+    }
+  };
 
   useEffect(()=>{
     setOpen(props['open']);
@@ -130,32 +207,55 @@ export default function FormDialog(props) {
             label="팀(프로젝트) 명"
             fullWidth
             />
-          <TextField
-            inputRef={start}
-            style={{marginTop:20}}
-            id="datetime-local"
-            label="프로젝트 시작일"
-            type="date"
-            margin="dense"
-            fullWidth
-            defaultValue="2017-05-24"
-            InputLabelProps={{
-                shrink: true,
-            }}
-            />
-          <TextField
-            inputRef={end}
-            style={{marginTop:20}}
-            id="datetime-local"
-            label="프로젝트 마감일"
-            type="date"
-            margin="dense"
-            fullWidth
-            defaultValue="2017-05-24"
-            InputLabelProps={{
-            shrink: true,
-            }}
-        />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container>
+              <Grid item xs={5}>
+                <KeyboardDatePicker
+                  autoOk
+                  disableToolbar
+                  variant="inline"
+                  format="yyyy-MM-dd"
+                  margin="normal"
+                  id="startDate"
+                  label="시작날짜"
+                  error={startDateError ? true : false}
+                  helperText={startDateError}
+                  value={startDate}
+                  onChange={handleStartDateChange}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                />
+              </Grid>
+              <Grid style={{ textAlign: "center" }} item xs={2}>
+                <Typography
+                  variant="h4"
+                  component="h4"
+                  style={{ position: "relative", top: 20 }}
+                >
+                  ~
+                </Typography>
+              </Grid>
+              <Grid item xs={5}>
+                <KeyboardDatePicker
+                  autoOk
+                  disableToolbar
+                  variant="inline"
+                  format="yyyy-MM-dd"
+                  error={endDateError ? true : false}
+                  helperText={endDateError}
+                  margin="normal"
+                  id="endDate"
+                  label="종료날짜"
+                  value={endDate}
+                  onChange={handleEndDateChange}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </MuiPickersUtilsProvider>
         <TextField
           inputRef={description}
           style={{marginTop:20}}

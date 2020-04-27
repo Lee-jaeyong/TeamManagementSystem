@@ -21,6 +21,8 @@ import { bugs, website, server } from "variables/general.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import BoardView from "components/BoardView/BoardView.js";
 
+import * as axiosGet from '@axios/get';
+
 const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
@@ -66,7 +68,7 @@ const theme = createMuiTheme({
   },
 });
 
-export default function TableList() {
+export default function TableList(props) {
   const [pagingTheme, setPagingTheme] = useState(
     createMuiTheme({
       overrides: {
@@ -110,6 +112,33 @@ export default function TableList() {
       })
     );
   };
+
+  const getPlanListUnFinished = () => {
+    let data = {
+      year:new Date().getFullYear(),
+      month:dateMonthCheck(new Date().getMonth()+1),
+      day:dateMonthCheck(new Date().getDate()),
+      page:0,
+      size:10
+    }
+    console.log(data);
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search",getPlanListUnFinishedSuccess,data,true);
+  }
+
+  const dateMonthCheck = (value) => {
+    const check = value + '';
+    if(check.length === 1)
+      return "0"+check;
+    return check;
+  }
+
+  const getPlanListUnFinishedSuccess = (res) => {
+    console.log(res);
+  }
+
+  useEffect(()=>{
+    getPlanListUnFinished();
+  },[]);
 
   return (
     <div>
