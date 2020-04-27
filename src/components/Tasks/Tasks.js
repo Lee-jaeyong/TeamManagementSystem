@@ -39,8 +39,8 @@ export default function Tasks(props) {
   return (
     <Table className={classes.table}>
       <TableBody>
-        {tasksIndexes.map(value => (
-          <TableRow key={value} className={classes.tableRow}>
+        {tasksIndexes.map((value,idx) => (
+          <TableRow key={idx} className={classes.tableRow}>
             <TableCell className={tableCellClasses}>
               <Checkbox
                 checked={checked.indexOf(value) !== -1}
