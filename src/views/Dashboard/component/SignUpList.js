@@ -43,7 +43,9 @@ export default function SignUpList(props){
     }
 
     useEffect(()=>{
-        getSignUpList();
+        if(props['teamLeader'] === localStorage.getItem('ID')){
+            getSignUpList();
+        }
         setSignUplist(false);
     },[props['location']]);
 
