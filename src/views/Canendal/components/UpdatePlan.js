@@ -94,6 +94,11 @@ export default function UpdatePlan(props) {
   }
 
   const handleStartDateChange = (date) => {
+    if(date.toString() === 'Invalid Date'){
+      setStartDateError("일정을 다시 입력해주세요");
+      setStartDate(null);
+      return;
+    }
     if(!endDate){
       setEndDateError(null);
       setStartDateError(null);
@@ -113,6 +118,11 @@ export default function UpdatePlan(props) {
   };
 
   const handleEndDateChange = (date) => {
+    if(date.toString() === 'Invalid Date'){
+      setEndDateError("일정을 다시 입력해주세요");
+      setEndDate(null);
+      return;
+    }
     if(!startDate){
       setStartDateError(null);
       setEndDateError(null);
@@ -210,7 +220,9 @@ export default function UpdatePlan(props) {
     if(props['open']){
       setStartDate(props['plan'] ? props['plan']['start'] : new Date())
       setEndDate(props['plan'] ? props['plan']['end'] : new Date())
-      setProgressValue(props['plan'] ? props['plan']['progress'] : 0)
+      setProgressValue(props['plan'] ? props['plan']['progress'] : 0);
+      setEndDateError('');
+      setStartDateError('');
     }
     setOpen(props["open"]);
   }, [props["open"]]);

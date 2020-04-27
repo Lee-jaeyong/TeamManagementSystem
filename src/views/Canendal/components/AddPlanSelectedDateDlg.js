@@ -9,7 +9,6 @@ import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
-import AccessTime from "@material-ui/icons/AccessTime";
 import CardHeader from "components/Card/CardHeader.js";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -95,6 +94,11 @@ export default function AddPlanSelectedDateDlg(props) {
   }
 
   const handleStartDateChange = (date) => {
+    if(date.toString() === 'Invalid Date'){
+      setStartDateError("일정을 다시 입력해주세요");
+      setStartDate(null);
+      return;
+    }
     if(!endDate){
       setEndDateError(null);
       setStartDateError(null);
@@ -114,6 +118,11 @@ export default function AddPlanSelectedDateDlg(props) {
   };
 
   const handleEndDateChange = (date) => {
+    if(date.toString() === 'Invalid Date'){
+      setEndDateError("일정을 다시 입력해주세요");
+      setEndDate(null);
+      return;
+    }
     if(!startDate){
       setStartDateError(null);
       setEndDateError(null);
@@ -210,6 +219,7 @@ export default function AddPlanSelectedDateDlg(props) {
   useEffect(() => {
     setOpen(props["open"]);
     setStartDate(new Date());
+    setEndDate(new Date());
     setStartDateError('');
     setEndDateError('');
   }, [props["open"]]);

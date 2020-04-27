@@ -102,7 +102,7 @@ export default function SignUpList(props){
                 ) : null : null}
             </CardHeader>
             <CardBody>
-            <h3 className={classes.cardTitle}><strong>{teamInfo ? teamInfo['name'] : null}</strong>{teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? " [팀 코드 : "+ teamInfo['code'] + "]" : "" : null}</h3>
+            <h3 className={classes.cardTitle}><strong>{teamInfo ? teamInfo['name'] : null}</strong><span style={{fontSize:20}}>{teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? " [팀 코드 : "+ teamInfo['code'] + "]" : "" : null}</span></h3>
             <p className={classes.cardCategory}>
                 {teamInfo ? teamInfo['description'] : null}
                 <AvatarGroup max={teamInfo ? teamInfo['joinPerson'].length + 1 : 0}>
