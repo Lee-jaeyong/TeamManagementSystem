@@ -78,7 +78,6 @@ export default function SignUpList(props){
     }
 
     const {teamInfo} = props;
-    console.log(teamInfo);
     const updateTeamHandle = () => {
         setUpdateTeam(true);
     }

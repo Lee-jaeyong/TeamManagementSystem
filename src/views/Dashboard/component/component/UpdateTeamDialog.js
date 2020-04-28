@@ -188,7 +188,6 @@ export default function FormDialog(props) {
   };
 
   useEffect(() => {
-    console.log(team);
     setStartDate(team ? team["startDate"] : null);
     setEndDate(team ? team["endDate"] : null);
     setOpen(props["open"]);
