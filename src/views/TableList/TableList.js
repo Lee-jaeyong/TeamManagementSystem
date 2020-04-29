@@ -6,6 +6,7 @@ import PermDataSettingIcon from "@material-ui/icons/PermDataSetting";
 import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import Pagination from "@material-ui/lab/Pagination";
 import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
@@ -111,6 +112,18 @@ export default function TableList() {
     );
   };
 
+  const createBoard = () => {
+    
+  }
+  
+  const createReferenceData = () => {
+
+  }
+
+  const createNotice = () => {
+
+  }
+
   return (
     <div>
       <BoardView
@@ -132,6 +145,7 @@ export default function TableList() {
                   <Table //테이블 간격 조절하는방법 모르겠음ㅎ..
                     sellClick={viewBoard}
                     pointer
+                    customButton={<div style={{marginTop:10, textAlign:"right"}}><Button variant="contained" onClick={createNotice} color="secondary">글쓰기</Button></div>}
                     tableHeaderColor="primary"
                     tableHead={["No.", "이름", "제목", "날짜"]}
                     tableData={[
@@ -174,6 +188,7 @@ export default function TableList() {
                 tabIcon: PermDataSettingIcon,
                 tabContent: (
                   <Table
+                    customButton={<div style={{marginTop:10, textAlign:"right"}}><Button onClick={createReferenceData} variant="contained" color="secondary">글쓰기</Button></div>}
                     sellClick={viewBoard}
                     pointer
                     tableHeaderColor="success"
@@ -218,6 +233,7 @@ export default function TableList() {
                 tabIcon: FormatListBulletedIcon,
                 tabContent: (
                   <Table
+                    customButton={<div style={{marginTop:10, textAlign:"right"}}><Button onClick={createBoard} variant="contained" color="secondary">글쓰기</Button></div>}
                     sellClick={viewBoard}
                     pointer
                     tableHeaderColor="danger"

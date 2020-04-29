@@ -69,6 +69,11 @@ const theme = createMuiTheme({
 });
 
 export default function TableList(props) {
+  const [page,setPage] = useState(1);
+  const [tabIndex,setTabIndex] = useState(0);
+  const [totalPage,setTotalPage] = useState(0);
+  const [todoList,setTodoList] = useState([]);
+  const [finishedTodoList,setFinishedTodoList] = useState([]);
   const [pagingTheme, setPagingTheme] = useState(
     createMuiTheme({
       overrides: {
@@ -113,16 +118,59 @@ export default function TableList(props) {
     );
   };
 
-  const getPlanListUnFinished = () => {
+  const pageMove = (number) => {
+    setPage(number);
+    if(tabIndex === 0)
+      getPlanListUnFinished(number);
+    else if(tabIndex === 1)
+      getPlenListFinished(number);  
+  }
+
+  const tabChangeHandle = (value) => {
+    setTabIndex(value);
+    pagingAreaChange(value);
+    setPage(0);
+    if(value === 0){
+      getPlanListUnFinished(0);
+    }else if(value === 1){
+      getPlenListFinished(0);
+    }
+  }
+
+  const getPlenListFinished = (number) => {
+    let data = {
+      page:number - 1,
+      size:10
+    }
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/finished",getPlanListFinishedSuccess,data,true);
+    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/finished/count",getPlanCountFinishedSuccess,true);
+  }
+
+  const getPlanCountFinishedSuccess = (res) => {
+    setTotalPage(Math.ceil(res['content'] / 10));
+  }
+
+  const getPlanListFinishedSuccess = (res) => {
+    if(!res['_embedded'])
+      return;
+    const content = res['_embedded']['planByUserList'];
+    let resultArr = [];
+    for(let i =0;i<content.length;i++){
+      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],content[i]['end']]);
+    }
+    setFinishedTodoList(resultArr);
+  }
+
+  const getPlanListUnFinished = (number) => {
     let data = {
       year:new Date().getFullYear(),
       month:dateMonthCheck(new Date().getMonth()+1),
       day:dateMonthCheck(new Date().getDate()),
-      page:0,
+      page:number - 1,
       size:10
     }
-    console.log(data);
     axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search",getPlanListUnFinishedSuccess,data,true);
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/count",getPlanCountUnFinishedSuccess,data,true);
   }
 
   const dateMonthCheck = (value) => {
@@ -132,12 +180,23 @@ export default function TableList(props) {
     return check;
   }
 
+  const getPlanCountUnFinishedSuccess = (res) => {
+    setTotalPage(Math.ceil(res['content'] / 10));
+  }
+
   const getPlanListUnFinishedSuccess = (res) => {
-    console.log(res);
+    if(!res['_embedded'])
+      return;
+    const content = res['_embedded']['planByUserList'];
+    let resultArr = [];
+    for(let i =0;i<content.length;i++){
+      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],content[i]['end']]);
+    }
+    setTodoList(resultArr);
   }
 
   useEffect(()=>{
-    getPlanListUnFinished();
+    getPlanListUnFinished(page);
   },[]);
 
   return (
@@ -153,7 +212,7 @@ export default function TableList(props) {
             color
             title=""
             containsPaging
-            handleChange={(value) => pagingAreaChange(value)}
+            handleChange={(value) => {tabChangeHandle(value)}}
             tabs={[
               {
                 tabName: "진행중인 일정",
@@ -164,38 +223,7 @@ export default function TableList(props) {
                     pointer
                     tableHeaderColor="warning"
                     tableHead={["No.", "이름", "제목", "날짜"]}
-                    tableData={[
-                      ["1", "이재용", "튜터링 공지사항입니다.", "2020.04.16"],
-                      ["2", "윤지원", "모임관련 공지사항입니다.", "2020.04.16"],
-                      ["3", "윤재원", "일정관리 공지입니다.", "2020.04.16"],
-                      ["4", "장유나", "튜터링 공지사항입니다", "2020.04.16"],
-                      [
-                        "5",
-                        "이재용",
-                        "4월18일 생일관련공지입니다.",
-                        "2020.04.16",
-                      ],
-                      [
-                        "6",
-                        "이재용",
-                        "2020년04년16일 모임에관하여",
-                        "2020.04.16",
-                      ],
-                      ["7", "윤지원", "으아아아아아", "2020.04.16"],
-                      [
-                        "8",
-                        "윤재원",
-                        "뭘 사용해야 할지 모르겠어요",
-                        "2020.04.16",
-                      ],
-                      ["9", "장유나", "악동뮤지션 노래 좋음", "2020.04.16"],
-                      [
-                        "10",
-                        "이재용",
-                        "볼빨간사춘기 노래도 좋음",
-                        "2020.04.16",
-                      ],
-                    ]}
+                    tableData={todoList}
                   />
                 ),
               },
@@ -208,38 +236,7 @@ export default function TableList(props) {
                     pointer
                     tableHeaderColor="danger"
                     tableHead={["No.", "이름", "제목", "날짜"]}
-                    tableData={[
-                      ["1", "이재용", "튜터링 2차 참고자료.", "2020.04.16"],
-                      ["2", "윤지원", "모임관련 공지사항입니다.", "2020.04.16"],
-                      ["3", "윤재원", "일정관리 공지입니다.", "2020.04.16"],
-                      ["4", "장유나", "튜터링 공지사항입니다", "2020.04.16"],
-                      [
-                        "5",
-                        "이재용",
-                        "4월18일 생일관련공지입니다.",
-                        "2020.04.16",
-                      ],
-                      [
-                        "6",
-                        "이재용",
-                        "2020년04년16일 모임에관하여",
-                        "2020.04.16",
-                      ],
-                      ["7", "윤지원", "으아아아아아", "2020.04.16"],
-                      [
-                        "8",
-                        "윤재원",
-                        "뭘 사용해야 할지 모르겠어요",
-                        "2020.04.16",
-                      ],
-                      ["9", "장유나", "악동뮤지션 노래 좋음", "2020.04.16"],
-                      [
-                        "10",
-                        "이재용",
-                        "볼빨간사춘기 노래도 좋음",
-                        "2020.04.16",
-                      ],
-                    ]}
+                    tableData={finishedTodoList}
                   />
                 ),
               }
@@ -250,7 +247,7 @@ export default function TableList(props) {
       <GridContainer direction="column" alignItems="center" justify="center">
         <GridItem xs={12} sm={12} md={12}>
           <ThemeProvider theme={pagingTheme}>
-            <Pagination count={11} defaultPage={1} boundaryCount={2} />
+            <Pagination onChange={(event,number)=>pageMove(number)} count={totalPage} page={page} defaultPage={0} boundaryCount={2} />
           </ThemeProvider>
         </GridItem>
       </GridContainer>
