@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
@@ -9,11 +9,15 @@ import IconButton from "@material-ui/core/IconButton";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Avatar from "@material-ui/core/Avatar";
 import CreateIcon from "@material-ui/icons/Create";
+import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+
 import Typography from "@material-ui/core/Typography";
+import createBreakpoints from "@material-ui/core/styles/createBreakpoints";
+import ImgUpdateDlg from "./ImgUpdateDlg.js";
+import UpdateProfileDlg from "./UpdateProfileDlg.js";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
-    // border: `3px solid ${theme.palette.background.paper}`,
     backgroundColor: "#EAEAEA",
     color: "#4C4C4C",
     width: 30,
@@ -26,11 +30,37 @@ const StyledBadge = withStyles((theme) => ({
 }))(Badge);
 
 export default function Profile(props) {
+  const [updateOpen, setUpdateOpen] = useState(false);
+  const [imgUpdateOpen, setImgUpdateOpen] = useState(false);
+
+  useEffect(() => {
+    document
+      .getElementsByClassName("makeStyles-mainPanel-2")[0]
+      .addEventListener("scroll", (event) => {
+        if (
+          props["history"]["location"]["pathname"] === "/admin/myPage" &&
+          window.innerWidth > 600
+        ) {
+          document.getElementById("profileSection").style.animationDirection =
+            ".10s";
+          document.getElementById(
+            "profileSection"
+          ).style.top = document
+            .getElementsByClassName("ps__rail-x")[0]
+            .style.bottom.substring(
+              1,
+              document.getElementsByClassName("ps__rail-x")[0].style.bottom
+                .length
+            );
+        }
+      });
+  }, []);
   return (
     <Paper
+      id="profileSection"
       style={{
         position: "relative",
-        top: 60,
+        top: 50,
         marginBottom: 30,
         borderRadius: 7,
       }}
@@ -45,7 +75,7 @@ export default function Profile(props) {
         <div style={{ position: "relative", top: -60 }}>
           <StyledBadge
             onClick={() => {
-              alert("사진 변경하기");
+              setImgUpdateOpen(true);
             }}
             overlap="circle"
             anchorOrigin={{
@@ -97,10 +127,27 @@ export default function Profile(props) {
         direction="row"
         style={{ paddingRight: 10, paddingBottom: 10 }}
       >
-        <IconButton aria-label="setting">
+        <IconButton
+          aria-label="setting"
+          onClick={() => {
+            setUpdateOpen(true);
+          }}
+        >
           <SettingsIcon />
         </IconButton>
       </Grid>
+      <UpdateProfileDlg
+        open={updateOpen}
+        updateDlgClose={() => {
+          setUpdateOpen(false);
+        }}
+      />
+      <ImgUpdateDlg
+        open={imgUpdateOpen}
+        ImgUpdateDlgClose={() => {
+          setImgUpdateOpen(false);
+        }}
+      />
     </Paper>
   );
 }

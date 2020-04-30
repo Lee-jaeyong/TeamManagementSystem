@@ -41,17 +41,22 @@ const useStyles = makeStyles(styles);
 
 export default function MyPageProject(props) {
   const classes = useStyles();
-  const [tabValue, setTabValue] = useState(0);
+  const [progressProjectTabValue, setProgressProjectTabValue] = useState(0);
+  const [pastProjectTabValue, setPastProjectTabValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
-    setTabValue(newValue);
+  const progressTabHandle = (event, newValue) => {
+    setProgressProjectTabValue(newValue);
+  };
+
+  const pastTabHandle = (event, newValue) => {
+    setPastProjectTabValue(newValue);
   };
 
   return (
     <Card className={classes.cardSize}>
       <CardHeader color="warning">
         <Typography variant="h6" component="h6">
-          나의 프로젝트
+          프로젝트 현황
         </Typography>
       </CardHeader>
       <CardBody>
@@ -64,10 +69,10 @@ export default function MyPageProject(props) {
                 color="primary"
               />
               <Tabs
-                value={tabValue}
+                value={progressProjectTabValue}
                 indicatorColor="primary"
                 textColor="primary"
-                onChange={handleChange}
+                onChange={progressTabHandle}
                 aria-label="disabled tabs example"
               >
                 <Tooltip title="구성원으로 참여중인 프로젝트" placement="left">
@@ -120,8 +125,54 @@ export default function MyPageProject(props) {
               <Chip
                 style={{ margin: 20 }}
                 label="지난 프로젝트"
-                color="primary"
+                color="secondary"
               />
+              <Tabs
+                value={pastProjectTabValue}
+                indicatorColor="secondary"
+                textColor="secondary"
+                onChange={pastTabHandle}
+                aria-label="disabled tabs example"
+              >
+                <Tab label="만료된 프로젝트" />
+                <Tab label="탈퇴한 프로젝트" />
+              </Tabs>
+              <Divider />
+              <ListItem button>
+                <Grid container>
+                  <ListItemText
+                    style={{ marginRight: 15, marginTop: 10 }}
+                    id="projectName"
+                    primary="C언어 프로젝트"
+                  />
+                  <ListItemAvatar style={{ float: "right" }}>
+                    <AvatarGroup max={3}>
+                      <Avatar alt="이" src="/images/dlwodyd.png" />
+                      <Avatar alt="Travis Howard" src="/images/dlwodyd.png" />
+                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
+                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
+                    </AvatarGroup>
+                  </ListItemAvatar>
+                </Grid>
+              </ListItem>
+              <Divider />
+              <ListItem button>
+                <Grid container>
+                  <ListItemText
+                    style={{ marginRight: 15, marginTop: 10 }}
+                    id="projectName"
+                    primary="C언어 프로젝트"
+                  />
+                  <ListItemAvatar style={{ float: "right" }}>
+                    <AvatarGroup max={3}>
+                      <Avatar alt="이" src="/images/dlwodyd.png" />
+                      <Avatar alt="Travis Howard" src="/images/dlwodyd.png" />
+                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
+                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
+                    </AvatarGroup>
+                  </ListItemAvatar>
+                </Grid>
+              </ListItem>
             </Paper>
           </Grid>
         </Grid>
