@@ -1,5 +1,27 @@
 import axios from 'axios';
 
+export async function getFileDownload(URL,fileName){
+    axios({
+        url: URL,
+        method: 'get',
+        headers : {
+            Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
+        },
+        responseType: 'blob'
+    }).then((res)=>{
+        console.log(res);
+        const url = window.URL.createObjectURL(
+            new Blob([res.data], {
+             type: res.headers['content-type']
+        }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+    });
+}
+
 export async function getNotContainsData(URL,func){
     axios({
         url: URL,

@@ -20,8 +20,39 @@ import Tasks from "components/Tasks/Tasks.js";
 import { bugs, website, server } from "variables/general.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import BoardView from "components/BoardView/BoardView.js";
+import Slider from '@material-ui/core/Slider';
 
 import * as axiosGet from '@axios/get';
+
+const PrettoSlider = withStyles({
+  root: {
+    color: '#52af77',
+    height: 8,
+  },
+  thumb: {
+    height: 24,
+    width: 24,
+    backgroundColor: '#fff',
+    border: '2px solid currentColor',
+    marginTop: -8,
+    marginLeft: -12,
+    '&:focus, &:hover, &$active': {
+      boxShadow: 'inherit',
+    },
+  },
+  active: {},
+  valueLabel: {
+    left: 'calc(-50% + 4px)',
+  },
+  track: {
+    height: 8,
+    borderRadius: 4,
+  },
+  rail: {
+    height: 8,
+    borderRadius: 4,
+  },
+})(Slider);
 
 const styles = {
   cardCategoryWhite: {
@@ -156,7 +187,7 @@ export default function TableList(props) {
     const content = res['_embedded']['planByUserList'];
     let resultArr = [];
     for(let i =0;i<content.length;i++){
-      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],content[i]['end']]);
+      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
     }
     setFinishedTodoList(resultArr);
   }
@@ -190,7 +221,7 @@ export default function TableList(props) {
     const content = res['_embedded']['planByUserList'];
     let resultArr = [];
     for(let i =0;i<content.length;i++){
-      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],content[i]['end']]);
+      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
     }
     setTodoList(resultArr);
   }
@@ -222,7 +253,7 @@ export default function TableList(props) {
                     sellClick={viewBoard}
                     pointer
                     tableHeaderColor="warning"
-                    tableHead={["No.", "이름", "제목", "날짜"]}
+                    tableHead={["No.", "이름", "제목", "진척도","날짜"]}
                     tableData={todoList}
                   />
                 ),
@@ -235,7 +266,7 @@ export default function TableList(props) {
                     sellClick={viewBoard}
                     pointer
                     tableHeaderColor="danger"
-                    tableHead={["No.", "이름", "제목", "날짜"]}
+                    tableHead={["No.", "이름", "제목","진척도", "날짜"]}
                     tableData={finishedTodoList}
                   />
                 ),
