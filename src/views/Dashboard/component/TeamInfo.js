@@ -20,6 +20,7 @@ import Slider from '@material-ui/core/Slider';
 import CreateIcon from '@material-ui/icons/Create';
 import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 
 import MessageBox from 'components/MessageBox/MessageBox';
 import UpdateTeamDialog from './component/UpdateTeamDialog';
@@ -77,6 +78,16 @@ export default function SignUpList(props){
       })
     }
 
+    const copyCode = () => {
+      let dummy = document.createElement("textarea");
+      document.body.appendChild(dummy);
+      dummy.value = document.getElementById("teamCode").innerText;
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+      messageBoxHandle(true,"팀 코드가 복사되었습니다.",2000,'success');
+    }
+
     const {teamInfo} = props;
     const updateTeamHandle = () => {
         setUpdateTeam(true);
@@ -101,7 +112,10 @@ export default function SignUpList(props){
                 ) : null : null}
             </CardHeader>
             <CardBody>
-            <h3 className={classes.cardTitle}><strong>{teamInfo ? teamInfo['name'] : null}</strong><span style={{fontSize:20}}>{teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? " [팀 코드 : "+ teamInfo['code'] + "]" : "" : null}</span></h3>
+            <h3 className={classes.cardTitle}><strong>{teamInfo ? teamInfo['name'] : null}</strong>
+            <span style={{fontSize:20}}>
+              {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? " [팀 코드 : "+ teamInfo['code'] + "]" : "" : null}</span>{teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<Button onClick={copyCode} variant="outlined" color="secondary" style={{marginLeft:10}}>복사하기</Button>) : "" : null}</h3>
+            {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<div id="teamCode" style={{display:'none'}}>{teamInfo['code']}</div>) : null : null}
             <p className={classes.cardCategory}>
                 {teamInfo ? teamInfo['description'] : null}
                 <AvatarGroup max={teamInfo ? teamInfo['joinPerson'].length + 1 : 0}>

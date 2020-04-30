@@ -107,7 +107,8 @@ export default function FormDialog(props) {
         name:name.current.value,
         startDate:dateFormat(startDate + ''),
         endDate:dateFormat(endDate + ''),
-        description:description.current.value
+        description:description.current.value,
+        progress : progress.current.value
       }
       axiosPost.postContainsData("http://localhost:8090/api/teamManage",createSuccess,createError,team);
     }

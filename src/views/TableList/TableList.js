@@ -23,6 +23,10 @@ import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import BoardView from "components/BoardView/BoardView.js";
 
 import CreateNotice from './component/CreateNotice';
+import MessageBox from 'components/MessageBox/MessageBox';
+
+import * as axiosGet from '@axios/get';
+import { number } from "prop-types";
 
 const styles = {
   cardCategoryWhite: {
@@ -69,9 +73,14 @@ const theme = createMuiTheme({
   },
 });
 
-export default function TableList() {
+export default function TableList(props) {
+  const [noticeList,setNoticeList] = useState([]);
+  const [selectBoard,setSelectBoard] = useState();
   const [createNoticeState,setCreateNoticeState] = useState(false);
-
+  const [tabIndex,setTabIndex] = useState(0);
+  const [page,setPage] = useState(1);
+  const [totalPage,setTotalPage] = useState(0);
+  const [teamLeader,setTeamLeader] = useState();
   const [pagingTheme, setPagingTheme] = useState(
     createMuiTheme({
       overrides: {
@@ -92,11 +101,42 @@ export default function TableList() {
   const [dialogHandle, setDialogHandle] = useState(false);
   const [contentsSeq, setContentsSeq] = useState();
   const viewBoard = (seq) => {
+    if(tabIndex === 0){
+      selectNoticeInfo(seq)
+    }
     setContentsSeq(seq);
     setDialogHandle(true);
   };
 
+  const [showMessageState,setShowMessageState] = useState(false);
+  const [MessageBoxState,setMessageBoxState] = useState(
+    {
+      content : "",
+      level : "success",
+      time : 2000
+    }
+  );
+
+  const selectNoticeInfo = seq => {
+    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/notice/" + seq,selectNoticeInfoSuccess);
+  }
+
+  const selectNoticeInfoSuccess = res =>{
+    setSelectBoard(res);
+  }
+
+  const messageBoxHandle = (show,content,time,level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content : content,
+      time : time,
+      level : level
+    })
+  }
+
   const pagingAreaChange = (value) => {
+    setPage(0);
+    setTabIndex(value);
     let color = ["#9c27b0", "#57af5b", "#e63d39"];
     setPagingTheme(
       createMuiTheme({
@@ -116,6 +156,35 @@ export default function TableList() {
     );
   };
 
+  const pageMove = (number) =>{
+    setPage(number);
+    if(tabIndex === 0){
+      getNoticeList(number);
+    }
+  }
+
+  const getNoticeList = (number) => {
+    setPage(number);
+    const data = {
+      page : number - 1,
+      size : 10
+    }
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/notice/"+props.match.params.idx+"/all",getNoticeListSuccess,data,true);
+  }
+
+  const getNoticeListSuccess = (res) => {
+    if(!res['_embedded'])
+      return;
+    setTotalPage(Math.ceil(res['page']['totalElements']/10));
+    let resultArr = [];
+    const _noticeList = res['_embedded']['noticeList'];
+    for(let i =0;i<_noticeList.length;i++){
+      resultArr.push([_noticeList[i]['seq'],_noticeList[i]['user']['name'],_noticeList[i]['title'],_noticeList[i]['date']]);
+    }
+    setTeamLeader(_noticeList[0]['user']['id']);
+    setNoticeList(resultArr);
+  }
+
   const createBoard = () => {
     
   }
@@ -128,11 +197,17 @@ export default function TableList() {
     setCreateNoticeState(true);
   }
 
+  useEffect(()=>{
+    getNoticeList(1);
+  },[]);
+
   return (
     <div>
       <BoardView
-        seq={contentsSeq}
+        data={selectBoard}
         open={dialogHandle}
+        updateList={()=>pageMove(0)}
+        messageBoxHandle={messageBoxHandle}
         handleClose={() => setDialogHandle(false)}
       />
       <GridContainer>
@@ -146,44 +221,22 @@ export default function TableList() {
                 tabName: "공지사항",
                 tabIcon: NotificationsActiveIcon,
                 tabContent: (
+                  localStorage.getItem("ID") === teamLeader ?
                   <Table //테이블 간격 조절하는방법 모르겠음ㅎ..
                     sellClick={viewBoard}
                     pointer
                     customButton={<div style={{marginTop:10, textAlign:"right"}}><Button variant="contained" onClick={createNotice} color="secondary">글쓰기</Button></div>}
                     tableHeaderColor="primary"
                     tableHead={["No.", "이름", "제목", "날짜"]}
-                    tableData={[
-                      ["1", "이재용", "튜터링 공지사항입니다.", "2020.04.16"],
-                      ["2", "윤지원", "모임관련 공지사항입니다.", "2020.04.16"],
-                      ["3", "윤재원", "일정관리 공지입니다.", "2020.04.16"],
-                      ["4", "장유나", "튜터링 공지사항입니다", "2020.04.16"],
-                      [
-                        "5",
-                        "이재용",
-                        "4월18일 생일관련공지입니다.",
-                        "2020.04.16",
-                      ],
-                      [
-                        "6",
-                        "이재용",
-                        "2020년04년16일 모임에관하여",
-                        "2020.04.16",
-                      ],
-                      ["7", "윤지원", "으아아아아아", "2020.04.16"],
-                      [
-                        "8",
-                        "윤재원",
-                        "뭘 사용해야 할지 모르겠어요",
-                        "2020.04.16",
-                      ],
-                      ["9", "장유나", "악동뮤지션 노래 좋음", "2020.04.16"],
-                      [
-                        "10",
-                        "이재용",
-                        "볼빨간사춘기 노래도 좋음",
-                        "2020.04.16",
-                      ],
-                    ]}
+                    tableData={noticeList}
+                  />
+                  :
+                  <Table //테이블 간격 조절하는방법 모르겠음ㅎ..
+                    sellClick={viewBoard}
+                    pointer
+                    tableHeaderColor="primary"
+                    tableHead={["No.", "이름", "제목", "날짜"]}
+                    tableData={noticeList}
                   />
                 ),
               },
@@ -289,11 +342,18 @@ export default function TableList() {
       <GridContainer direction="column" alignItems="center" justify="center">
         <GridItem xs={12} sm={12} md={12}>
           <ThemeProvider theme={pagingTheme}>
-            <Pagination count={11} defaultPage={1} boundaryCount={2} />
+            <Pagination onChange={(event,number)=>pageMove(number)} count={totalPage} boundaryCount={2} />
           </ThemeProvider>
         </GridItem>
       </GridContainer>
-      <CreateNotice open={createNoticeState} handleClose={()=>setCreateNoticeState(false)}/>
+      <CreateNotice updateList={()=>getNoticeList(0)} messageBoxHandle={messageBoxHandle} idx={props.match.params.idx} open={createNoticeState} handleClose={()=>setCreateNoticeState(false)}/>
+      <MessageBox
+          open={showMessageState}
+          content={MessageBoxState['content']}
+          level={MessageBoxState['level']}
+          time={MessageBoxState['time']}
+          handleClose={()=>setShowMessageState(false)}
+        />
     </div>
   );
 }
