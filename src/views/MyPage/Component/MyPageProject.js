@@ -83,41 +83,34 @@ export default function MyPageProject(props) {
                 </Tooltip>
               </Tabs>
               <Divider />
-              <ListItem button>
-                <Grid container>
-                  <ListItemText
-                    style={{ marginRight: 15, marginTop: 10 }}
-                    id="projectName"
-                    primary="C언어 프로젝트"
-                  />
-                  <ListItemAvatar style={{ float: "right" }}>
-                    <AvatarGroup max={3}>
-                      <Avatar alt="이" src="/images/dlwodyd.png" />
-                      <Avatar alt="Travis Howard" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                    </AvatarGroup>
-                  </ListItemAvatar>
-                </Grid>
-              </ListItem>
-              <Divider />
-              <ListItem button>
-                <Grid container>
-                  <ListItemText
-                    style={{ marginRight: 15, marginTop: 10 }}
-                    id="projectName"
-                    primary="C언어 프로젝트"
-                  />
-                  <ListItemAvatar style={{ float: "right" }}>
-                    <AvatarGroup max={3}>
-                      <Avatar alt="이" src="/images/dlwodyd.png" />
-                      <Avatar alt="Travis Howard" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                    </AvatarGroup>
-                  </ListItemAvatar>
-                </Grid>
-              </ListItem>
+              {props.joinProject
+                ? // console.log(props.joinProject[0]["project"])
+                  props.joinProject.map((data, idx) => {
+                    return (
+                      <div key={idx}>
+                        <ListItem button>
+                          <Grid container>
+                            <ListItemText
+                              style={{ marginRight: 15, marginTop: 10 }}
+                              id="projectName"
+                              primary={data["project"]}
+                            />
+                            <ListItemAvatar style={{ float: "right" }}>
+                              <AvatarGroup max={3}>
+                                {data["userImgs"]
+                                  ? data["userImgs"].map((img, idx) => {
+                                      return <Avatar key={idx} src={img} />;
+                                    })
+                                  : null}
+                              </AvatarGroup>
+                            </ListItemAvatar>
+                          </Grid>
+                        </ListItem>
+                        <Divider />
+                      </div>
+                    );
+                  })
+                : null}
             </Paper>
           </Grid>
           <Grid item md={6} sm={12} xs={12}>

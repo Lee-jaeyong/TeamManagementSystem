@@ -32,7 +32,6 @@ const StyledBadge = withStyles((theme) => ({
 export default function Profile(props) {
   const [updateOpen, setUpdateOpen] = useState(false);
   const [imgUpdateOpen, setImgUpdateOpen] = useState(false);
-
   useEffect(() => {
     document
       .getElementsByClassName("makeStyles-mainPanel-2")[0]
@@ -91,12 +90,12 @@ export default function Profile(props) {
                 boxShadow: "2px 2px 7px 2px #939393",
               }}
               alt="Remy Sharp"
-              src="/images/yunjiwon.png"
+              src={props["userImgSrc"]}
             />
           </StyledBadge>
         </div>
         <Typography variant="h5" component="h5">
-          윤지원
+          {props.userName}
           <Divider />
         </Typography>
       </Grid>
@@ -106,7 +105,7 @@ export default function Profile(props) {
             style={{ width: "100% " }}
             id="myId"
             label="ID"
-            value="jiwon_3261"
+            value={props["userId"]}
             readOnly
           />
         </Grid>
@@ -115,7 +114,7 @@ export default function Profile(props) {
             style={{ width: "100% " }}
             id="myId"
             label="E-mail"
-            value="jiwon_3261@naver.com"
+            value={props["userEmail"]}
             readOnly
           />
         </Grid>

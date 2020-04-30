@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState, createElement } from 'react';
+import React, { useEffect, useRef, useState, createElement } from "react";
 
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 import {
   Button,
   Grid,
@@ -15,38 +15,38 @@ import {
   Collapse,
   GridList,
   GridListTile,
-  GridListTileBar
-} from '@material-ui/core';
+  GridListTileBar,
+} from "@material-ui/core";
 
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import InfoIcon from '@material-ui/icons/Info';
-import Typography from '@material-ui/core/Typography';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import Dialog from "@material-ui/core/Dialog";
+import MuiDialogTitle from "@material-ui/core/DialogTitle";
+import MuiDialogContent from "@material-ui/core/DialogContent";
+import MuiDialogActions from "@material-ui/core/DialogActions";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import InfoIcon from "@material-ui/icons/Info";
+import Typography from "@material-ui/core/Typography";
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
-import * as axiosPost from '@axios/post';
+import * as axiosPost from "@axios/post";
 
-import FileUpload from './FileUpload.js';
-import ImageUpload from './ImageUpload.js';
+import FileUpload from "./FileUpload.js";
+import ImageUpload from "./ImageUpload.js";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     margin: 0,
-    padding: theme.spacing(2)
+    padding: theme.spacing(2),
   },
   closeButton: {
-    position: 'absolute',
+    position: "absolute",
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500]
-  }
+    color: theme.palette.grey[500],
+  },
 });
 
-const DialogTitle = withStyles(styles)(props => {
+const DialogTitle = withStyles(styles)((props) => {
   const { children, classes, onClose, ...other } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
@@ -55,7 +55,8 @@ const DialogTitle = withStyles(styles)(props => {
         <IconButton
           aria-label="close"
           className={classes.closeButton}
-          onClick={onClose}>
+          onClick={onClose}
+        >
           <CloseIcon />
         </IconButton>
       ) : null}
@@ -63,17 +64,17 @@ const DialogTitle = withStyles(styles)(props => {
   );
 });
 
-const DialogContent = withStyles(theme => ({
+const DialogContent = withStyles((theme) => ({
   root: {
-    padding: theme.spacing(2)
-  }
+    padding: theme.spacing(2),
+  },
 }))(MuiDialogContent);
 
-const DialogActions = withStyles(theme => ({
+const DialogActions = withStyles((theme) => ({
   root: {
     margin: 0,
-    padding: theme.spacing(1)
-  }
+    padding: theme.spacing(1),
+  },
 }))(MuiDialogActions);
 
 export default function CreateNotice(props) {
@@ -94,12 +95,12 @@ export default function CreateNotice(props) {
     setOpen(false);
   };
 
-  const btnSubmit = event => {
+  const btnSubmit = (event) => {
     event.preventDefault();
-    if (name.current.value.trim() === '') {
+    if (name.current.value.trim() === "") {
       name.current.focus();
       return;
-    } 
+    }
 
     const CreateNoticeInfo = {
       name: name.current.value,
@@ -120,12 +121,12 @@ export default function CreateNotice(props) {
     // handleClose();
   };
 
-  const getResponse = res => {
+  const getResponse = (res) => {
     if (files.length !== 0) {
       let formData = new FormData();
-      formData.append('file', files);
+      formData.append("file", files);
       axiosPost.postFileUpload(
-        '/api/professor/uploadFile/' + res.seq + '/classInfoExcel',
+        "/api/professor/uploadFile/" + res.seq + "/classInfoExcel",
         fileUploadResult,
         formData
       );
@@ -134,33 +135,32 @@ export default function CreateNotice(props) {
   };
 
   async function imgUpload(file) {
-    const fileName = file[0]['name'];
+    const fileName = file[0]["name"];
     let _fileLen = fileName.length;
-    let _lastDot = fileName.lastIndexOf('.');
+    let _lastDot = fileName.lastIndexOf(".");
     let _fileExt = fileName.substring(_lastDot, _fileLen).toLowerCase();
-    if (_fileExt !== '.jpg' && _fileExt !== '.jpeg' && _fileExt !== '.png') {
+    if (_fileExt !== ".jpg" && _fileExt !== ".jpeg" && _fileExt !== ".png") {
       return;
     }
     setTimeout(() => {
       let originImgs = imgs;
       let checkImgs = [];
-      for(let j=0;j<file.length;j++){
+      for (let j = 0; j < file.length; j++) {
         let chk = true;
-        for(let i =0;i<originImgs.length;i++){
-          if(originImgs[i]['name'] === file[j]['name'])
-          {
+        for (let i = 0; i < originImgs.length; i++) {
+          if (originImgs[i]["name"] === file[j]["name"]) {
             chk = false;
             break;
           }
         }
-        if(chk){
+        if (chk) {
           checkImgs.push(file[j]);
         }
       }
       let _imgByte = imgByte;
       for (let i = 0; i < checkImgs.length; i++) {
-        getImgSource(checkImgs[i]).then(value => {
-          _imgByte.push({ name: checkImgs[i]['name'], imgByte: value });
+        getImgSource(checkImgs[i]).then((value) => {
+          _imgByte.push({ name: checkImgs[i]["name"], imgByte: value });
         });
       }
       setImgs(imgs.concat(checkImgs));
@@ -175,7 +175,7 @@ export default function CreateNotice(props) {
 
   async function getImgSource(file) {
     return new Promise((resolve, reject) => {
-      let contents = '';
+      let contents = "";
       const reader = new FileReader();
       reader.onloadend = function(e) {
         contents = e.target.result;
@@ -185,26 +185,32 @@ export default function CreateNotice(props) {
     });
   }
 
-  const fileUpload = file => {
-    const fileName = file[0]['name'];
+  const fileUpload = (file) => {
+    const fileName = file[0]["name"];
     let _fileLen = fileName.length;
-    let _lastDot = fileName.lastIndexOf('.');
+    let _lastDot = fileName.lastIndexOf(".");
     let _fileExt = fileName.substring(_lastDot, _fileLen).toLowerCase();
-    if (_fileExt === '.exe' || _fileExt === '.jpg' || _fileExt === '.jpeg' || _fileExt === '.png' || _fileExt === '.gif') {
+    if (
+      _fileExt === ".exe" ||
+      _fileExt === ".jpg" ||
+      _fileExt === ".jpeg" ||
+      _fileExt === ".png" ||
+      _fileExt === ".gif"
+    ) {
       return;
     }
     setTimeout(() => {
       let originFile = files;
       let checkFile = [];
-      for(let i =0;i<file.length;i++){
+      for (let i = 0; i < file.length; i++) {
         let chk = true;
-        for(let j=0;j<originFile.length;j++){
-          if(file[i]['name'] === originFile[j]['name']){
-            chk = false;   
+        for (let j = 0; j < originFile.length; j++) {
+          if (file[i]["name"] === originFile[j]["name"]) {
+            chk = false;
             break;
           }
         }
-        if(chk){
+        if (chk) {
           checkFile.push(file[i]);
         }
       }
@@ -214,17 +220,17 @@ export default function CreateNotice(props) {
     setProgressState(true);
   };
 
-  const fileUploadResult = res => {
+  const fileUploadResult = (res) => {
     console.log(res);
   };
 
-  const imgHandleDelete = name => {
-    setImgByte(imgByte.filter(value=>value['name']!== name));
-    setImgs(imgs.filter(value => value['name'] !== name));
+  const imgHandleDelete = (name) => {
+    setImgByte(imgByte.filter((value) => value["name"] !== name));
+    setImgs(imgs.filter((value) => value["name"] !== name));
   };
 
-  const handleDelete = name => {
-    setFiles(files.filter(value => value['name'] != name));
+  const handleDelete = (name) => {
+    setFiles(files.filter((value) => value["name"] != name));
   };
 
   const handleChange = () => {
@@ -232,20 +238,23 @@ export default function CreateNotice(props) {
   };
 
   useEffect(() => {
-    setOpen(props['open']);
+    setOpen(props["open"]);
     setFiles([]);
-  }, [props['open']]);
+  }, [props["open"]]);
 
   return (
     <div>
       <Dialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={open}>
+        open={open}
+      >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           공지사항 등록
           <br />
-          <span style={{ fontSize: 15 }}>공지사항의 기본 정보를 입력합니다.</span>
+          <span style={{ fontSize: 15 }}>
+            공지사항의 기본 정보를 입력합니다.
+          </span>
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={4}>
@@ -265,14 +274,22 @@ export default function CreateNotice(props) {
               {imgProgressState ? (
                 <LinearProgress color="secondary" style={{ marginTop: 5 }} />
               ) : null}
-              <div style={{display:'flex',overflowX:"auto",marginTop:15}}>
+              <div
+                style={{ display: "flex", overflowX: "auto", marginTop: 15 }}
+              >
                 {imgByte.length !== 0
                   ? imgByte.map((img, idx) => {
                       return (
                         <div key={idx}>
-                          {img['name']}<br/>
-                          <img style={{width:100,height:100}} src={img['imgByte']}/>
-                          <IconButton onClick={()=>imgHandleDelete(img['name'])}>
+                          {img["name"]}
+                          <br />
+                          <img
+                            style={{ width: 100, height: 100 }}
+                            src={img["imgByte"]}
+                          />
+                          <IconButton
+                            onClick={() => imgHandleDelete(img["name"])}
+                          >
                             <HighlightOffIcon />
                           </IconButton>
                         </div>
@@ -286,13 +303,13 @@ export default function CreateNotice(props) {
               {files.length !== 0
                 ? files.map((file, idx) => {
                     return (
-                      <div key={idx} style={{ textAlign: 'center' }}>
+                      <div key={idx} style={{ textAlign: "center" }}>
                         <br />
                         <Chip
                           variant="outlined"
-                          label={file['name']}
+                          label={file["name"]}
                           color="secondary"
-                          onDelete={() => handleDelete(file['name'])}
+                          onDelete={() => handleDelete(file["name"])}
                         />
                       </div>
                     );
