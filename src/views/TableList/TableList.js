@@ -22,6 +22,8 @@ import { bugs, website, server } from "variables/general.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import BoardView from "components/BoardView/BoardView.js";
 
+import CreateNotice from './component/CreateNotice';
+
 const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
@@ -68,6 +70,8 @@ const theme = createMuiTheme({
 });
 
 export default function TableList() {
+  const [createNoticeState,setCreateNoticeState] = useState(false);
+
   const [pagingTheme, setPagingTheme] = useState(
     createMuiTheme({
       overrides: {
@@ -121,7 +125,7 @@ export default function TableList() {
   }
 
   const createNotice = () => {
-
+    setCreateNoticeState(true);
   }
 
   return (
@@ -289,6 +293,7 @@ export default function TableList() {
           </ThemeProvider>
         </GridItem>
       </GridContainer>
+      <CreateNotice open={createNoticeState} handleClose={()=>setCreateNoticeState(false)}/>
     </div>
   );
 }
