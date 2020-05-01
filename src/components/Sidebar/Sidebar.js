@@ -80,7 +80,9 @@ export default function Sidebar(props) {
         className={classNames(classes.logoLink, {
           [classes.logoLinkRTL]: props.rtlActive
         })}
-        onClick={(e)=>e.preventDefault()}
+        onClick={(e)=>{
+          props['history'].push("/admin/main");
+          e.preventDefault()}}
       >
         <div className={classes.logoImage}>
           <img src={logo} alt="logo" className={classes.img} />

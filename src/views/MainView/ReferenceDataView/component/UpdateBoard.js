@@ -128,12 +128,12 @@ export default function CreateNotice(props) {
         title: name.current.value,
         content: content.current.value,
       };
-      axiosPut.putContainsData("http://localhost:8090/api/teamManage/freeBoard/" + props['data']['data']['seq'],createNoticeSuccess,createNoticeError,createNoticeInfo);
+      axiosPut.putContainsData("http://localhost:8090/api/teamManage/referenceData/" + props['data']['data']['seq'],createNoticeSuccess,createNoticeError,createNoticeInfo);
     }
   };
 
   const createNoticeSuccess = (res) => {
-    props.messageBoxHandle(true,"자유게시판 수정 완료",2000,'success');
+    props.messageBoxHandle(true,"참고자료 수정 완료",2000,'success');
     props['updateList']();
     handleClose();
   }
@@ -155,7 +155,7 @@ export default function CreateNotice(props) {
     let data = new FormData();
     for(let i =0;i<file.length;i++)
       data.append("files",file[i]);
-    axiosPost.postFileUpload("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/IMG",successFileUpload,data);  
+    axiosPost.postFileUpload("http://localhost:8090/api/teamManage/referenceData/"+props['data']['data']['seq']+"/fileUpload/IMG",successFileUpload,data);  
     setTimeout(() => {
       let originImgs = imgs;
       let checkImgs = [];
@@ -214,7 +214,7 @@ export default function CreateNotice(props) {
     let data = new FormData();
     for(let i =0;i<file.length;i++)
       data.append("files",file[i]);
-    axiosPost.postFileUpload("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/FILE",successFileUpload,data);    
+    axiosPost.postFileUpload("http://localhost:8090/api/teamManage/referenceData/"+props['data']['data']['seq']+"/fileUpload/FILE",successFileUpload,data);    
     setTimeout(() => {
       let originFile = files;
       let checkFile = [];
@@ -241,7 +241,7 @@ export default function CreateNotice(props) {
   }
 
   const imgHandleDelete = name => {
-    axiosPost.postNotContainsData("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/"+name+"/delete",deleteSuccessImg,deleteErrorImg);
+    axiosPost.postNotContainsData("http://localhost:8090/api/teamManage/referenceData/"+props['data']['data']['seq']+"/fileUpload/"+name+"/delete",deleteSuccessImg,deleteErrorImg);
     setImgByte(imgByte.filter(value=>value['name']!== name));
     setImgs(imgs.filter(value => value['name'] !== name));
   };
@@ -255,7 +255,7 @@ export default function CreateNotice(props) {
   }
 
   const handleDelete = name => {
-    axiosPost.postNotContainsData("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/"+name+"/delete",deleteSuccessImg,deleteErrorImg);
+    axiosPost.postNotContainsData("http://localhost:8090/api/teamManage/referenceData/"+props['data']['data']['seq']+"/fileUpload/"+name+"/delete",deleteSuccessImg,deleteErrorImg);
     setFiles(files.filter(value => value['name'] != name));
   };
 
@@ -288,7 +288,7 @@ export default function CreateNotice(props) {
         aria-labelledby="customized-dialog-title"
         open={open}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          자유게시판 수정
+          참고자료 수정
           <br />
         </DialogTitle>
         <DialogContent dividers>

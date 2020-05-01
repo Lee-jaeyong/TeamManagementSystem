@@ -116,7 +116,7 @@ export default function SignUpList(props){
             <span style={{fontSize:20}}>
               {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? " [팀 코드 : "+ teamInfo['code'] + "]" : "" : null}</span>{teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<Button onClick={copyCode} variant="outlined" color="secondary" style={{marginLeft:10}}>복사하기</Button>) : "" : null}</h3>
             {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<div id="teamCode" style={{display:'none'}}>{teamInfo['code']}</div>) : null : null}
-            <p className={classes.cardCategory}>
+            <div className={classes.cardCategory}>
                 {teamInfo ? teamInfo['description'] : null}
                 <AvatarGroup max={teamInfo ? teamInfo['joinPerson'].length + 1 : 0}>
                     {teamInfo ? teamInfo['joinPerson'].map((person,idx)=>{
@@ -125,7 +125,7 @@ export default function SignUpList(props){
                         )
                     }) : null}
                 </AvatarGroup>
-            </p>
+            </div>
             <br/>
             {teamInfo ? teamInfo['startDate'] : null} ~ {teamInfo ? teamInfo['endDate'] : null}
             <Chip style={{marginLeft:10}} color="primary" label={
@@ -134,7 +134,7 @@ export default function SignUpList(props){
             <Chip style={{marginLeft:10}} label={teamInfo ? "팀장 : " +  teamInfo['teamLeader']['name'] : null} color="secondary"/>
             <Grid container style={{marginTop:20,marginLeft:20}}>
                 <Grid item sm={12} md={1}>
-                    <Chip label={"현재 진척도"} color=""/>
+                    <Chip label={"현재 진척도"} color="primary"/>
                 </Grid>
                 <Grid item sm={12} md={8}>
                     <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={teamInfo ? teamInfo['progress'] : 0} />

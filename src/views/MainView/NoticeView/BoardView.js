@@ -137,11 +137,11 @@ export default function BoardView(props) {
   };
 
   const deleteYesClick = () => {
-    axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/freeBoard/" + props['data']['data']['seq'],deleteSuccess);
+    axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/notice/" + props['data']['data']['seq'],deleteSuccess);
   }
 
   const deleteSuccess = (res) => {
-    props.messageBoxHandle(true,"자유게시판 삭제 완료",2000,'success');
+    props.messageBoxHandle(true,"공지사항 삭제 완료",2000,'success');
     props.updateList();
     handleClose();
   }
@@ -244,7 +244,7 @@ export default function BoardView(props) {
             subheader={data ? data['data']['date'] : null}
           />
           {
-            data ? data['data']['fileList'].map((files,idx)=>{
+            data ? data['data']['noticeFileAndImg'].map((files,idx)=>{
               if(files['type'] === 'FILE'){
                 return (
                   <Chip
@@ -253,7 +253,7 @@ export default function BoardView(props) {
                     avatar={<GetAppIcon />}
                     label={files['name']}
                     onClick={() => {
-                      axiosGet.getFileDownload("http://localhost:8090/api/teamManage/freeBoard/" + data['data']['seq'] + "/downloadFile/" + files['name'],files['name']);
+                      axiosGet.getFileDownload("http://localhost:8090/api/teamManage/notice/" + data['data']['seq'] + "/downloadFile/" + files['name'],files['name']);
                     }}
                     size="small"
                     variant="outlined"
@@ -334,7 +334,7 @@ export default function BoardView(props) {
           </Collapse>
         </Card>
         <UpdateBoard open={updateBoardState} messageBoxHandle={props['messageBoxHandle']} updateList={updateList} handleClose={()=>sestUpdateBoardState(false)} images={images} data={props['data']}/>
-        <ConfirmDialog title={"자유게시판 삭제"} content={"정말 자유게시판을 삭제하시겠습니까?"} yseClick={deleteYesClick} open={deleteState} handleClose={()=>setDeleteState(false)}/>
+        <ConfirmDialog title={"공지사항 삭제"} content={"정말 공지사항을 삭제하시겠습니까?"} yseClick={deleteYesClick} open={deleteState} handleClose={()=>setDeleteState(false)}/>
       </Dialog>
     </div>
   );

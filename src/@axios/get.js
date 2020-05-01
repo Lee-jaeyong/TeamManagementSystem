@@ -9,7 +9,6 @@ export async function getFileDownload(URL,fileName){
         },
         responseType: 'blob'
     }).then((res)=>{
-        console.log(res);
         const url = window.URL.createObjectURL(
             new Blob([res.data], {
              type: res.headers['content-type']

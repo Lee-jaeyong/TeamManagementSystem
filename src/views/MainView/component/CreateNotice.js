@@ -29,7 +29,6 @@ import Typography from '@material-ui/core/Typography';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import MessageBox from 'components/MessageBox/MessageBox';
 
-import * as axiosPut from '@axios/put';
 import * as axiosPost from '@axios/post';
 
 import FileUpload from './FileUpload.js';
@@ -79,8 +78,6 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 export default function CreateNotice(props) {
-  const {data} = props;
-
   const name = useRef([]);
   const content = useRef([]);
 
@@ -124,18 +121,50 @@ export default function CreateNotice(props) {
       messageBoxHandle(true,"내용을 입력해주세요",2000,'error');
       content.current.focus();
     }else{
-      const createNoticeInfo = {
+      const createInfo = {
         title: name.current.value,
         content: content.current.value,
       };
-      axiosPut.putContainsData("http://localhost:8090/api/teamManage/freeBoard/" + props['data']['data']['seq'],createNoticeSuccess,createNoticeError,createNoticeInfo);
+      axiosPost.postContainsData("http://localhost:8090/api/teamManage/"+props['createState']['type']+"/" + props['idx'],createNoticeSuccess,createNoticeError,createInfo);
     }
   };
 
   const createNoticeSuccess = (res) => {
-    props.messageBoxHandle(true,"자유게시판 수정 완료",2000,'success');
+    if(imgs.length === 0 && files.length === 0){
+      props.messageBoxHandle(true,props['createState']['text']+" 등록 완료",2000,'success');
+      props['updateList']();
+      handleClose();
+      return;
+    }
+    let seq = res['seq'];
+    if(imgs.length > 0){
+      let data = new FormData();
+      for(let i =0;i<imgs.length;i++){
+        data.append("files",imgs[i]);
+      }
+      axiosPost.postFileUpload("http://localhost:8090/api/teamManage/"+props['createState']['type']+"/" + seq + "/fileUpload/IMG",ImgUploadSuccess,data);
+    }
+    if(files.length > 0){
+      let data = new FormData();
+      for(let i =0;i<files.length;i++){
+        data.append("files",files[i]);
+      }
+      axiosPost.postFileUpload("http://localhost:8090/api/teamManage/"+props['createState']['type']+"/" + seq + "/fileUpload/FILE",FileUploadSuccess,data);
+    }
+  }
+
+  const FileUploadSuccess = (res) => {
+    props.messageBoxHandle(true,props['createState']['text']+" 등록 완료",2000,'success');
     props['updateList']();
     handleClose();
+  }
+
+  const ImgUploadSuccess = (res) => {
+    if(files.length === 0){
+      props.messageBoxHandle(true,props['createState']['text']+" 등록 완료",2000,'success');
+      props['updateList']();
+      handleClose();
+    }
   }
 
   const createNoticeError = (res) => {
@@ -152,10 +181,6 @@ export default function CreateNotice(props) {
         return;
       }
     }
-    let data = new FormData();
-    for(let i =0;i<file.length;i++)
-      data.append("files",file[i]);
-    axiosPost.postFileUpload("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/IMG",successFileUpload,data);  
     setTimeout(() => {
       let originImgs = imgs;
       let checkImgs = [];
@@ -211,10 +236,6 @@ export default function CreateNotice(props) {
         return;
       }
     }
-    let data = new FormData();
-    for(let i =0;i<file.length;i++)
-      data.append("files",file[i]);
-    axiosPost.postFileUpload("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/FILE",successFileUpload,data);    
     setTimeout(() => {
       let originFile = files;
       let checkFile = [];
@@ -236,49 +257,18 @@ export default function CreateNotice(props) {
     setProgressState(true);
   };
 
-  const successFileUpload = (res) => {
-    messageBoxHandle(true,"등록 완료",2000,'success');
-  }
-
   const imgHandleDelete = name => {
-    axiosPost.postNotContainsData("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/"+name+"/delete",deleteSuccessImg,deleteErrorImg);
     setImgByte(imgByte.filter(value=>value['name']!== name));
     setImgs(imgs.filter(value => value['name'] !== name));
   };
-  
-  const deleteSuccessImg = (name) => {
-    messageBoxHandle(true,"삭제 완료",2000,'success');
-  }
-
-  const deleteErrorImg = (error) =>{
-    messageBoxHandle(true,"삭제 도중 문제가 발생했습니다.",2000,'error');
-  }
 
   const handleDelete = name => {
-    axiosPost.postNotContainsData("http://localhost:8090/api/teamManage/freeBoard/"+props['data']['data']['seq']+"/fileUpload/"+name+"/delete",deleteSuccessImg,deleteErrorImg);
     setFiles(files.filter(value => value['name'] != name));
   };
 
   useEffect(() => {
     setOpen(props['open']);
     setFiles([]);
-    if(props['data']){
-      let imageArr = [];
-      let fileArr = [];
-      for(let i =0;i<props['data']['image'].length;i++){
-        imageArr.push({
-          name : props['data']['data']['fileList'][i]['name'],
-          imgByte : props['images'][i]
-        })
-      }
-      for(let i =0;i<props['data']['data']['fileList'].length;i++){
-        if(props['data']['data']['fileList'][i]['type'] === 'FILE'){
-          fileArr.push(props['data']['data']['fileList'][i]);
-        }
-      }
-      setFiles(fileArr);
-      setImgByte(imageArr);
-    }
   }, [props['open']]);
 
   return (
@@ -288,8 +278,9 @@ export default function CreateNotice(props) {
         aria-labelledby="customized-dialog-title"
         open={open}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          자유게시판 수정
+          {props['createState']['title']}
           <br />
+          <span style={{ fontSize: 15 }}>{props['createState']['content']}</span>
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={4}>
@@ -300,7 +291,7 @@ export default function CreateNotice(props) {
                 name="name"
                 fullWidth
                 label="제목*"
-                defaultValue={data ? data['data']['title'] : null}
+                defaultValue=" "
                 placeholder="제목을 입력하세요."
               />
             </Grid>
@@ -353,7 +344,7 @@ export default function CreateNotice(props) {
                 multiline
                 fullWidth
                 rows="10"
-                defaultValue={data ? data['data']['content'] : null}
+                defaultValue=" "
                 variant="outlined"
               />
             </Grid>
@@ -361,7 +352,7 @@ export default function CreateNotice(props) {
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={btnSubmit} color="primary">
-            수 정
+            등 록
           </Button>
         </DialogActions>
       <MessageBox

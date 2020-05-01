@@ -21,6 +21,7 @@ export default function ConfirmDialog(props) {
 
   useEffect(()=>{
     setOpen(props['open']);
+    console.log(props);
   },[props['open']]);
 
   return (

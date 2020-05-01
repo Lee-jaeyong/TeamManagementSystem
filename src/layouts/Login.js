@@ -101,7 +101,7 @@ export default function Admin({ ...rest }) {
   }
   
   const loginSuccess = () => {
-    rest['history'].push('/admin/dashboard/1');
+    rest['history'].push('/admin/main');
   }
 
   // initialize and destroy the PerfectScrollbar plugin

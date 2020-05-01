@@ -23,6 +23,7 @@ import CustomTabs from "components/CustomTabs/CustomTabs.js";
 
 import BoardView from "./NoticeView/BoardView";
 import ReferenceView from './ReferenceDataView/BoardView';
+import FreeBoardView from './FreeBoard/BoardView';
 
 import CreateNotice from './component/CreateNotice';
 import MessageBox from 'components/MessageBox/MessageBox';
@@ -120,6 +121,11 @@ export default function TableList(props) {
   const [dialogHandle, setDialogHandle] = useState(false);
   const [contentsSeq, setContentsSeq] = useState();
 
+  const viewFreeboard = (seq) => {
+    selectNoticeInfo('freeBoard',seq);
+    setFreeBoardReadDialog(true);
+  }
+
   const viewReferenceData = (seq) => {
     selectNoticeInfo('referenceData',seq);
     setReferenceDialog(true);
@@ -145,7 +151,13 @@ export default function TableList(props) {
       axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/"+type+"/" + seq,selectNoticeInfoSuccess);
     else if(type === 'referenceData'){
       axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/"+type+"/" + seq,selectReferenceDataInfoSuccess);
-    }  
+    }else if(type === 'freeBoard'){
+      axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/"+type+"/" + seq,selectFreeBoardSuccess);
+    }
+  }
+
+  const selectFreeBoardSuccess = res => {
+    setSelectFreeBoard(res);
   }
 
   const selectReferenceDataInfoSuccess = res => {
@@ -282,6 +294,13 @@ export default function TableList(props) {
         messageBoxHandle={messageBoxHandle}
         handleClose={() => setReferenceDialog(false)}
       />
+      <FreeBoardView
+        data={selectFreeBoard}
+        open={freeBoardReadDialog}
+        updateList={()=>pageMove(0)}
+        messageBoxHandle={messageBoxHandle}
+        handleClose={() => setFreeBoardReadDialog(false)}
+      />
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <CustomTabs
@@ -332,7 +351,7 @@ export default function TableList(props) {
                 tabContent: (
                   <Table
                     customButton={<div style={{marginTop:10, textAlign:"right"}}><Button onClick={createBoard} variant="contained" color="secondary">글쓰기</Button></div>}
-                    sellClick={viewBoard}
+                    sellClick={viewFreeboard}
                     pointer
                     tableHeaderColor="danger"
                     tableHead={["No.", "이름", "제목", "날짜"]}
