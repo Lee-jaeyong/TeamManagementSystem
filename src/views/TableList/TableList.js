@@ -20,7 +20,10 @@ import CardBody from "components/Card/CardBody.js";
 import Tasks from "components/Tasks/Tasks.js";
 import { bugs, website, server } from "variables/general.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
-import BoardView from "components/BoardView/BoardView.js";
+
+import BoardView from "./NoticeView/BoardView";
+import ReferenceView from './ReferenceDataView/BoardView';
+import FreeBoardView from './FreeBoard/BoardView';
 
 import CreateNotice from './component/CreateNotice';
 import MessageBox from 'components/MessageBox/MessageBox';
@@ -75,10 +78,27 @@ const theme = createMuiTheme({
 
 export default function TableList(props) {
   const [noticeList,setNoticeList] = useState([]);
+  const [referenceDataList,setReferenceDataList] = useState([]);
+  const [freeBoardList,setFreeBoardList] = useState([]);
+
+  const [referenceDialog,setReferenceDialog] = useState(false);
+  const [freeBoardReadDialog,setFreeBoardReadDialog] = useState(false);
+
   const [selectBoard,setSelectBoard] = useState();
+  const [selectReferenceData,setSelectReferenceData] = useState();
+  const [selectFreeBoard,setSelectFreeBoard] = useState();
+
   const [createNoticeState,setCreateNoticeState] = useState(false);
   const [tabIndex,setTabIndex] = useState(0);
   const [page,setPage] = useState(1);
+  const [selectType,setSelectType] = useState('notice');
+  const [createDialogState,setCreateDialogState] = useState({
+    title : '',
+    content : '',
+    type : '',
+    text : ''
+  })
+
   const [totalPage,setTotalPage] = useState(0);
   const [teamLeader,setTeamLeader] = useState();
   const [pagingTheme, setPagingTheme] = useState(
@@ -100,10 +120,19 @@ export default function TableList(props) {
 
   const [dialogHandle, setDialogHandle] = useState(false);
   const [contentsSeq, setContentsSeq] = useState();
+
+  const viewFreeboard = (seq) => {
+    selectNoticeInfo('freeBoard',seq);
+    setFreeBoardReadDialog(true);
+  }
+
+  const viewReferenceData = (seq) => {
+    selectNoticeInfo('referenceData',seq);
+    setReferenceDialog(true);
+  }
+
   const viewBoard = (seq) => {
-    if(tabIndex === 0){
-      selectNoticeInfo(seq)
-    }
+    selectNoticeInfo('notice',seq);
     setContentsSeq(seq);
     setDialogHandle(true);
   };
@@ -117,8 +146,22 @@ export default function TableList(props) {
     }
   );
 
-  const selectNoticeInfo = seq => {
-    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/notice/" + seq,selectNoticeInfoSuccess);
+  const selectNoticeInfo = (type,seq) => {
+    if(type === 'notice')
+      axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/"+type+"/" + seq,selectNoticeInfoSuccess);
+    else if(type === 'referenceData'){
+      axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/"+type+"/" + seq,selectReferenceDataInfoSuccess);
+    }else if(type === 'freeBoard'){
+      axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/"+type+"/" + seq,selectFreeBoardSuccess);
+    }
+  }
+
+  const selectFreeBoardSuccess = res => {
+    setSelectFreeBoard(res);
+  }
+
+  const selectReferenceDataInfoSuccess = res => {
+    setSelectReferenceData(res);
   }
 
   const selectNoticeInfoSuccess = res =>{
@@ -137,6 +180,16 @@ export default function TableList(props) {
   const pagingAreaChange = (value) => {
     setPage(0);
     setTabIndex(value);
+    if(value === 0){
+      setSelectType('notice');
+      getList(0,'notice');
+    }else if(value === 1){
+      setSelectType('referenceData');
+      getList(0,'referenceData');
+    }else if(value === 2){
+      setSelectType('freeBoard');
+      getList(0,'freeBoard');
+    }
     let color = ["#9c27b0", "#57af5b", "#e63d39"];
     setPagingTheme(
       createMuiTheme({
@@ -158,47 +211,76 @@ export default function TableList(props) {
 
   const pageMove = (number) =>{
     setPage(number);
-    if(tabIndex === 0){
-      getNoticeList(number);
-    }
+    getList(number,selectType);
   }
 
-  const getNoticeList = (number) => {
+  const getList = (number,type) => {
+    if(!type) type = 'notice';
     setPage(number);
     const data = {
       page : number - 1,
       size : 10
     }
-    axiosGet.getContainsData("http://localhost:8090/api/teamManage/notice/"+props.match.params.idx+"/all",getNoticeListSuccess,data,true);
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/"+type+"/"+props.match.params.idx+"/all",getNoticeListSuccess,data,true,type);
   }
 
-  const getNoticeListSuccess = (res) => {
+  const getNoticeListSuccess = (res,type) => {
     if(!res['_embedded'])
-      return;
+    return;
     setTotalPage(Math.ceil(res['page']['totalElements']/10));
     let resultArr = [];
-    const _noticeList = res['_embedded']['noticeList'];
+    const _noticeList = res['_embedded'][type+'List'];
     for(let i =0;i<_noticeList.length;i++){
       resultArr.push([_noticeList[i]['seq'],_noticeList[i]['user']['name'],_noticeList[i]['title'],_noticeList[i]['date']]);
     }
-    setTeamLeader(_noticeList[0]['user']['id']);
-    setNoticeList(resultArr);
+    if(type==='notice'){
+      setTeamLeader(_noticeList[0]['user']['id']);
+      setNoticeList(resultArr);
+    }
+    else if(type === 'referenceData'){
+      setReferenceDataList(resultArr);
+    }else if(type === 'freeBoard'){
+      setFreeBoardList(resultArr);
+    }
   }
 
   const createBoard = () => {
-    
+    setCreateNoticeState(true);
+    setCreateDialogState({
+      title : "자유게시판 등록",
+      content : "자유게시판의 기본 정보를 입력합니다.",
+      type:'freeBoard',
+      text : "자유게시판"
+    })
   }
   
   const createReferenceData = () => {
-
+    setCreateNoticeState(true);
+    setCreateDialogState({
+      title : "참고자료 등록",
+      content : "참고자료의 기본 정보를 입력합니다.",
+      type:'referenceData',
+      text : "참고자료"
+    })
   }
-
+  
   const createNotice = () => {
     setCreateNoticeState(true);
+    setCreateDialogState({
+      title : "공지사항 등록",
+      content : "공지사항의 기본 정보를 입력합니다.",
+      type:'notice',
+      text : "공지사항"
+    })
+  }
+
+  function topScroll(){
+    document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
   }
 
   useEffect(()=>{
-    getNoticeList(1);
+    getList(1,'notice');
+    topScroll();
   },[]);
 
   return (
@@ -209,6 +291,20 @@ export default function TableList(props) {
         updateList={()=>pageMove(0)}
         messageBoxHandle={messageBoxHandle}
         handleClose={() => setDialogHandle(false)}
+      />
+      <ReferenceView
+        data={selectReferenceData}
+        open={referenceDialog}
+        updateList={()=>pageMove(0)}
+        messageBoxHandle={messageBoxHandle}
+        handleClose={() => setReferenceDialog(false)}
+      />
+      <FreeBoardView
+        data={selectFreeBoard}
+        open={freeBoardReadDialog}
+        updateList={()=>pageMove(0)}
+        messageBoxHandle={messageBoxHandle}
+        handleClose={() => setFreeBoardReadDialog(false)}
       />
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
@@ -246,42 +342,11 @@ export default function TableList(props) {
                 tabContent: (
                   <Table
                     customButton={<div style={{marginTop:10, textAlign:"right"}}><Button onClick={createReferenceData} variant="contained" color="secondary">글쓰기</Button></div>}
-                    sellClick={viewBoard}
+                    sellClick={viewReferenceData}
                     pointer
                     tableHeaderColor="success"
                     tableHead={["No.", "이름", "제목", "날짜"]}
-                    tableData={[
-                      ["1", "이재용", "튜터링 2차 참고자료.", "2020.04.16"],
-                      ["2", "윤지원", "모임관련 공지사항입니다.", "2020.04.16"],
-                      ["3", "윤재원", "일정관리 공지입니다.", "2020.04.16"],
-                      ["4", "장유나", "튜터링 공지사항입니다", "2020.04.16"],
-                      [
-                        "5",
-                        "이재용",
-                        "4월18일 생일관련공지입니다.",
-                        "2020.04.16",
-                      ],
-                      [
-                        "6",
-                        "이재용",
-                        "2020년04년16일 모임에관하여",
-                        "2020.04.16",
-                      ],
-                      ["7", "윤지원", "으아아아아아", "2020.04.16"],
-                      [
-                        "8",
-                        "윤재원",
-                        "뭘 사용해야 할지 모르겠어요",
-                        "2020.04.16",
-                      ],
-                      ["9", "장유나", "악동뮤지션 노래 좋음", "2020.04.16"],
-                      [
-                        "10",
-                        "이재용",
-                        "볼빨간사춘기 노래도 좋음",
-                        "2020.04.16",
-                      ],
-                    ]}
+                    tableData={referenceDataList}
                   />
                 ),
               },
@@ -291,47 +356,11 @@ export default function TableList(props) {
                 tabContent: (
                   <Table
                     customButton={<div style={{marginTop:10, textAlign:"right"}}><Button onClick={createBoard} variant="contained" color="secondary">글쓰기</Button></div>}
-                    sellClick={viewBoard}
+                    sellClick={viewFreeboard}
                     pointer
                     tableHeaderColor="danger"
                     tableHead={["No.", "이름", "제목", "날짜"]}
-                    tableData={[
-                      [
-                        "1",
-                        "이재용",
-                        "2020년04년16일 모임에관한 게시글",
-                        "2020.04.16",
-                      ],
-                      ["2", "윤지원", "으아아아아아", "2020.04.16"],
-                      [
-                        "3",
-                        "윤재원",
-                        "뭘 사용해야 할지 모르겠어요",
-                        "2020.04.16",
-                      ],
-                      ["4", "장유나", "악동뮤지션 노래 좋음", "2020.04.16"],
-                      ["5", "이재용", "볼빨간사춘기 노래도 좋음", "2020.04.16"],
-                      [
-                        "6",
-                        "이재용",
-                        "2020년04년16일 모임에관하여",
-                        "2020.04.16",
-                      ],
-                      ["7", "윤지원", "으아아아아아", "2020.04.16"],
-                      [
-                        "8",
-                        "윤재원",
-                        "뭘 사용해야 할지 모르겠어요",
-                        "2020.04.16",
-                      ],
-                      ["9", "장유나", "악동뮤지션 노래 좋음", "2020.04.16"],
-                      [
-                        "10",
-                        "이재용",
-                        "볼빨간사춘기 노래도 좋음",
-                        "2020.04.16",
-                      ],
-                    ]}
+                    tableData={freeBoardList}
                   />
                 ),
               },
@@ -346,7 +375,9 @@ export default function TableList(props) {
           </ThemeProvider>
         </GridItem>
       </GridContainer>
-      <CreateNotice updateList={()=>getNoticeList(0)} messageBoxHandle={messageBoxHandle} idx={props.match.params.idx} open={createNoticeState} handleClose={()=>setCreateNoticeState(false)}/>
+      <CreateNotice
+      createState={createDialogState}
+      updateList={()=>getList(0,selectType)} messageBoxHandle={messageBoxHandle} idx={props.match.params.idx} open={createNoticeState} handleClose={()=>setCreateNoticeState(false)}/>
       <MessageBox
           open={showMessageState}
           content={MessageBoxState['content']}

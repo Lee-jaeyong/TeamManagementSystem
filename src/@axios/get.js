@@ -9,7 +9,6 @@ export async function getFileDownload(URL,fileName){
         },
         responseType: 'blob'
     }).then((res)=>{
-        console.log(res);
         const url = window.URL.createObjectURL(
             new Blob([res.data], {
              type: res.headers['content-type']
@@ -34,7 +33,7 @@ export async function getNotContainsData(URL,func){
     );
 }
 
-export async function getContainsData(URL,func,data,auth){
+export async function getContainsData(URL,func,data,auth,otherData){
     let _dataArr = [];
     for(let key in data){
         _dataArr.push(key);
@@ -54,7 +53,12 @@ export async function getContainsData(URL,func,data,auth){
                 Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
             }
         }).then(
-            res=>func(res.data)
+            res=>{
+                if(otherData)
+                func(res.data,otherData)
+                else
+                func(res.data)
+            }
         );
     }else
     {
@@ -63,7 +67,12 @@ export async function getContainsData(URL,func,data,auth){
             method: 'get',
             data: data,
         }).then(
-            res=>func(res.data)
+            res=>{
+                if(otherData)
+                func(res.data,otherData)
+                else
+                func(res.data)
+            }
         );
     }
 }

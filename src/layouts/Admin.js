@@ -40,7 +40,7 @@ const switchRoutes = (
     <Route
       path={'/login'}
     />
-    <Redirect from="/admin" to="/admin/dashboard/1" />
+    <Redirect from="/admin" to="/admin/main" />
   </Switch>
 );
 

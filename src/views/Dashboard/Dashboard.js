@@ -37,11 +37,67 @@ export default function Dashboard(props) {
   const [teamInfo,setTeamInfo] = useState();
   const [signUpList,setSignUplist] = useState(false);
   const [plan,setPlan] = useState([]);
+
+  const [referenceDataList,setReferenceDataList] = useState([]);
+  const [referenceDataCount,setReferenceDataCount] = useState([]);
+
+  const [freeBoardList,setFreeBoardList] = useState([]);
+  const [freeBoardCount,setFreeBoardCount] = useState([]);
+
   const [chartData,setChartData] = useState([]);
 
   useEffect(() => {
   }, [props.match.params.idx]);
 
+  const getReferenceData = () => {
+    const data = {
+      page : 0,
+      size : 5
+    }
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/referenceData/"+props.match.params.idx+"/all",getReferenceDataSuccess,data,true);
+  }
+
+  const getReferenceDataSuccess = (res) => {
+    if(!res['_embedded']){
+      setReferenceDataCount([]);
+      setReferenceDataList([]);
+      return;
+    }
+    const data = res['_embedded']['referenceDataList'];
+    let resultArr = [];
+    let resultCount = [];
+    for(let i =0;i<data.length;i++){
+      resultArr.push([data[i]['title']]);
+      resultCount.push(i);
+    }
+    setReferenceDataList(resultArr);
+    setReferenceDataCount(resultCount);
+  }
+  
+  const getFreeBoard = () => {
+    const data = {
+      page : 0,
+      size : 5
+    }
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/freeBoard/"+props.match.params.idx+"/all",getFreeBoardSuccess,data,true);
+  }
+  
+  const getFreeBoardSuccess = (res) => {
+    if(!res['_embedded']){
+      setFreeBoardCount([]);
+      setFreeBoardList([]);
+      return;
+    }
+    const data = res['_embedded']['freeBoardList'];
+    let resultArr = [];
+    let resultCount = [];
+    for(let i =0;i<data.length;i++){
+      resultArr.push([data[i]['title']]);
+      resultCount.push(i);
+    }
+    setFreeBoardList(resultArr);
+    setFreeBoardCount(resultCount);  
+  }
 
   const updatePlan = () => {
     let page = {
@@ -121,6 +177,8 @@ export default function Dashboard(props) {
 
   useEffect(()=>{
     updatePlan();
+    getReferenceData();
+    getFreeBoard();
   },[props.match.params.idx]);
 
   return (
@@ -186,9 +244,9 @@ export default function Dashboard(props) {
                 tabIcon: Code,
                 tabContent: (
                   <Tasks
-                    checkedIndexes={[0]}
-                    tasksIndexes={[0, 1]}
-                    tasks={website}
+                    checkedIndexes={[]}
+                    tasksIndexes={referenceDataCount}
+                    tasks={referenceDataList}
                   />
                 ),
               },
@@ -197,9 +255,9 @@ export default function Dashboard(props) {
                 tabIcon: Cloud,
                 tabContent: (
                   <Tasks
-                    checkedIndexes={[1]}
-                    tasksIndexes={[0, 1, 2]}
-                    tasks={server}
+                    checkedIndexes={[]}
+                    tasksIndexes={freeBoardCount}
+                    tasks={freeBoardList}
                   />
                 ),
               },

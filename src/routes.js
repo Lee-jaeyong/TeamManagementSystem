@@ -35,6 +35,7 @@ import NotificationsPage from "views/Notifications/Notifications.js";
 import schedulerView from "views/Canendal/Calendal.js";
 import TodoListPage from "views/TodoList/TodoList";
 import MyPage from "views/MyPage/MyPage.js";
+import MainViewPage from 'views/MainView/MainView'
 
 // core components/views for RTL layout
 import RTLPage from "views/RTLPage/RTLPage.js";
@@ -45,6 +46,13 @@ const dashboardRoutes = [
     name: "Dashboard",
     icon: Dashboard,
     component: DashboardPage,
+    layout: "/admin",
+  },
+  {
+    path: "/main",
+    name: "MainView",
+    icon: Dashboard,
+    component: MainViewPage,
     layout: "/admin",
   },
   {

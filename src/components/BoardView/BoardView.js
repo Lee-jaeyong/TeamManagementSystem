@@ -182,7 +182,6 @@ export default function BoardView(props) {
     props['updateList']();
     handleClose();
   }
-
   useEffect(() => {
     setOpen(props["open"]);
     setImages([]);
@@ -244,7 +243,7 @@ export default function BoardView(props) {
             subheader={data ? data['data']['date'] : null}
           />
           {
-            data ? data['data']['noticeFileAndImg'].map((files,idx)=>{
+            data ? data['data']['fileList'].map((files,idx)=>{
               if(files['type'] === 'FILE'){
                 return (
                   <Chip
