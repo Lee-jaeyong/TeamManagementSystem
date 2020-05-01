@@ -25,6 +25,11 @@ export default function Sidebar(props) {
   function activeRoute(routeName) {
     return window.location.href.indexOf(routeName) > -1 ? true : false;
   }
+
+  function topScroll(){
+    document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
+  }
+
   const { color, logo, image, logoText, routes } = props;
   var links = (
     <List className={classes.list}>
@@ -43,6 +48,7 @@ export default function Sidebar(props) {
             className={activePro + classes.item}
             activeClassName="active"
             key={key}
+            onClick={topScroll}
           >
             <ListItem button className={classes.itemLink + listItemClasses}>
               {typeof prop.icon === "string" ? (

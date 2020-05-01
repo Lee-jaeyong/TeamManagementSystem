@@ -226,8 +226,13 @@ export default function TableList(props) {
     setTodoList(resultArr);
   }
 
+  function topScroll(){
+    document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
+  }
+
   useEffect(()=>{
     getPlanListUnFinished(page);
+    topScroll();
   },[]);
 
   return (

@@ -144,6 +144,10 @@ export default function App(props) {
     return new Date(value).getTime();
   }
 
+  function topScroll(){
+    document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
+  }
+
   useEffect(()=>{
     let planArr = [];
     for(let i =0;i<mockData.length;i++){
@@ -151,6 +155,7 @@ export default function App(props) {
     }
     setPlan(planArr);
     updatePlanList();
+    topScroll();
   },[]);
 
   return (
