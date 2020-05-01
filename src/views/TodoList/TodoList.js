@@ -227,8 +227,9 @@ export default function TableList(props) {
   }
 
   function topScroll(){
-    document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
-  }
+    try{
+      document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
+    }catch{}  }
 
   useEffect(()=>{
     getPlanListUnFinished(page);

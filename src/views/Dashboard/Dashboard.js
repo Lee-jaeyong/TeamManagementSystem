@@ -7,7 +7,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import BugReport from "@material-ui/icons/BugReport";
 import Code from "@material-ui/icons/Code";
 import Cloud from "@material-ui/icons/Cloud";
-
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -45,7 +46,7 @@ export default function Dashboard(props) {
   const [freeBoardCount,setFreeBoardCount] = useState([]);
 
   const [chartData,setChartData] = useState([]);
-
+  
   useEffect(() => {
   }, [props.match.params.idx]);
 
@@ -176,12 +177,21 @@ export default function Dashboard(props) {
   };
 
   useEffect(()=>{
-    updatePlan();
-    getReferenceData();
-    getFreeBoard();
+    setTeamInfo(null);
+    setTimeout(() => {
+      updatePlan();
+      getReferenceData();
+      getFreeBoard();
+    }, 1000);
   },[props.match.params.idx]);
 
   return (
+    !teamInfo ? (
+      <Backdrop className={classes.backdrop} open={true}>
+        <CircularProgress color="primary" />
+      </Backdrop>
+    ) : 
+    (
     <div id="section">
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
@@ -266,5 +276,6 @@ export default function Dashboard(props) {
         </GridItem>
       </GridContainer>
     </div>
+    )
   );
 }
