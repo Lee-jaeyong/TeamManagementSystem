@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -52,6 +52,21 @@ export default function MyPageProject(props) {
     setPastProjectTabValue(newValue);
   };
 
+  const [unfinishedProjectTapData, setUnfinishedProjectTapData] = useState();
+  const [finishedProjectTapData, setFinishedProjectTapData] = useState();
+
+  useEffect(() => {
+    setUnfinishedProjectTapData(
+      progressProjectTabValue == 0 ? props.joinProject : props.unfinishedProject
+    );
+  }, [progressProjectTabValue]);
+
+  useEffect(() => {
+    setFinishedProjectTapData(
+      pastProjectTabValue == 0 ? props.finishedProject : props.outProject
+    );
+  }, [pastProjectTabValue]);
+
   return (
     <Card className={classes.cardSize}>
       <CardHeader color="warning">
@@ -83,9 +98,9 @@ export default function MyPageProject(props) {
                 </Tooltip>
               </Tabs>
               <Divider />
-              {props.joinProject
-                ? // console.log(props.joinProject[0]["project"])
-                  props.joinProject.map((data, idx) => {
+
+              {unfinishedProjectTapData
+                ? unfinishedProjectTapData.map((data, idx) => {
                     return (
                       <div key={idx}>
                         <ListItem button>
@@ -131,41 +146,43 @@ export default function MyPageProject(props) {
                 <Tab label="탈퇴한 프로젝트" />
               </Tabs>
               <Divider />
-              <ListItem button>
-                <Grid container>
-                  <ListItemText
-                    style={{ marginRight: 15, marginTop: 10 }}
-                    id="projectName"
-                    primary="C언어 프로젝트"
-                  />
-                  <ListItemAvatar style={{ float: "right" }}>
-                    <AvatarGroup max={3}>
-                      <Avatar alt="이" src="/images/dlwodyd.png" />
-                      <Avatar alt="Travis Howard" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                    </AvatarGroup>
-                  </ListItemAvatar>
-                </Grid>
-              </ListItem>
-              <Divider />
-              <ListItem button>
-                <Grid container>
-                  <ListItemText
-                    style={{ marginRight: 15, marginTop: 10 }}
-                    id="projectName"
-                    primary="C언어 프로젝트"
-                  />
-                  <ListItemAvatar style={{ float: "right" }}>
-                    <AvatarGroup max={3}>
-                      <Avatar alt="이" src="/images/dlwodyd.png" />
-                      <Avatar alt="Travis Howard" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                      <Avatar alt="Cindy Baker" src="/images/dlwodyd.png" />
-                    </AvatarGroup>
-                  </ListItemAvatar>
-                </Grid>
-              </ListItem>
+              {finishedProjectTapData ? (
+                finishedProjectTapData.map((data, idx) => {
+                  return (
+                    <div key={idx}>
+                      <ListItem button>
+                        <Grid container>
+                          <ListItemText
+                            style={{ marginRight: 15, marginTop: 10 }}
+                            id="projectName"
+                            primary={data["project"]}
+                          />
+                          <ListItemAvatar style={{ float: "right" }}>
+                            <AvatarGroup max={3}>
+                              {data["userImgs"]
+                                ? data["userImgs"].map((img, idx) => {
+                                    return <Avatar key={idx} src={img} />;
+                                  })
+                                : null}
+                            </AvatarGroup>
+                          </ListItemAvatar>
+                        </Grid>
+                      </ListItem>
+                      <Divider />
+                    </div>
+                  );
+                })
+              ) : (
+                <ListItem button>
+                  <Grid container>
+                    <ListItemText
+                      style={{ marginRight: 15, marginTop: 10 }}
+                      id="projectName"
+                      primary="데이터가 없습니다."
+                    />
+                  </Grid>
+                </ListItem>
+              )}
             </Paper>
           </Grid>
         </Grid>

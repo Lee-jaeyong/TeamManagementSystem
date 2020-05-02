@@ -18,7 +18,7 @@ import Typography from "@material-ui/core/Typography";
 
 export default function UpdateProfileDlg(props) {
   const [open, setOpen] = useState(props["open"]);
-  const [email, setEmail] = useState("jiwon_3261@naver.com");
+  const [email, setEmail] = useState(props.email);
 
   const handleClose = () => {
     props.updateDlgClose();
@@ -67,7 +67,7 @@ export default function UpdateProfileDlg(props) {
           justify="center"
         >
           <Typography variant="h5" component="h5">
-            윤지원
+            {props.name}
             <Divider />
           </Typography>
         </Grid>
@@ -78,7 +78,7 @@ export default function UpdateProfileDlg(props) {
               style={{ width: "100% " }}
               id="myId"
               label="ID"
-              value="jiwon_3261"
+              value={props.id}
               readOnly
             />
           </Grid>

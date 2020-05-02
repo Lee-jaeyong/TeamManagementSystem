@@ -73,15 +73,18 @@ export default function Profile(props) {
       >
         <div style={{ position: "relative", top: -60 }}>
           <StyledBadge
-            onClick={() => {
-              setImgUpdateOpen(true);
-            }}
             overlap="circle"
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "right",
             }}
-            badgeContent={<CreateIcon />}
+            badgeContent={
+              <CreateIcon
+                onClick={() => {
+                  setImgUpdateOpen(true);
+                }}
+              />
+            }
           >
             <Avatar
               style={{
@@ -136,6 +139,9 @@ export default function Profile(props) {
         </IconButton>
       </Grid>
       <UpdateProfileDlg
+        name={props.userName}
+        email={props.userEmail}
+        id={props.userId}
         open={updateOpen}
         updateDlgClose={() => {
           setUpdateOpen(false);
