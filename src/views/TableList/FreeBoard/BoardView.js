@@ -46,7 +46,7 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 800,
+    
   },
   media: {
     height: 0,
@@ -204,18 +204,20 @@ export default function BoardView(props) {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
-        maxWidth="md"
+        maxWidth="lg"
+        fullWidth
         scroll="body"
       >
-        <Card className={cardClasses.root}>
+        <Card>
           <CardHeader
             avatar={
               <Avatar aria-label="recipe" className={cardClasses.avatar}>
-                {mockData.userImg}
               </Avatar>
             }
             action={
-              <ThemeProvider theme={theme}>
+                <ThemeProvider theme={theme}>
+                {
+                props['data'] ? props['data']['data']['user']['id'] === localStorage.getItem("ID") ? (
                 <SpeedDial
                   ariaLabel="SpeedDial example"
                   hidden={hidden}
@@ -238,6 +240,7 @@ export default function BoardView(props) {
                     onClick={deleteClick}
                   />
                 </SpeedDial>
+                ) : null : null}
               </ThemeProvider>
             }
             title={data ? data['data']['title'] : null}
@@ -305,33 +308,6 @@ export default function BoardView(props) {
           <CardContent>
             <Typography paragraph>{data ? data['data']['content'] : null}</Typography>
           </CardContent>
-          <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
-              <FavoriteIcon />
-            </IconButton>
-            <IconButton aria-label="share">
-              <ShareIcon />
-            </IconButton>
-            <IconButton
-              className={clsx(cardClasses.expand, {
-                [cardClasses.expandOpen]: expanded,
-              })}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more"
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </CardActions>
-          <Collapse in={true} timeout="auto" unmountOnExit>
-            <CardContent>
-              <Typography paragraph>댓 글:</Typography>
-              <Typography paragraph>
-                Heat 1/2 cup of the broth in a pot until simmering, add saffron
-                and set aside for 10 minutes.
-              </Typography>
-            </CardContent>
-          </Collapse>
         </Card>
         <UpdateBoard open={updateBoardState} messageBoxHandle={props['messageBoxHandle']} updateList={updateList} handleClose={()=>sestUpdateBoardState(false)} images={images} data={props['data']}/>
         <ConfirmDialog title={"자유게시판 삭제"} content={"정말 자유게시판을 삭제하시겠습니까?"} yseClick={deleteYesClick} open={deleteState} handleClose={()=>setDeleteState(false)}/>
