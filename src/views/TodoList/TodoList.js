@@ -7,6 +7,7 @@ import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import Pagination from "@material-ui/lab/Pagination";
 import { withStyles } from "@material-ui/core/styles";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import MessageBox from "components/MessageBox/MessageBox";
 
 import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
 // core components
@@ -19,9 +20,10 @@ import CardBody from "components/Card/CardBody.js";
 import Tasks from "components/Tasks/Tasks.js";
 import { bugs, website, server } from "variables/general.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
-import BoardView from "components/BoardView/BoardView.js";
 import Slider from '@material-ui/core/Slider';
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+import ShowSelectEvent from './component/ShowSelectEvent';
 
 import * as axiosGet from '@axios/get';
 
@@ -106,6 +108,18 @@ export default function TableList(props) {
   const [totalPage,setTotalPage] = useState(0);
   const [todoList,setTodoList] = useState([]);
   const [finishedTodoList,setFinishedTodoList] = useState([]);
+  const [selectEvent,setSelectEvent] = useState();
+  const [showSelectEventState,setShowSelectEventState] = useState(false);
+
+  const [showMessageState,setShowMessageState] = useState(false);
+  const [MessageBoxState,setMessageBoxState] = useState(
+    {
+      content : "",
+      level : "success",
+      time : 2000
+    }
+  );
+
   const [pagingTheme, setPagingTheme] = useState(
     createMuiTheme({
       overrides: {
@@ -184,11 +198,15 @@ export default function TableList(props) {
     if(!res['content'])
       return;
     const content = res['content'];
+    let count = 0;
     let resultArr = [];
     for(let i =0;i<content.length;i++){
-      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
+      if(content[i]['user']['id'] === localStorage.getItem('ID')){
+        resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
+        count++;
+      }
     }
-    setTotalPage(Math.ceil(res['page']['totalElements'] / 10));
+    setTotalPage(Math.ceil(count === 0 ? 1 : count / 10));
     setFinishedTodoList(resultArr);
   }
 
@@ -214,11 +232,16 @@ export default function TableList(props) {
     if(!res['content'])
       return;
     const content = res['content'];
+    let count = 0;
     let resultArr = [];
     for(let i =0;i<content.length;i++){
-      resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
+      if(content[i]['user']['id'] === localStorage.getItem("ID"))
+      {
+        resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
+        count++;
+      }
     }
-    setTotalPage(Math.ceil(res['page']['totalElements'] / 10));
+    setTotalPage(Math.ceil(count / 10));
     setTodoList(resultArr);
   }
 
@@ -228,6 +251,36 @@ export default function TableList(props) {
     }catch{}
   }
 
+  function updatePlanList(){
+    if(tabIndex === 0){
+      getPlanListUnFinished(0);
+    }else{
+      getPlenListFinished(0);
+    }
+  }
+
+  function selectEventHandle(eventTarget){
+    selectEventFilter(eventTarget);
+    setShowSelectEventState(true);
+  }
+
+  function selectEventFilter(groupId){
+    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/plan/"+groupId,selectEventSuccess);
+  }
+  
+  function selectEventSuccess(res){
+    setSelectEvent(res);
+  }
+
+  const messageBoxHandle = (show,content,time,level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content : content,
+      time : time,
+      level : level
+    })
+  }
+
   useEffect(()=>{
     getPlanListUnFinished(page);
     topScroll();
@@ -235,11 +288,12 @@ export default function TableList(props) {
 
   return (
     <div>
-      <BoardView
-        seq={contentsSeq}
-        open={dialogHandle}
-        handleClose={() => setDialogHandle(false)}
-      />
+      <ShowSelectEvent
+      messageBoxHandle={messageBoxHandle}
+      updatePlanList={updatePlanList}
+      event={selectEvent}
+      open={showSelectEventState}
+      handleClose={()=>setShowSelectEventState(false)}/>
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <CustomTabs
@@ -253,7 +307,7 @@ export default function TableList(props) {
                 tabIcon: NotificationsActiveIcon,
                 tabContent: (
                   <Table //테이블 간격 조절하는방법 모르겠음ㅎ..
-                    sellClick={viewBoard}
+                    sellClick={selectEventHandle}
                     pointer
                     tableHeaderColor="warning"
                     tableHead={["No.", "이름", "제목", "진척도","날짜"]}
@@ -266,7 +320,7 @@ export default function TableList(props) {
                 tabIcon: PermDataSettingIcon,
                 tabContent: (
                   <Table
-                    sellClick={viewBoard}
+                    sellClick={selectEventHandle}
                     pointer
                     tableHeaderColor="danger"
                     tableHead={["No.", "이름", "제목","진척도", "날짜"]}
@@ -287,6 +341,13 @@ export default function TableList(props) {
           </ThemeProvider>
         </GridItem>
       </GridContainer>
+      <MessageBox
+        open={showMessageState}
+        content={MessageBoxState["content"]}
+        level={MessageBoxState["level"]}
+        time={MessageBoxState["time"]}
+        handleClose={() => setShowMessageState(false)}
+      />
     </div>
   );
 }
