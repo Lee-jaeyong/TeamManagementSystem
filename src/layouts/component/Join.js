@@ -1,12 +1,16 @@
-import React,{useState,useEffect,useRef} from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
+import React, { useState, useEffect, useRef } from "react";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import { withStyles } from "@material-ui/core/styles";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import CreateIcon from "@material-ui/icons/Create";
+import Grid from "@material-ui/core/Grid";
+import Badge from "@material-ui/core/Badge";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 // core components
@@ -18,10 +22,10 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-import MessageBox from 'components/MessageBox/MessageBox';
+import MessageBox from "components/MessageBox/MessageBox";
 
-import * as axiosPost from '@axios/post';
-import * as axiosGet from '@axios/get';
+import * as axiosPost from "@axios/post";
+import * as axiosGet from "@axios/get";
 
 import avatar from "assets/img/faces/marc.jpg";
 
@@ -31,7 +35,7 @@ const styles = {
     margin: "0",
     fontSize: "14px",
     marginTop: "0",
-    marginBottom: "0"
+    marginBottom: "0",
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -40,9 +44,22 @@ const styles = {
     fontWeight: "300",
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
-    textDecoration: "none"
-  }
+    textDecoration: "none",
+  },
 };
+
+const StyledBadge = withStyles((theme) => ({
+  badge: {
+    backgroundColor: "#EAEAEA",
+    color: "#4C4C4C",
+    width: 30,
+    height: 30,
+    borderRadius: "50%",
+    "&:hover": {
+      backgroundColor: "white",
+    },
+  },
+}))(Badge);
 
 const useStyles = makeStyles(styles);
 
@@ -52,130 +69,182 @@ export default function FormDialog(props) {
   const passCheck = useRef();
   const email = useRef();
   const name = useRef();
-
   const classes = useStyles();
+  const imgUpload = useRef();
+  const [dupCheck, setDupCheck] = useState(null);
+  const [open, setOpen] = useState(props["open"]);
+  const [showMessageState, setShowMessageState] = useState(false);
+  const [MessageBoxState, setMessageBoxState] = useState({
+    content: "",
+    level: "success",
+    time: 2000,
+  });
 
-  const [dupCheck,setDupCheck] = useState(null);
-  const [open, setOpen] = useState(props['open']);
-  const [showMessageState,setShowMessageState] = useState(false);
-  const [MessageBoxState,setMessageBoxState] = useState(
-    {
-      content : "",
-      level : "success",
-      time : 2000
-    }
-  );
-
-  const messageBoxHandle = (show,content,time,level) => {
+  const messageBoxHandle = (show, content, time, level) => {
     setShowMessageState(show);
     setMessageBoxState({
-      content : content,
-      time : time,
-      level : level
-    })
-  }
+      content: content,
+      time: time,
+      level: level,
+    });
+  };
 
   const handleClose = () => {
     setOpen(false);
-    props['handleClose']();
+    props["handleClose"]();
   };
-  
+
   const joinSuccess = () => {
-    props.messageBoxHandle(true,"회원가입 완료",2000,'success');
+    props.messageBoxHandle(true, "회원가입 완료", 2000, "success");
     handleClose();
-  }
+  };
 
   const joinError = () => {
-    messageBoxHandle(true,"이메일 형식이 잘못되었습니다.",2000,'error');
+    messageBoxHandle(true, "이메일 형식이 잘못되었습니다.", 2000, "error");
     email.current.focus();
-  }
+  };
 
   const checkDupId = (input) => {
-    if(input.trim() === ''){
+    if (input.trim() === "") {
       setDupCheck(null);
       return;
     }
-    axiosGet.getContainsData("http://localhost:8090/api/users/dupId",getResponse,{id:input},false);
-    function getResponse(data){
+    axiosGet.getContainsData(
+      "http://localhost:8090/api/users/dupId",
+      getResponse,
+      { id: input },
+      false
+    );
+    function getResponse(data) {
       setDupCheck(data);
     }
-  }
+  };
 
   const joinHandle = () => {
-    if(id.current.value.trim() === ''){
-      messageBoxHandle(true,"아이디를 입력해주세요.",2000,'error');
+    if (id.current.value.trim() === "") {
+      messageBoxHandle(true, "아이디를 입력해주세요.", 2000, "error");
       id.current.focus();
-    }else if(pass.current.value.trim() === ''){
-      messageBoxHandle(true,"비밀번호를 입력해주세요.",2000,'error');
+    } else if (pass.current.value.trim() === "") {
+      messageBoxHandle(true, "비밀번호를 입력해주세요.", 2000, "error");
       pass.current.focus();
-    }else if(passCheck.current.value.trim() === ''){
-      messageBoxHandle(true,"비밀번호 체크를 입력해주세요.",2000,'error');
+    } else if (passCheck.current.value.trim() === "") {
+      messageBoxHandle(true, "비밀번호 체크를 입력해주세요.", 2000, "error");
       passCheck.current.focus();
-    }else if(email.current.value.trim() === ''){
-      messageBoxHandle(true,"이메일을 입력해주세요.",2000,'error');
+    } else if (email.current.value.trim() === "") {
+      messageBoxHandle(true, "이메일을 입력해주세요.", 2000, "error");
       email.current.focus();
-    }else if(name.current.value.trim() === ''){
-      messageBoxHandle(true,"이름을 입력해주세요.",2000,'error');
+    } else if (name.current.value.trim() === "") {
+      messageBoxHandle(true, "이름을 입력해주세요.", 2000, "error");
       name.current.focus();
-    }else if(dupCheck){
-      messageBoxHandle(true,"중복된 아이디가 존재합니다.",2000,'error');
+    } else if (dupCheck) {
+      messageBoxHandle(true, "중복된 아이디가 존재합니다.", 2000, "error");
       id.current.focus();
-    }
-    else if(pass.current.value !== passCheck.current.value){
-      messageBoxHandle(true,"비밀번호와 비밀번호 체크란이 일치하지 않습니다.",2000,'error');
+    } else if (pass.current.value !== passCheck.current.value) {
+      messageBoxHandle(
+        true,
+        "비밀번호와 비밀번호 체크란이 일치하지 않습니다.",
+        2000,
+        "error"
+      );
       pass.current.focus();
-    }
-    else{
+    } else {
       const user = {
-        id:id.current.value,
-        pass :pass.current.value,
-        email:email.current.value,
-        name : name.current.value
-      }
-      axiosPost.postContainsData("http://localhost:8090/api/users",joinSuccess,joinError,user);
+        id: id.current.value,
+        pass: pass.current.value,
+        email: email.current.value,
+        name: name.current.value,
+      };
+      axiosPost.postContainsData(
+        "http://localhost:8090/api/users",
+        joinSuccess,
+        joinError,
+        user
+      );
     }
+  };
+
+  const triggerImgUpload = () =>{
+    imgUpload.current.click();
   }
 
-  useEffect(()=>{
-    if(props['open']){
+  useEffect(() => {
+    if (props["open"]) {
       setOpen(true);
       setDupCheck(null);
     }
-  },[props['open']]);
+  }, [props["open"]]);
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
         <DialogContent>
-        <GridContainer>
-        <GridItem xs={12} sm={12} md={12}>
-          <Card>
-            <CardHeader color="warning">
-              <h4 className={classes.cardTitleWhite}>회원 가입</h4>
-                  <p className={classes.cardCategoryWhite}>사용자의 기본 정보를 입력합니다.</p>
+          <GridContainer>
+            <GridItem xs={12} sm={12} md={12}>
+              <Card>
+                <CardHeader color="warning">
+                  <h4 className={classes.cardTitleWhite}>회원 가입</h4>
+                  <p className={classes.cardCategoryWhite}>
+                    사용자의 기본 정보를 입력합니다.
+                  </p>
                 </CardHeader>
                 <CardBody>
                   <GridContainer>
+                    <Grid
+                      container
+                      spacing={0}
+                      direction="column"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <Grid item xs={12} sm={12} md={12} style={{marginTop:20}}>
+                        <input type="file" ref={imgUpload} style={{display:"none"}}></input>
+                        <StyledBadge
+                          overlap="circle"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          badgeContent={
+                            <CreateIcon
+                              onClick={triggerImgUpload}
+                            />
+                          }
+                        >
+                          <Avatar
+                            style={{
+                              width: 120,
+                              height: 120,
+                              boxShadow: "2px 2px 7px 2px #939393",
+                            }}
+                            alt="Remy Sharp"
+                            src=""
+                          />
+                        </StyledBadge>
+                      </Grid>
+                    </Grid>
                     <GridItem xs={12} sm={12} md={12}>
                       <CustomInput
                         inputRef={id}
                         labelText="아이디"
                         id="username"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
-                        onKeyUp={(e)=>checkDupId(e.target.value)}
+                        onKeyUp={(e) => checkDupId(e.target.value)}
                       />
-                      {
-                        dupCheck ? (
-                          <div style={{color:'red'}}>
-                            * 중복되는 아이디가 존재합니다.
-                          </div>
-                        ): dupCheck === null ? null :
-                         <div style={{color:'blue'}}>
-                            * 사용 가능한 아이디입니다.
-                          </div>
-                      }
+                      {dupCheck ? (
+                        <div style={{ color: "red" }}>
+                          * 중복되는 아이디가 존재합니다.
+                        </div>
+                      ) : dupCheck === null ? null : (
+                        <div style={{ color: "blue" }}>
+                          * 사용 가능한 아이디입니다.
+                        </div>
+                      )}
                     </GridItem>
                     <GridItem xs={12} sm={12} md={12}>
                       <CustomInput
@@ -183,7 +252,7 @@ export default function FormDialog(props) {
                         labelText="이메일"
                         id="email-address"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                       />
                     </GridItem>
@@ -195,7 +264,7 @@ export default function FormDialog(props) {
                         labelText="이름"
                         id="first-name"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                       />
                     </GridItem>
@@ -206,7 +275,7 @@ export default function FormDialog(props) {
                         labelText="비밀번호"
                         id="last-name"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                       />
                     </GridItem>
@@ -217,7 +286,7 @@ export default function FormDialog(props) {
                         labelText="비밀번호 재입력"
                         id="last-name"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                       />
                     </GridItem>
@@ -237,10 +306,10 @@ export default function FormDialog(props) {
         </DialogActions>
         <MessageBox
           open={showMessageState}
-          content={MessageBoxState['content']}
-          level={MessageBoxState['level']}
-          time={MessageBoxState['time']}
-          handleClose={()=>setShowMessageState(false)}
+          content={MessageBoxState["content"]}
+          level={MessageBoxState["level"]}
+          time={MessageBoxState["time"]}
+          handleClose={() => setShowMessageState(false)}
         />
       </Dialog>
     </div>

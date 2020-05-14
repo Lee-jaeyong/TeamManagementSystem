@@ -33,27 +33,29 @@ export default function Profile(props) {
   const [updateOpen, setUpdateOpen] = useState(false);
   const [imgUpdateOpen, setImgUpdateOpen] = useState(false);
   useEffect(() => {
-    document
-      .getElementsByClassName("makeStyles-mainPanel-2")[0]
-      .addEventListener("scroll", (event) => {
-        if (
-          props["history"]["location"]["pathname"] === "/admin/myPage" &&
-          window.innerWidth > 600
-        ) {
-          document.getElementById("profileSection").style.animationDirection =
-            ".10s";
-          document.getElementById(
-            "profileSection"
-          ).style.top = document
-            .getElementsByClassName("ps__rail-x")[0]
-            .style.bottom.substring(
-              1,
-              document.getElementsByClassName("ps__rail-x")[0].style.bottom
-                .length
-            );
-        }
+    try{
+      document 
+        .getElementsByClassName("makeStyles-mainPanel-2")[0]
+        .addEventListener("scroll", (event) => {
+          if (
+            props["history"]["location"]["pathname"] === "/admin/myPage" &&
+            window.innerWidth > 600
+          ) {
+            document.getElementById("profileSection").style.animationDirection =
+              ".10s";
+            document.getElementById(
+              "profileSection"
+            ).style.top = document
+              .getElementsByClassName("ps__rail-x")[0]
+              .style.bottom.substring(
+                1,
+                document.getElementsByClassName("ps__rail-x")[0].style.bottom
+                  .length
+              );
+          }
       });
-  }, []);
+    }catch{}
+  });
   return (
     <Paper
       id="profileSection"
