@@ -13,17 +13,17 @@ import CardFooter from "components/Card/CardFooter.js";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
-import GroupIcon from '@material-ui/icons/Group';
-import Chip from '@material-ui/core/Chip';
 import IconButton from '@material-ui/core/IconButton';
 import Slider from '@material-ui/core/Slider';
 import CreateIcon from '@material-ui/icons/Create';
 import Tooltip from '@material-ui/core/Tooltip';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import MessageBox from 'components/MessageBox/MessageBox';
 import UpdateTeamDialog from './component/UpdateTeamDialog';
+import bgImage from "assets/img/teamInfoBack.jpg";
 
 const useStyles = makeStyles(styles);
 
@@ -99,50 +99,38 @@ export default function SignUpList(props){
     return (
         <Card>
             <CardHeader color={teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? "rose" : "warning" : null} stats icon>
-                <CardIcon color={teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? "rose" : "warning" : null}>
-                    <GroupIcon />
-                </CardIcon>
-                {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<div>
-                    <Tooltip title="수정">
-                        <IconButton aria-label="update" onClick={updateTeamHandle}>
-                            <CreateIcon />
-                        </IconButton>
-                    </Tooltip>
-                </div>
-                ) : null : null}
             </CardHeader>
             <CardBody>
-            <h3 className={classes.cardTitle}><strong>{teamInfo ? teamInfo['name'] : null}</strong>
+            <br/>
+            <br/>
+            <span style={{fontSize:20}}><span style={{fontSize:15}}>Since...</span> {teamInfo ? teamInfo['startDate'] : null} ~ {teamInfo ? teamInfo['endDate'] : null}</span>
+            {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (
+              <Tooltip title="수정" style={{position:"relative", top:-5}}>
+                <IconButton aria-label="update" onClick={updateTeamHandle}>
+                  <CreateIcon />
+                </IconButton>
+              </Tooltip>
+             ) : null : null}
+            <h1 className={classes.cardTitle}><strong>{teamInfo ? teamInfo['name'] : null}</strong>
             <span style={{fontSize:20}}>
-              {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? " [팀 코드 : "+ teamInfo['code'] + "]" : "" : null}</span>{teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<Button onClick={copyCode} variant="outlined" color="secondary" style={{marginLeft:10}}>복사하기</Button>) : "" : null}</h3>
+            {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? " [팀 코드 : "+ teamInfo['code'] + "]" : "" : null}</span>{teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<Button onClick={copyCode} variant="outlined" color="secondary" style={{marginLeft:10}}>복사하기</Button>) : "" : null}</h1>
             {teamInfo ? teamInfo['teamLeader']['id'] === localStorage.getItem("ID") ? (<div id="teamCode" style={{display:'none'}}>{teamInfo['code']}</div>) : null : null}
+            <Divider/>
             <div className={classes.cardCategory}>
-                {teamInfo ? teamInfo['description'] : null}
-                <AvatarGroup max={teamInfo ? teamInfo['joinPerson'].length + 1 : 0}>
-                    {teamInfo ? teamInfo['joinPerson'].map((person,idx)=>{
+                <span style={{fontSize:22}}>{teamInfo ? teamInfo['description'] : null}</span>
+                {teamInfo ? teamInfo['joinPerson'] ? (
+                <AvatarGroup style={{marginTop:20}} max={teamInfo ? teamInfo['joinPerson'] ? teamInfo['joinPerson'].length + 1 : 1 : 1}>
+                    <Avatar alt="" src="/static/images/avatar/1.jpg" />
+                    {teamInfo ? teamInfo['joinPerson'] ? teamInfo['joinPerson'].map((person,idx)=>{
                         return (
-                            <Avatar key={idx} alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                            <Avatar key={idx} alt="" src="/static/images/avatar/1.jpg" />
                         )
-                    }) : null}
+                    }) : null : null}
                 </AvatarGroup>
+                ) : <Avatar alt="" style={{marginTop:20}} src="/static/images/avatar/1.jpg" /> : ""}
             </div>
             <br/>
-            {teamInfo ? teamInfo['startDate'] : null} ~ {teamInfo ? teamInfo['endDate'] : null}
-            <Chip style={{marginLeft:10}} color="primary" label={
-                teamInfo ? parseInt((new Date(teamInfo['endDate']).getTime() - new Date().getTime()) / 86400000) + 1 + " 일 남음" : null
-            }/>
-            <Chip style={{marginLeft:10}} label={teamInfo ? "팀장 : " +  teamInfo['teamLeader']['name'] : null} color="secondary"/>
-            <Grid container style={{marginTop:20,marginLeft:20}}>
-                <Grid item sm={12} md={1}>
-                    <Chip label={"현재 진척도"} color="primary"/>
-                </Grid>
-                <Grid item sm={12} md={8}>
-                    <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={teamInfo ? teamInfo['progress'] : 0} />
-                </Grid>
-            </Grid>
             </CardBody>
-            <CardFooter chart>
-            </CardFooter>
             <UpdateTeamDialog updateTeamInfo={props.updateTeamInfo} messageBoxHandle={messageBoxHandle} team={teamInfo} open={updateTeam} handleClose={()=>setUpdateTeam(false)}/>
             <MessageBox
                 open={showMessageState}

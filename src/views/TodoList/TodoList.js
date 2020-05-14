@@ -21,6 +21,7 @@ import { bugs, website, server } from "variables/general.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import BoardView from "components/BoardView/BoardView.js";
 import Slider from '@material-ui/core/Slider';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import * as axiosGet from '@axios/get';
 
@@ -150,6 +151,8 @@ export default function TableList(props) {
   };
 
   const pageMove = (number) => {
+    if(page === number)
+      return;
     setPage(number);
     if(tabIndex === 0)
       getPlanListUnFinished(number);
@@ -160,7 +163,8 @@ export default function TableList(props) {
   const tabChangeHandle = (value) => {
     setTabIndex(value);
     pagingAreaChange(value);
-    setPage(0);
+    setPage(1);
+    setTotalPage(null);
     if(value === 0){
       getPlanListUnFinished(0);
     }else if(value === 1){
@@ -174,21 +178,17 @@ export default function TableList(props) {
       size:10
     }
     axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/finished",getPlanListFinishedSuccess,data,true);
-    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/finished/count",getPlanCountFinishedSuccess,true);
-  }
-
-  const getPlanCountFinishedSuccess = (res) => {
-    setTotalPage(Math.ceil(res['content'] / 10));
   }
 
   const getPlanListFinishedSuccess = (res) => {
-    if(!res['_embedded'])
+    if(!res['content'])
       return;
-    const content = res['_embedded']['planByUserList'];
+    const content = res['content'];
     let resultArr = [];
     for(let i =0;i<content.length;i++){
       resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
     }
+    setTotalPage(Math.ceil(res['page']['totalElements'] / 10));
     setFinishedTodoList(resultArr);
   }
 
@@ -201,7 +201,6 @@ export default function TableList(props) {
       size:10
     }
     axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search",getPlanListUnFinishedSuccess,data,true);
-    axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/count",getPlanCountUnFinishedSuccess,data,true);
   }
 
   const dateMonthCheck = (value) => {
@@ -211,18 +210,15 @@ export default function TableList(props) {
     return check;
   }
 
-  const getPlanCountUnFinishedSuccess = (res) => {
-    setTotalPage(Math.ceil(res['content'] / 10));
-  }
-
   const getPlanListUnFinishedSuccess = (res) => {
-    if(!res['_embedded'])
+    if(!res['content'])
       return;
-    const content = res['_embedded']['planByUserList'];
+    const content = res['content'];
     let resultArr = [];
     for(let i =0;i<content.length;i++){
       resultArr.push([content[i]['seq'],content[i]['user']['name'],content[i]['content'],<PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" value={content[i]['progress']} />,content[i]['end']]);
     }
+    setTotalPage(Math.ceil(res['page']['totalElements'] / 10));
     setTodoList(resultArr);
   }
 
@@ -286,7 +282,9 @@ export default function TableList(props) {
       <GridContainer direction="column" alignItems="center" justify="center">
         <GridItem xs={12} sm={12} md={12}>
           <ThemeProvider theme={pagingTheme}>
-            <Pagination onChange={(event,number)=>pageMove(number)} count={totalPage} page={page} defaultPage={0} boundaryCount={2} />
+            {totalPage ? 
+            <Pagination onChange={(event,number)=>pageMove(number)} count={totalPage} boundaryCount={2} />
+            : <CircularProgress color="secondary" /> }
           </ThemeProvider>
         </GridItem>
       </GridContainer>

@@ -29,8 +29,7 @@ export default function Sidebar(props) {
   function topScroll(){
     try{
       document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
-    }catch{
-    }
+    }catch{}
   }
 
   const { color, logo, image, logoText, routes } = props;

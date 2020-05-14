@@ -26,7 +26,8 @@ export async function getNotContainsData(URL,func){
         url: URL,
         method: 'get',
         headers : {
-            Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
+            Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token'),
+            Accept:'application/x-spring-data-verbose+json'
         }
     }).then(
         res=>func(res.data)
@@ -50,7 +51,8 @@ export async function getContainsData(URL,func,data,auth,otherData){
             method: 'get',
             data: data,
             headers : {
-                Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')
+                Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token'),
+                Accept:'application/x-spring-data-verbose+json'
             }
         }).then(
             res=>{

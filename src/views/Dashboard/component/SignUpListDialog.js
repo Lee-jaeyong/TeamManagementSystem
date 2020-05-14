@@ -17,6 +17,7 @@ import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
 import FaildSignUp from './component/FaildSignUp';
 
 import * as axiosPatch from '@axios/patch';
+import * as axiosPut from '@axios/put';
 
 const useStyles = makeStyles({
   avatar: {
@@ -56,16 +57,17 @@ export default function SimpleDialogDemo(props) {
   const {signUpList} = props;
 
   const handleClose = () => {
-    setOpen(false);
     props['handleClose']();
+    setOpen(false);
   };
 
   const yesClickHandle = () => {
-    axiosPatch.patchNotContainsData("http://localhost:8090/api/teamManage/" + selectSignUp + "/joinTeam",signUpSuccess);
+    axiosPut.putNotContainsData("http://localhost:8090/api/teamManage/" + selectSignUp + "/joinTeam/success",signUpSuccess);
   }
 
   const signUpSuccess = (res) => {
     props.updateList();
+    messageBoxHandle(true,"승인 완료",2000,"success");
   }
 
   const selectHandle = (value) => {
