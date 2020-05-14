@@ -262,13 +262,14 @@ export default function CreateNotice(props) {
   useEffect(() => {
     setOpen(props['open']);
     setFiles([]);
-    if(props['data']){
+    console.log(props['data']);
+    if(props['data'] && props['data']['data']['noticeFileAndImg']){
       let imageArr = [];
       let fileArr = [];
       for(let i =0;i<props['data']['image'].length;i++){
         imageArr.push({
           name : props['data']['data']['noticeFileAndImg'][i]['name'],
-          imgByte : props['images'][i]
+          imgByte : "data:image/png;base64,"+props['data']['image'][i]
         })
       }
       for(let i =0;i<props['data']['data']['noticeFileAndImg'].length;i++){

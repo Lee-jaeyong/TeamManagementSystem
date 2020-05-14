@@ -101,15 +101,19 @@ export default function App(props) {
   }
   
   const updatePlanList = () => {
-    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/all",getPlanSuccess)
+    let data = {
+      size : 200,
+      page : 0
+    }
+    axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/all",getPlanSuccess,data,true,null)
   }
 
   const getPlanSuccess = (res) => {
-    if(!res['_embedded']){
+    if(!res['content']){
       setPlan([]);
       return;
     }
-    const content = res['_embedded']['planByUserList'];
+    const content = res['content'];
     let planList = [];
     for(let i =0;i<content.length;i++){
       planList.push(

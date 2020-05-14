@@ -126,7 +126,7 @@ export default function Admin({ ...rest }) {
   }
 
   const getTeamSuccess = (res) => {
-    const content = res['_embedded']['content'];
+    const content = res['content'];
     let contentArr = [];
     for(let i =0;i<content.length;i++){
       contentArr.push(

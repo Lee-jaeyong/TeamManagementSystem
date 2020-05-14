@@ -109,11 +109,13 @@ export default function SignUpList(props) {
   };
 
   const parseChartData = (data) => {
+    if(!data['content'])
+      return;
     let user = [];
     let value = [];
-    for (let i = 0; i < data.length; i++) {
-      user.push(data[i]["name"]);
-      value.push(data[i]["count"]);
+    for (let i = 0; i < data['content'].length; i++) {
+      user.push(data['content'][i]["name"]);
+      value.push(data['content'][i]["count"]);
     }
     setData({
       user: user,

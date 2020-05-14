@@ -137,7 +137,7 @@ export default function BoardView(props) {
   };
 
   const deleteYesClick = () => {
-    axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/notice/" + props['data']['data']['seq'],deleteSuccess);
+    axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/notice/" + props['seq'],deleteSuccess);
   }
 
   const deleteSuccess = (res) => {
@@ -190,13 +190,13 @@ export default function BoardView(props) {
 
   useEffect(()=>{
     let images = [];
-    if(props['data']){
+    if(props && props['data'] && props['data']['image']){
       for(let i =0;i<props['data']['image'].length;i++){
         images.push("data:image/png;base64,"+props['data']['image'][i]);
       }
     }
     setImages(images);
-  },[props['data']])
+  },[props])
 
   return (
     <div>
@@ -244,7 +244,7 @@ export default function BoardView(props) {
             subheader={data ? data['data']['date'] : null}
           />
           {
-            data ? data['data']['noticeFileAndImg'].map((files,idx)=>{
+            data ? data['data']['noticeFileAndImg'] ? data['data']['noticeFileAndImg'].map((files,idx)=>{
               if(files['type'] === 'FILE'){
                 return (
                   <Chip
@@ -260,7 +260,7 @@ export default function BoardView(props) {
                   />
                 )
               }
-            }) : null
+            }) : null : null
           }
           {
             data ? data['image'].length === 0 ? null : data['image'].length === 1 ? (
@@ -323,12 +323,9 @@ export default function BoardView(props) {
               <ExpandMoreIcon />
             </IconButton>
           </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Collapse in={true} timeout="auto" unmountOnExit>
             <CardContent>
-              <Typography paragraph>Method:</Typography>
               <Typography paragraph>
-                Heat 1/2 cup of the broth in a pot until simmering, add saffron
-                and set aside for 10 minutes.
               </Typography>
             </CardContent>
           </Collapse>

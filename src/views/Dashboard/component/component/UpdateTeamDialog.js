@@ -16,7 +16,9 @@ import {
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
+import Card from "components/Card/Card.js";
 
+import CardHeader from "components/Card/CardHeader.js";
 import * as axiosPut from "@axios/put";
 
 const PrettoSlider = withStyles({
@@ -88,22 +90,32 @@ export default function FormDialog(props) {
   };
 
   const updateTeamInfo = () => {
-    if(!startDate){
-      messageBoxHandle(true,"일정 시작일을 입력해주세요.",2000,'error');
-    }else if(!endDate){
-      messageBoxHandle(true,"일정 마감일을 입력해주세요.",2000,'error');
-    }else if(startDateError){
-      messageBoxHandle(true,"일정 시작일은 마감일보다 작아야합니다.",2000,'error');
-    }else if(endDateError){
-      messageBoxHandle(true,"일정 마감일은 시작일보다 커야합니다.",2000,'error');
-    }else if (description.current.value.trim() === "") {
+    if (!startDate) {
+      messageBoxHandle(true, "일정 시작일을 입력해주세요.", 2000, "error");
+    } else if (!endDate) {
+      messageBoxHandle(true, "일정 마감일을 입력해주세요.", 2000, "error");
+    } else if (startDateError) {
+      messageBoxHandle(
+        true,
+        "일정 시작일은 마감일보다 작아야합니다.",
+        2000,
+        "error"
+      );
+    } else if (endDateError) {
+      messageBoxHandle(
+        true,
+        "일정 마감일은 시작일보다 커야합니다.",
+        2000,
+        "error"
+      );
+    } else if (description.current.value.trim() === "") {
       messageBoxHandle(true, "팀의 목표를 입력해주세요.", 2000, "error");
       description.current.focus();
     } else {
       const team = {
         name: name.current.value,
-        startDate:dateFormat(startDate + ''),
-        endDate:dateFormat(endDate + ''),
+        startDate: dateFormat(startDate + ""),
+        endDate: dateFormat(endDate + ""),
         description: description.current.value,
         progress: progress.current.value,
       };
@@ -122,17 +134,16 @@ export default function FormDialog(props) {
     let month = dateMonthCheck(date.getMonth() + 1);
     let day = dateMonthCheck(date.getDate());
     return year + "-" + month + "-" + day;
-  }
+  };
 
   const dateMonthCheck = (value) => {
-    const check = value + '';
-    if(check.length === 1)
-      return "0"+check;
+    const check = value + "";
+    if (check.length === 1) return "0" + check;
     return check;
-  }
+  };
 
   const handleStartDateChange = (date) => {
-    if(date.toString() === 'Invalid Date'){
+    if (date.toString() === "Invalid Date") {
       setStartDateError("일정을 다시 입력해주세요");
       setStartDate(null);
       return;
@@ -155,7 +166,7 @@ export default function FormDialog(props) {
   };
 
   const handleEndDateChange = (date) => {
-    if(date.toString() === 'Invalid Date'){
+    if (date.toString() === "Invalid Date") {
       setEndDateError("일정을 다시 입력해주세요");
       setEndDate(null);
       return;
@@ -199,105 +210,123 @@ export default function FormDialog(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
+        PaperComponent="div"
       >
-        <DialogTitle id="form-dialog-title">팀 수정</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            팀(프로젝트)을 <strong>수정</strong>합니다.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            inputRef={name}
-            margin="dense"
-            id="name"
-            value={team ? team["name"] : null}
-            label="팀(프로젝트) 명"
-            disabled
-            fullWidth
-          />
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container>
-              <Grid item xs={5}>
-                <KeyboardDatePicker
-                  autoOk
-                  disableToolbar
-                  variant="inline"
-                  format="yyyy-MM-dd"
-                  margin="normal"
-                  id="startDate"
-                  label="시작날짜"
-                  error={startDateError ? true : false}
-                  helperText={startDateError}
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
-                  }}
-                />
+        <Card>
+          <CardHeader color="success">
+            <Typography variant="h6" component="h6">
+              팀 수정
+            </Typography>
+          </CardHeader>
+          <DialogContent>
+            <DialogContentText>
+              <br/>
+              팀(프로젝트)을 <strong>수정</strong>합니다.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              inputRef={name}
+              margin="dense"
+              id="name"
+              value={team ? team["name"] : null}
+              label="팀(프로젝트) 명"
+              disabled
+              fullWidth
+            />
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Grid container>
+                <Grid item xs={5}>
+                  <KeyboardDatePicker
+                    autoOk
+                    disableToolbar
+                    variant="inline"
+                    format="yyyy-MM-dd"
+                    margin="normal"
+                    id="startDate"
+                    label="시작날짜"
+                    error={startDateError ? true : false}
+                    helperText={startDateError}
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                    KeyboardButtonProps={{
+                      "aria-label": "change date",
+                    }}
+                  />
+                </Grid>
+                <Grid style={{ textAlign: "center" }} item xs={2}>
+                  <Typography
+                    variant="h4"
+                    component="h4"
+                    style={{ position: "relative", top: 20 }}
+                  >
+                    ~
+                  </Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <KeyboardDatePicker
+                    autoOk
+                    disableToolbar
+                    variant="inline"
+                    format="yyyy-MM-dd"
+                    error={endDateError ? true : false}
+                    helperText={endDateError}
+                    margin="normal"
+                    id="endDate"
+                    label="종료날짜"
+                    value={endDate}
+                    onChange={handleEndDateChange}
+                    KeyboardButtonProps={{
+                      "aria-label": "change date",
+                    }}
+                  />
+                </Grid>
               </Grid>
-              <Grid style={{ textAlign: "center" }} item xs={2}>
-                <Typography
-                  variant="h4"
-                  component="h4"
-                  style={{ position: "relative", top: 20 }}
-                >
-                  ~
-                </Typography>
-              </Grid>
-              <Grid item xs={5}>
-                <KeyboardDatePicker
-                  autoOk
-                  disableToolbar
-                  variant="inline"
-                  format="yyyy-MM-dd"
-                  error={endDateError ? true : false}
-                  helperText={endDateError}
-                  margin="normal"
-                  id="endDate"
-                  label="종료날짜"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </MuiPickersUtilsProvider>
-          <TextField
-            inputRef={description}
-            style={{ marginTop: 20 }}
-            id="outlined-textarea"
-            fullWidth
-            defaultValue={team ? team["description"] : null}
-            label="팀 최종 목표"
-            multiline
+            </MuiPickersUtilsProvider>
+            <TextField
+              inputRef={description}
+              style={{ marginTop: 20 }}
+              id="outlined-textarea"
+              fullWidth
+              defaultValue={team ? team["description"] : null}
+              label="팀 최종 목표"
+              multiline
+            />
+            <Typography style={{ marginTop: 30 }} gutterBottom>
+              진척도
+            </Typography>
+            <PrettoSlider
+              style={{ marginTop: 0 }}
+              valueLabelDisplay="auto"
+              aria-label="pretto slider"
+              onChange={(e, num) => {
+                progress.current.value = num;
+              }}
+              defaultValue={team ? team["progress"] : 0}
+            />
+            <input type="hidden" ref={progress} />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              style={{
+                width: "100%",
+                color: "white",
+                background: "linear-gradient(45deg, #81c784 30%, #2e7d32 90%)",
+              }}
+              fullWidth
+              variant="contained"
+              onClick={updateTeamInfo}
+            >
+              수 정
+            </Button>
+          </DialogActions>
+          <MessageBox
+            open={showMessageState}
+            content={MessageBoxState["content"]}
+            level={MessageBoxState["level"]}
+            time={MessageBoxState["time"]}
+            handleClose={() => setShowMessageState(false)}
           />
-          <PrettoSlider
-            valueLabelDisplay="auto"
-            aria-label="pretto slider"
-            onChange={(e, num) => {
-              progress.current.value = num;
-            }}
-            defaultValue={team ? team["progress"] : 0}
-          />
-          <input type="hidden" ref={progress} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={updateTeamInfo} color="primary">
-            수 정
-          </Button>
-          <Button onClick={handleClose} color="primary">
-            취 소
-          </Button>
-        </DialogActions>
-        <MessageBox
-          open={showMessageState}
-          content={MessageBoxState["content"]}
-          level={MessageBoxState["level"]}
-          time={MessageBoxState["time"]}
-          handleClose={() => setShowMessageState(false)}
-        />
+        </Card>
       </Dialog>
     </div>
   );

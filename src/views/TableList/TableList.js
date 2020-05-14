@@ -20,6 +20,7 @@ import CardBody from "components/Card/CardBody.js";
 import Tasks from "components/Tasks/Tasks.js";
 import { bugs, website, server } from "variables/general.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import BoardView from "./NoticeView/BoardView";
 import ReferenceView from './ReferenceDataView/BoardView';
@@ -178,7 +179,8 @@ export default function TableList(props) {
   }
 
   const pagingAreaChange = (value) => {
-    setPage(0);
+    setTotalPage(null);
+    setPage(1);
     setTabIndex(value);
     if(value === 0){
       setSelectType('notice');
@@ -216,7 +218,7 @@ export default function TableList(props) {
 
   const getList = (number,type) => {
     if(!type) type = 'notice';
-    setPage(number);
+    setPage(number + 1);
     const data = {
       page : number - 1,
       size : 10
@@ -225,16 +227,15 @@ export default function TableList(props) {
   }
 
   const getNoticeListSuccess = (res,type) => {
-    if(!res['_embedded'])
+    if(!res['content'] || res['content'].length === 0)
     return;
     setTotalPage(Math.ceil(res['page']['totalElements']/10));
     let resultArr = [];
-    const _noticeList = res['_embedded'][type+'List'];
+    const _noticeList = res['content'];
     for(let i =0;i<_noticeList.length;i++){
       resultArr.push([_noticeList[i]['seq'],_noticeList[i]['user']['name'],_noticeList[i]['title'],_noticeList[i]['date']]);
     }
     if(type==='notice'){
-      setTeamLeader(_noticeList[0]['user']['id']);
       setNoticeList(resultArr);
     }
     else if(type === 'referenceData'){
@@ -274,12 +275,21 @@ export default function TableList(props) {
     })
   }
 
+  function getTeamInfo(code){
+    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/"+code,getTeamSuccess);
+  }
+
+  function getTeamSuccess(res){
+    setTeamLeader(res['teamLeader']['id']);
+  }
+
   function topScroll(){
     try{
       document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
     }catch{}  }
-
+  
   useEffect(()=>{
+    getTeamInfo(props.match.params.idx);
     getList(1,'notice');
     topScroll();
   },[]);
@@ -372,7 +382,9 @@ export default function TableList(props) {
       <GridContainer direction="column" alignItems="center" justify="center">
         <GridItem xs={12} sm={12} md={12}>
           <ThemeProvider theme={pagingTheme}>
+            {totalPage ? 
             <Pagination onChange={(event,number)=>pageMove(number)} count={totalPage} boundaryCount={2} />
+            : <CircularProgress color="secondary" /> }
           </ThemeProvider>
         </GridItem>
       </GridContainer>

@@ -192,7 +192,7 @@ export default function BoardView(props) {
     let images = [];
     if(props['data']){
       for(let i =0;i<props['data']['image'].length;i++){
-        images.push("data:image/png;base64,"+props['data']['image'][i]);
+        images.push("data:image/png;base64," + props['data']['image'][i]);
       }
     }
     setImages(images);
@@ -323,9 +323,9 @@ export default function BoardView(props) {
               <ExpandMoreIcon />
             </IconButton>
           </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Collapse in={true} timeout="auto" unmountOnExit>
             <CardContent>
-              <Typography paragraph>Method:</Typography>
+              <Typography paragraph>댓 글:</Typography>
               <Typography paragraph>
                 Heat 1/2 cup of the broth in a pot until simmering, add saffron
                 and set aside for 10 minutes.

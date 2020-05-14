@@ -15,6 +15,7 @@ import DateRange from "@material-ui/icons/DateRange";
 import SignUpListDialog from './SignUpListDialog';
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
+import MessageBox from 'components/MessageBox/MessageBox';
 
 import * as axiosGet from '@axios/get';
 
@@ -24,34 +25,58 @@ export default function SignUpList(props){
     const classes = useStyles();
     const [signUpList,setSignUplist] = useState(false);
     const [signUpUserList,setSignUpUserList] = useState([]);
+    const [showMessageState,setShowMessageState] = useState(false);
+    const [MessageBoxState,setMessageBoxState] = useState(
+      {
+        content : "",
+        level : "success",
+        time : 2000
+      }
+    );
+  
+    const messageBoxHandle = (show,content,time,level) => {
+      setShowMessageState(show);
+      setMessageBoxState({
+        content : content,
+        time : time,
+        level : level
+      })
+    }
 
     const getSignUpList = () => {
         axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/" + props['code'] + "/signUpList",getSignUpListSuccess);
     }
 
     const getSignUpListSuccess = (res) => {
-        if(!res['_embedded']){
+        if(props['teamLeader'] !== localStorage.getItem('ID')){
+            return;
+        }
+        if(!res['content']){
             setSignUpUserList([]);
             return;
         }
         let userList = [];
-        const result = res['_embedded']['joinTeamList'];        
+        const result = res['content'];        
         for(let i =0;i<result.length;i++){
             userList.push(result[i]);
         }
         setSignUpUserList(userList);
     }
 
+    const ShowSignUpDialog = () => {
+        if(signUpUserList.length > 0)
+            setSignUplist(true);
+        else
+            messageBoxHandle(true,"신청 명단이 존재하지 않습니다.",2000,'error');
+    }
+
     useEffect(()=>{
-        if(props['teamLeader'] === localStorage.getItem('ID')){
-            getSignUpList();
-        }
-        setSignUplist(false);
-    },[props['location']]);
+        getSignUpList();
+    },[]);
 
     return (
         <Card>
-            <CardActionArea onClick={()=>setSignUplist(true)}>
+            <CardActionArea onClick={ShowSignUpDialog}>
             <CardHeader color="rose" stats icon>
                 <CardIcon color="rose">
                 <Store />
@@ -65,11 +90,18 @@ export default function SignUpList(props){
                 <Danger>
                     <DateRange />
                 </Danger>
-                공지, 자료, 게시글
+                신청 현황
                 </div>
             </CardFooter>
             </CardActionArea>
             <SignUpListDialog updateList={getSignUpList} signUpList={signUpUserList} open={signUpList} handleClose={()=>setSignUplist(false)}/>
+            <MessageBox
+                open={showMessageState}
+                content={MessageBoxState['content']}
+                level={MessageBoxState['level']}
+                time={MessageBoxState['time']}
+                handleClose={()=>setShowMessageState(false)}
+            />
         </Card>
     )
 }

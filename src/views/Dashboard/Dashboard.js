@@ -39,10 +39,10 @@ export default function Dashboard(props) {
   const [signUpList,setSignUplist] = useState(false);
   const [plan,setPlan] = useState([]);
 
-  const [referenceDataList,setReferenceDataList] = useState([]);
+  const [referenceDataList,setReferenceDataList] = useState();
   const [referenceDataCount,setReferenceDataCount] = useState([]);
 
-  const [freeBoardList,setFreeBoardList] = useState([]);
+  const [freeBoardList,setFreeBoardList] = useState();
   const [freeBoardCount,setFreeBoardCount] = useState([]);
 
   const [chartData,setChartData] = useState([]);
@@ -59,12 +59,12 @@ export default function Dashboard(props) {
   }
 
   const getReferenceDataSuccess = (res) => {
-    if(!res['_embedded']){
+    if(!res['content']){
       setReferenceDataCount([]);
       setReferenceDataList([]);
       return;
     }
-    const data = res['_embedded']['referenceDataList'];
+    const data = res['content'];
     let resultArr = [];
     let resultCount = [];
     for(let i =0;i<data.length;i++){
@@ -84,12 +84,13 @@ export default function Dashboard(props) {
   }
   
   const getFreeBoardSuccess = (res) => {
-    if(!res['_embedded']){
+    console.log(res);
+    if(!res['content']){
       setFreeBoardCount([]);
       setFreeBoardList([]);
       return;
     }
-    const data = res['_embedded']['freeBoardList'];
+    const data = res['content'];
     let resultArr = [];
     let resultCount = [];
     for(let i =0;i<data.length;i++){
@@ -101,10 +102,11 @@ export default function Dashboard(props) {
   }
 
   const updatePlan = () => {
+    let now = new Date();
     let page = {
-      year : new Date().getFullYear(),
-      month : new Date().getMonth() + 1,
-      day : new Date().getDate()
+      date : now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
+      size : 50,
+      page : 0
     }
     axiosGet.getContainsData("http://localhost:8090/api/teamManage/plan/"+props.match.params.idx+"/search/all",getPlanSuccess,page,true);
     getTeamInfo();
@@ -124,13 +126,13 @@ export default function Dashboard(props) {
   }
 
   const getPlanSuccess = (res) => {
-    if(!res['_embedded']){
+    if(!res['content']){
       setPlan([]);
       setTodayPlan([]);
       setTodayPlanCount([]);
       return;
     }
-    const content = res['_embedded']['planByUserList'];
+    const content = res['content'];
     let planList = [];
     let _todayPlan = [];
     let _todayPlanCount = [];
@@ -138,7 +140,7 @@ export default function Dashboard(props) {
     
     for(let i =0;i<content.length;i++){
       planList.push(
-        parsePlan(content[i])
+        parsePlan(content[i],content[i]['user']['name'],content[i]['user']['id'] === localStorage.getItem('ID'))
       );
       if(_todayPlan.length < 5 && content[i]['user']['id'] === localStorage.getItem('ID')){
         _todayPlan.push(content[i]['content']);
@@ -150,17 +152,17 @@ export default function Dashboard(props) {
     setTodayPlanCount(_todayPlanCount);
   }
 
-  const parsePlan = (plan) => {
+  const parsePlan = (plan,name,isMyPlan) => {
     let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
     return {
       groupId:plan['seq'],
-      title:plan['tag'],
+      title:plan['tag'] + " < " + name + " > ",
       start:plan['start'],
       end:plan['end'],
       user:plan['user'],
       progress:plan['progress'],
       content : plan['content'],
-      color : colors[plan['seq'] % colors.length]
+      color : isMyPlan ? 'red' : colors[plan['seq'] % colors.length]
     }
   }
 
@@ -178,17 +180,18 @@ export default function Dashboard(props) {
 
   useEffect(()=>{
     setTeamInfo(null);
-    setTimeout(() => {
-      updatePlan();
-      getReferenceData();
-      getFreeBoard();
-    }, 1000);
+    setPlan(null);
+    setReferenceDataList(null);
+    setFreeBoardList(null);
+    updatePlan();
+    getReferenceData();
+    getFreeBoard();
   },[props.match.params.idx]);
 
   return (
-    !teamInfo ? (
+    !teamInfo || !plan || !referenceDataList || !freeBoardList ? (
       <Backdrop className={classes.backdrop} open={true}>
-        <CircularProgress color="primary" />
+        <CircularProgress color="inherit" />
       </Backdrop>
     ) : 
     (
