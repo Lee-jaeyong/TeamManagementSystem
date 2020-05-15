@@ -119,8 +119,7 @@ export default function FormDialog(props) {
         name: name.current.value,
         startDate: dateFormat(startDate + ""),
         endDate: dateFormat(endDate + ""),
-        description: description.current.value,
-        progress: progress.current.value,
+        description: description.current.value
       };
       axiosPost.postContainsData(
         "http://localhost:8090/api/teamManage",
@@ -290,17 +289,6 @@ export default function FormDialog(props) {
               label="팀 최종 목표"
               multiline
             />
-            <Typography style={{marginTop:30}} gutterBottom>진척도</Typography>
-            <PrettoSlider
-              style={{marginTop:0}}
-              valueLabelDisplay="auto"
-              aria-label="pretto slider"
-              onChange={(e, num) => {
-                progress.current.value = num;
-              }}
-              defaultValue={0}
-            />
-            <input type="hidden" ref={progress} />
           </DialogContent>
           <DialogActions>
             <Button 

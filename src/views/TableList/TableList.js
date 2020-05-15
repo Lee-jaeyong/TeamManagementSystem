@@ -227,8 +227,10 @@ export default function TableList(props) {
   }
 
   const getNoticeListSuccess = (res,type) => {
-    if(!res['content'] || res['content'].length === 0)
-    return;
+    if(!res['content'] || res['content'].length === 0){
+      setTotalPage(1);
+      return;
+    }
     setTotalPage(Math.ceil(res['page']['totalElements']/10));
     let resultArr = [];
     const _noticeList = res['content'];

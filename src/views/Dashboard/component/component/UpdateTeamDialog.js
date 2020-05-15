@@ -57,8 +57,6 @@ export default function FormDialog(props) {
   const start = useRef();
   const end = useRef();
   const description = useRef();
-  const progress = useRef();
-
   const { team } = props;
 
   const [startDate, setStartDate] = useState(team ? team["startDate"] : null);
@@ -117,7 +115,6 @@ export default function FormDialog(props) {
         startDate: dateFormat(startDate + ""),
         endDate: dateFormat(endDate + ""),
         description: description.current.value,
-        progress: progress.current.value,
       };
       axiosPut.putContainsData(
         "http://localhost:8090/api/teamManage/" + props["team"]["code"],
@@ -291,19 +288,6 @@ export default function FormDialog(props) {
               label="팀 최종 목표"
               multiline
             />
-            <Typography style={{ marginTop: 30 }} gutterBottom>
-              진척도
-            </Typography>
-            <PrettoSlider
-              style={{ marginTop: 0 }}
-              valueLabelDisplay="auto"
-              aria-label="pretto slider"
-              onChange={(e, num) => {
-                progress.current.value = num;
-              }}
-              defaultValue={team ? team["progress"] : 0}
-            />
-            <input type="hidden" ref={progress} />
           </DialogContent>
           <DialogActions>
             <Button

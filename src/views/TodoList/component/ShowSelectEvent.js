@@ -301,7 +301,7 @@ export default function ShowSelectEvent(props) {
             </DialogContent>
           </CardContent>
           {props["event"] &&
-          props["event"]["user"]["id"] === localStorage.getItem("ID") ? (
+          props["event"]["user"]["id"] === localStorage.getItem("ID") && new Date(props['event']['end']).getTime() < new Date().getTime() ? (
             <CardActions>
               <Button
                 style={{

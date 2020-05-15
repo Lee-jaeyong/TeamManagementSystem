@@ -121,10 +121,6 @@ export default function BoardView(props) {
     }
   };
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
   const handleClose = () => {
     props.handleClose();
     setImgNum(0);
