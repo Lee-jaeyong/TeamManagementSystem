@@ -9,6 +9,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 // core components
 import styles from "assets/jss/material-dashboard-react/components/tableStyle.js";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(styles);
 
@@ -35,7 +36,8 @@ export default function CustomTable(props) {
           </TableHead>
         ) : null}
         <TableBody>
-          {tableData.map((prop, key) => {
+          {tableData ? tableData.length !== 0 ? (
+          tableData.map((prop, key) => {
             if (pointer) {
               return (
                 <TableRow
@@ -65,7 +67,19 @@ export default function CustomTable(props) {
                 </TableRow>
               );
             }
-          })}
+          })) : (
+            <TableRow className={classes.tableBodyRow}>
+                <TableCell style={{textAlign:"center"}} colSpan="4">
+                  <strong>* 글이 존재하지 않습니다.</strong>
+                </TableCell>
+            </TableRow>
+          ) : (
+            <TableRow className={classes.tableBodyRow}>
+                <TableCell style={{textAlign:"center"}} colSpan="4">
+                  <CircularProgress color="secondary" />
+                </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
       {customButton ? customButton : null}

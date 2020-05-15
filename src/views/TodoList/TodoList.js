@@ -106,7 +106,7 @@ export default function TableList(props) {
   const [page,setPage] = useState(1);
   const [tabIndex,setTabIndex] = useState(0);
   const [totalPage,setTotalPage] = useState(0);
-  const [todoList,setTodoList] = useState([]);
+  const [todoList,setTodoList] = useState();
   const [finishedTodoList,setFinishedTodoList] = useState([]);
   const [selectEvent,setSelectEvent] = useState();
   const [showSelectEventState,setShowSelectEventState] = useState(false);
@@ -175,6 +175,7 @@ export default function TableList(props) {
   }
 
   const tabChangeHandle = (value) => {
+    setTodoList(null);
     setTabIndex(value);
     pagingAreaChange(value);
     setPage(1);
@@ -270,6 +271,7 @@ export default function TableList(props) {
   }
   
   function selectEventSuccess(res){
+    console.log(res);
     setSelectEvent(res);
   }
 

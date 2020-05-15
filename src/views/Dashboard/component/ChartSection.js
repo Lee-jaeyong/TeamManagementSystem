@@ -130,49 +130,23 @@ export default function SignUpList(props) {
   return (
     <Card chart>
       <CardHeader color={value === 0 ? "warning" : "success"}>
-        <TabPanel value={value} index={0}>
-          <ChartistGraph
-            style={{ height: 200 }}
-            className="ct-chart"
-            data={
-              chartData(data ? data["user"] : [], data ? data["value"] : [])
-                .data
-            }
-            type="Bar"
-            options={chartData.options}
-            responsiveOptions={chartData.responsiveOptions}
-            listener={chartData.animation}
-          />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <ChartistGraph
-            style={{ height: 200 }}
-            className="ct-chart"
-            data={
-              chartData(data ? data["user"] : [], data ? data["value"] : [])
-                .data
-            }
-            type="Line"
-            options={chartData.options}
-            responsiveOptions={chartData.responsiveOptions}
-            listener={chartData.animation}
-          />
-        </TabPanel>
+        <ChartistGraph
+          style={{ height: 365 }}
+          className="ct-chart"
+          data={
+            chartData(data ? data["user"] : [], data ? data["value"] : [])
+              .data
+          }
+          type="Bar"
+          options={chartData.options}
+          responsiveOptions={chartData.responsiveOptions}
+          listener={chartData.animation}
+        />
       </CardHeader>
       <CardBody>
         <h4 className={classes.cardTitle}>{title ? title : null}</h4>
         <p className={classes.cardCategory}>{content ? content : null}</p>
         <Divider style={{ marginTop: 7, marginBottom: 0 }} />
-        <Tabs
-          value={value}
-          indicatorColor="primary"
-          textColor="primary"
-          onChange={handleChange}
-          aria-label="disabled tabs example"
-        >
-          <Tab label="개인별 일정수" {...a11yProps(0)} />
-          <Tab label="팀 진척도 현황" {...a11yProps(1)} />
-        </Tabs>
       </CardBody>
     </Card>
   );

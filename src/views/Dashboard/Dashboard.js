@@ -236,48 +236,6 @@ export default function Dashboard(props) {
             </GridItem>
           ) : null}
         </GridContainer>
-      <GridContainer>
-        <GridItem xs={12} sm={12} md={12}>
-          <CustomTabs
-            title=""
-            tabs={[
-              {
-                tabName: "오늘 일정",
-                tabIcon: BugReport,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[]}
-                    tasksIndexes={todayPlanCount}
-                    tasks={todayPlan}
-                  />
-                ),
-              },
-              {
-                tabName: "참고자료",
-                tabIcon: Code,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[]}
-                    tasksIndexes={referenceDataCount}
-                    tasks={referenceDataList}
-                  />
-                ),
-              },
-              {
-                tabName: "자유게시판",
-                tabIcon: Cloud,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[]}
-                    tasksIndexes={freeBoardCount}
-                    tasks={freeBoardList}
-                  />
-                ),
-              },
-            ]}
-          />
-        </GridItem>
-      </GridContainer>
     </div>
     )
   );
