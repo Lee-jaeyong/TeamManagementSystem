@@ -14,21 +14,27 @@ import Typography from "@material-ui/core/Typography";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Slider from "@material-ui/core/Slider";
-import Chip from "@material-ui/core/Chip";
 import Tooltip from "@material-ui/core/Tooltip";
-import Divider from "@material-ui/core/Divider";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import CardHeader from "components/Card/CardHeader.js";
 import DialogContent from "@material-ui/core/DialogContent";
-
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
+import UpdateIcon from '@material-ui/icons/Update';
 import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import Avatar from "@material-ui/core/Avatar";
+import CreateIcon from '@material-ui/icons/Create';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import * as axiosDelete from "@axios/delete";
+import * as axiosPut from '@axios/put';
 
 import UpdatePlan from "./UpdatePlan";
 
@@ -40,7 +46,95 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
 }));
+
+const Todo = ({todo,updateTodoInfo}) => {
+  const [updateTag,setUpdateTag] = useState(todo['tag']);
+  const [updateFlag,setUpdateFlag] = useState(false);
+
+  const updateTodo = () => {
+    setUpdateFlag(!updateFlag);
+  }
+  
+  const updateTodoSuccess = () => {
+    setUpdateFlag(false);
+    const updateTodo = {
+      tag : updateTag
+    }
+    axiosPut.putContainsData("http://localhost:8090/api/teamManage/todoList/" + todo['seq'],successUpdate,errorUpdate,updateTodo);
+  }
+
+  const successUpdate = (res) => {
+    updateTodoInfo(todo['seq'],updateTag);
+  }
+
+  const errorUpdate = (res) => {
+    alert();
+  }
+
+  return (
+    <div style={{marginTop:10}}>
+      {!updateFlag ? (
+      <Tooltip title="수정">
+        <IconButton aria-label="수정" size="small" onClick={updateTodo}>
+          <CreateIcon fontSize="inherit" />
+        </IconButton>
+      </Tooltip>
+      ) : (
+      <Tooltip title="적용">
+        <IconButton aria-label="적용" size="small" onClick={updateTodoSuccess}>
+          <UpdateIcon fontSize="inherit" />
+        </IconButton>
+      </Tooltip>
+      )}
+      <Checkbox
+        checked={todo['ing'] !== 'NO' ? true : false}
+      />
+      {!updateFlag ? (
+      todo['ing'] !== 'NO' ? 
+      (
+        <span style={{textDecorationLine:'line-through'}}>
+          {todo['tag']}
+        </span>
+      ) :
+      (
+        <span>
+          {todo['tag']}
+        </span>
+      )
+      ) : 
+      (
+        <TextField value={updateTag} onChange={({target})=>setUpdateTag(target.value)} id="standard-required" />
+      )}
+    </div>
+  )
+}
+
+const TodoListPanel = ({todoList,updateTodoInfo}) => {
+  const classes = useStyles();
+  return (
+    <ExpansionPanel>
+      <ExpansionPanelSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography className={classes.heading}>일정 목록</Typography>
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <Typography>
+          {todoList.map((todo,idx)=>(
+            <Todo key={idx} todo={todo} updateTodoInfo={updateTodoInfo}/>
+          ))}
+        </Typography>
+      </ExpansionPanelDetails>
+    </ExpansionPanel>
+  )
+}
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -126,11 +220,18 @@ export default function SelectDateDialog(props) {
     handleClose();
   };
 
+  const updateTodo = (seq,tag) => {
+    props.messageBoxHandle(true, "TodoList 변경 완료", 2000, "success");
+    updatePlanList();
+    handleClose();
+  }
+
   useEffect(() => {
     setOpen(props["open"]);
   }, [props["open"]]);
 
-  useEffect(() => {}, [props["eventList"]]);
+  useEffect(() => {
+  }, [props["eventList"]]);
 
   return (
     <div>
@@ -207,39 +308,7 @@ export default function SelectDateDialog(props) {
                           <br/>
                         </Typography>
                         <br />
-                        <span>
-                          {event["content"]}
-                        </span>
-                        <br />
-                        <br />
-                        {100 - event["progress"] === 0 ? (
-                        <Chip
-                          component="span"
-                          label={"완 료"}
-                          style={{
-                            color: "white",
-                            background: "linear-gradient(45deg, #d81b60 30%, #ad1457 90%)",
-                          }}
-                        />
-                        ) : (
-                          <Chip
-                            component="span"
-                            label={100 - event["progress"] + "% 남음"}
-                            style={{
-                              color: "white",
-                              background: "linear-gradient(45deg, #1e88e5 30%, #1565c0 90%)",
-                            }}
-                          />
-                        )}
-                        <Chip
-                          component="span"
-                          label={event["user"]["name"]}
-                          style={{
-                            marginLeft:10,
-                            color: "white",
-                            background: "linear-gradient(45deg, #ff8f00 30%, #ffd54f 90%)",
-                          }}
-                        />
+                        <TodoListPanel todoList={event['todoList']} updateTodoInfo={updateTodo}/>
                       </React.Fragment>
                     }
                     />

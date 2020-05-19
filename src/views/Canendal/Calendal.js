@@ -95,6 +95,7 @@ export default function App(props) {
       user:plan['user'],
       progress:plan['progress'],
       content : plan['content'],
+      todoList :plan['todoList'],
       color : isMyPlan ? 'red' : colors[plan['seq'] % colors.length]
     }
   }
