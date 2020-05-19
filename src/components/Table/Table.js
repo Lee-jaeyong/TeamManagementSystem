@@ -70,7 +70,6 @@ export default function CustomTable(props) {
           })) : (
             <TableRow className={classes.tableBodyRow}>
                 <TableCell style={{textAlign:"center"}} colSpan="4">
-                  <strong>* 글이 존재하지 않습니다.</strong>
                 </TableCell>
             </TableRow>
           ) : (

@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
-import Badge from "@material-ui/core/Badge";
 import { Divider } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
-import IconButton from "@material-ui/core/IconButton";
-import SettingsIcon from "@material-ui/icons/Settings";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-
-import CreateIcon from "@material-ui/icons/Create";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 
 import Typography from "@material-ui/core/Typography";
 

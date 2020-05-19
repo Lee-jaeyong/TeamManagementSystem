@@ -5,7 +5,6 @@ class ImageUpload extends React.Component {
   state = { warningMsg: "" };
 
   render() {
-    const { files } = this.props;
     return (
       <Dropzone onDrop={(acceptedFiles) => this.props.addImg(acceptedFiles)}>
         {({ getRootProps, getInputProps }) => (

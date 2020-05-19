@@ -1,18 +1,13 @@
 import React, { useEffect,useState } from "react";
 // react plugin for creating charts
-import ChartistGraph from "react-chartist";
 // @material-ui/core
 import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
-import BugReport from "@material-ui/icons/BugReport";
-import Code from "@material-ui/icons/Code";
-import Cloud from "@material-ui/icons/Cloud";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
-import Tasks from "components/Tasks/Tasks.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
 
 import SchedulerSection from './component/Scheduler';
@@ -21,8 +16,6 @@ import FreeBoardSection from './component/FreeBoard';
 import ChartSection from './component/ChartSection';
 import SignUpListSection from './component/SignUpList';
 import TeamInfoSection from './component/TeamInfo';
-
-import {  website, server } from "variables/general.js";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
@@ -36,7 +29,6 @@ export default function Dashboard(props) {
   const [todayPlan,setTodayPlan] = useState([]);
   const [todayPlanCount,setTodayPlanCount] = useState([]);
   const [teamInfo,setTeamInfo] = useState();
-  const [signUpList,setSignUplist] = useState(false);
   const [plan,setPlan] = useState([]);
 
   const [referenceDataList,setReferenceDataList] = useState();
@@ -118,6 +110,7 @@ export default function Dashboard(props) {
   }
 
   const getChartGroupByUserSuccess = (res) => {
+    console.log(res);
     setChartData(res);
   }
 

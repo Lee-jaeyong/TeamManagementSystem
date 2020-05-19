@@ -1,33 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import CreateIcon from "@material-ui/icons/Create";
 import Grid from "@material-ui/core/Grid";
 import Badge from "@material-ui/core/Badge";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
-import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
-import CardFooter from "components/Card/CardFooter.js";
 import MessageBox from "components/MessageBox/MessageBox";
 
 import * as axiosPost from "@axios/post";
 import * as axiosGet from "@axios/get";
-
-import avatar from "assets/img/faces/marc.jpg";
 
 const styles = {
   cardCategoryWhite: {
@@ -193,39 +185,6 @@ export default function FormDialog(props) {
                 </CardHeader>
                 <CardBody>
                   <GridContainer>
-                    <Grid
-                      container
-                      spacing={0}
-                      direction="column"
-                      alignItems="center"
-                      justify="center"
-                    >
-                      <Grid item xs={12} sm={12} md={12} style={{marginTop:20}}>
-                        <input type="file" ref={imgUpload} style={{display:"none"}}></input>
-                        <StyledBadge
-                          overlap="circle"
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
-                          }}
-                          badgeContent={
-                            <CreateIcon
-                              onClick={triggerImgUpload}
-                            />
-                          }
-                        >
-                          <Avatar
-                            style={{
-                              width: 120,
-                              height: 120,
-                              boxShadow: "2px 2px 7px 2px #939393",
-                            }}
-                            alt="Remy Sharp"
-                            src=""
-                          />
-                        </StyledBadge>
-                      </Grid>
-                    </Grid>
                     <GridItem xs={12} sm={12} md={12}>
                       <CustomInput
                         inputRef={id}

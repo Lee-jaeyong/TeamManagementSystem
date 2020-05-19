@@ -5,7 +5,6 @@ class FileUpload extends React.Component {
   state = { warningMsg: "" };
 
   render() {
-    const { files } = this.props;
     return (
       <div
         style={{

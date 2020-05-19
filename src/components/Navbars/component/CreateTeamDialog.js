@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { withStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Slider from "@material-ui/core/Slider";
 import MessageBox from "components/MessageBox/MessageBox";
 import {
   MuiPickersUtilsProvider,
@@ -19,47 +16,13 @@ import DateFnsUtils from "@date-io/date-fns";
 import Card from "components/Card/Card.js";
 
 import CardHeader from "components/Card/CardHeader.js";
-import Input from "@material-ui/core/Input";
 
 import * as axiosPost from "@axios/post";
 
-const PrettoSlider = withStyles({
-  root: {
-    color: "#52af77",
-    height: 8,
-    marginTop: 20,
-  },
-  thumb: {
-    height: 24,
-    width: 24,
-    backgroundColor: "#fff",
-    border: "2px solid currentColor",
-    marginTop: -8,
-    marginLeft: -12,
-    "&:focus, &:hover, &$active": {
-      boxShadow: "inherit",
-    },
-  },
-  active: {},
-  valueLabel: {
-    left: "calc(-50% + 4px)",
-  },
-  track: {
-    height: 8,
-    borderRadius: 4,
-  },
-  rail: {
-    height: 8,
-    borderRadius: 4,
-  },
-})(Slider);
 
 export default function FormDialog(props) {
   const name = useRef();
-  const start = useRef();
-  const end = useRef();
   const description = useRef();
-  const progress = useRef();
 
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());

@@ -5,11 +5,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
-import CardFooter from "components/Card/CardFooter.js";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Divider from "@material-ui/core/Divider";
 import Box from "@material-ui/core/Box";
 

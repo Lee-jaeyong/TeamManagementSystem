@@ -62,7 +62,6 @@ const mockData = [
 ]
 
 export default function App(props) {
-  const [selectedDateBtnOpen, setSelectedDateBtnOpen] = useState(false);
   const [selectDateDialog,setSelectDateDialog] = useState(false);
   const [selectDate,setSelectDate] = useState();
   const [fileterEventList,setFilterEventList] = useState([]);
@@ -86,17 +85,17 @@ export default function App(props) {
     })
   }
 
-  const parsePlan = (plan) => {
+  const parsePlan = (plan,name,isMyPlan) => {
     let colors = ['#D9418C','#D941C5','#8041D9','#6B66FF','#99004C','#747474'];
     return {
       groupId:plan['seq'],
-      title:plan['tag'],
+      title:plan['tag'] + " < " + name + " > ",
       start:plan['start'],
       end:plan['end'],
       user:plan['user'],
       progress:plan['progress'],
       content : plan['content'],
-      color : colors[plan['seq'] % colors.length]
+      color : isMyPlan ? 'red' : colors[plan['seq'] % colors.length]
     }
   }
   
@@ -117,7 +116,7 @@ export default function App(props) {
     let planList = [];
     for(let i =0;i<content.length;i++){
       planList.push(
-        parsePlan(content[i])
+        parsePlan(content[i],content[i]['user']['name'],content[i]['user']['id'] === localStorage.getItem('ID'))
       );
     }
     setPlan(planList);

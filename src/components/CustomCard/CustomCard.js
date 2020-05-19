@@ -1,7 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import Grid from "@material-ui/core/Grid";
 
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -114,7 +113,6 @@ export default function SimpleCard(props) {
             <ul>
               {contents
                 ? contents.map((list, idx) => {
-                    const delSearchStr = list.split(props["search"]);
                     return (
                       <li>
                         <div
