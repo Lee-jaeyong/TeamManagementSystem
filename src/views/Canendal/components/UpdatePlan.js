@@ -63,7 +63,6 @@ const PrettoSlider = withStyles({
 
 export default function UpdatePlan(props) {
   const tag = useRef();
-  const content = useRef();
   const classes = useStyles();
   const [open, setOpen] = useState(props["open"]);
   const [startDate, setStartDate] = useState(props['plan'] ? props['plan']['start'] : new Date());
@@ -72,7 +71,6 @@ export default function UpdatePlan(props) {
   const [startDateError,setStartDateError] = useState('');
   const [endDateError,setEndDateError] = useState('');
 
-  const [progressValue, setProgressValue] = useState(props['plan'] ? props['plan']['progress'] : 0);
   const [showMessageState,setShowMessageState] = useState(false);
   const [MessageBoxState,setMessageBoxState] = useState(
     {
@@ -144,31 +142,10 @@ export default function UpdatePlan(props) {
     setOpen(false);
   };
 
-  const handleBlur = () => {
-    if (progressValue < 0) {
-      setProgressValue(0);
-    } else if (progressValue > 100) {
-      setProgressValue(100);
-    }
-  };
-
-  const handleInputChange = (event) => {
-    setProgressValue(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-  };
-
-  const handleSliderChange = (event, newValue) => {
-    setProgressValue(newValue);
-  };
-
   const updatePlanHandle = () => {
     if(tag.current.value.trim() === ''){
       messageBoxHandle(true,"일정 태그를 입력해주세요.",2000,'error');
       tag.current.focus();
-    }else if(content.current.value.trim() === ''){
-      messageBoxHandle(true,"일정 내용을 입력해주세요.",2000,'error');
-      content.current.focus();
     }else if(!startDate){
       messageBoxHandle(true,"일정 시작일을 입력해주세요.",2000,'error');
     }else if(!endDate){
@@ -180,10 +157,8 @@ export default function UpdatePlan(props) {
     }else{
       const updatePlan = {
         tag:tag.current.value,
-        content:content.current.value,
         start:dateFormat(startDate),
         end:dateFormat(endDate),
-        progress:progressValue
       }
       axiosPut.putContainsData("http://localhost:8090/api/teamManage/plan/"+props['plan']['groupId'],updatePlanSuccess,updatePlanError,updatePlan);
     }
@@ -218,7 +193,6 @@ export default function UpdatePlan(props) {
     if(props['open']){
       setStartDate(props['plan'] ? props['plan']['start'] : new Date())
       setEndDate(props['plan'] ? props['plan']['end'] : new Date())
-      setProgressValue(props['plan'] ? props['plan']['progress'] : 0);
       setEndDateError('');
       setStartDateError('');
     }
@@ -293,53 +267,10 @@ export default function UpdatePlan(props) {
             inputRef={tag}
             id="standard-basic"
             label="태그"
-            defaultValue={props['plan'] ? props['plan']['title'] : null}
+            defaultValue={props['plan'] ? props['plan']['title'] ? props['plan']['title'].substring(0,props['plan']['title'].indexOf("<") - 1) : null : null}
             variant="outlined"
             style={{ width: "100%", marginTop: 15 }}
           />
-          
-          <TextField
-            inputRef={content}
-            id="standard-basic"
-            label="내용"
-            defaultValue={props['plan'] ? props['plan']['content'] : null}
-            variant="outlined"
-            multiline
-            rows={5}
-            style={{ width: "100%", marginTop: 15 }}
-          />
-
-          <Grid
-            container
-            style={{ margin: 10, marginTop: 20, paddingRight: 10 }}
-          >
-            <Typography gutterBottom>진척도</Typography>
-            <Grid item xs={11} style={{ paddingRight: 10 }}>
-              <PrettoSlider
-                value={typeof progressValue === "number" ? progressValue : 0}
-                onChange={handleSliderChange}
-                valueLabelDisplay="auto"
-                aria-label="pretto slider"
-                defaultValue={0}
-              />
-            </Grid>
-            <Grid item xs={1}>
-              <Input
-                className={classes.input}
-                value={progressValue}
-                margin="dense"
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                inputProps={{
-                  step: 1,
-                  min: 0,
-                  max: 100,
-                  type: "number",
-                  "aria-labelledby": "input-slider",
-                }}
-              />
-            </Grid>
-          </Grid>
         </CardBody>
         <Divider />
         <CardFooter>

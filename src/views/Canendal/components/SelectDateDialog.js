@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -32,6 +32,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 
 import * as axiosDelete from "@axios/delete";
 import * as axiosPut from '@axios/put';
@@ -52,9 +53,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Todo = ({todo,updateTodoInfo}) => {
+const Todo = ({todo,updateTodoInfo,isMy}) => {
+  const originTag = useMemo(()=>todo['tag'],[todo['tag']]);
   const [updateTag,setUpdateTag] = useState(todo['tag']);
   const [updateFlag,setUpdateFlag] = useState(false);
+  const [todoIng,setTodoIng] = useState(todo['ing']);
 
   const updateTodo = () => {
     setUpdateFlag(!updateFlag);
@@ -62,6 +65,9 @@ const Todo = ({todo,updateTodoInfo}) => {
   
   const updateTodoSuccess = () => {
     setUpdateFlag(false);
+    if(originTag === updateTag){
+      return;
+    }
     const updateTodo = {
       tag : updateTag
     }
@@ -73,17 +79,29 @@ const Todo = ({todo,updateTodoInfo}) => {
   }
 
   const errorUpdate = (res) => {
-    alert();
   }
+
+  const changeTodoIng = (type) => {
+    if(type === 'YES'){
+      axiosPut.putNotContainsData("http://localhost:8090/api/teamManage/todoList/" + todo['seq'] + "/faild",successHandle);
+    }else{
+      axiosPut.putNotContainsData("http://localhost:8090/api/teamManage/todoList/" + todo['seq'] + "/success",successHandle);
+    }
+    setTodoIng(type === 'YES' ? 'NO' : 'YES');
+  }
+
+  const successHandle = (res) => {}
 
   return (
     <div style={{marginTop:10}}>
       {!updateFlag ? (
+       isMy ? (
       <Tooltip title="수정">
         <IconButton aria-label="수정" size="small" onClick={updateTodo}>
           <CreateIcon fontSize="inherit" />
         </IconButton>
       </Tooltip>
+       ):null
       ) : (
       <Tooltip title="적용">
         <IconButton aria-label="적용" size="small" onClick={updateTodoSuccess}>
@@ -91,11 +109,18 @@ const Todo = ({todo,updateTodoInfo}) => {
         </IconButton>
       </Tooltip>
       )}
-      <Checkbox
-        checked={todo['ing'] !== 'NO' ? true : false}
-      />
+      {isMy ? (
+        <Checkbox
+          onChange={(e)=>changeTodoIng(todoIng)}
+          checked={todoIng !== 'NO' ? true : false}
+        />
+      ):(
+        <Checkbox
+          checked={todoIng !== 'NO' ? true : false}
+        />
+      )}
       {!updateFlag ? (
-      todo['ing'] !== 'NO' ? 
+      todoIng !== 'NO' ? 
       (
         <span style={{textDecorationLine:'line-through'}}>
           {todo['tag']}
@@ -114,8 +139,9 @@ const Todo = ({todo,updateTodoInfo}) => {
   )
 }
 
-const TodoListPanel = ({todoList,updateTodoInfo}) => {
+const TodoListPanel = ({todoList,updateTodoInfo,isMy}) => {
   const classes = useStyles();
+  const finishTodoList = todoList.filter(value=>value['ing'] === 'YES');
   return (
     <ExpansionPanel>
       <ExpansionPanelSummary
@@ -123,12 +149,12 @@ const TodoListPanel = ({todoList,updateTodoInfo}) => {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography className={classes.heading}>일정 목록</Typography>
+        <Typography className={classes.heading}>일정 목록 -- {' '}({todoList.length}개중 {finishTodoList.length}개 완료)</Typography>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
         <Typography>
           {todoList.map((todo,idx)=>(
-            <Todo key={idx} todo={todo} updateTodoInfo={updateTodoInfo}/>
+            <Todo key={idx} todo={todo} updateTodoInfo={updateTodoInfo} isMy={isMy}/>
           ))}
         </Typography>
       </ExpansionPanelDetails>
@@ -228,6 +254,9 @@ export default function SelectDateDialog(props) {
 
   useEffect(() => {
     setOpen(props["open"]);
+    if(!props['open']){
+      updatePlanList();
+    }
   }, [props["open"]]);
 
   useEffect(() => {
@@ -269,7 +298,13 @@ export default function SelectDateDialog(props) {
                     <Avatar alt="" src="/static/images/avatar/3.jpg" />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={<strong>{"## " + event["title"]}</strong>}
+                    primary={<strong>{"## " + event["title"]} 
+                    {event["user"]["id"] === localStorage.getItem("ID") ? (
+                    <Tooltip title="자신의 일정입니다." placement="right">
+                      <CalendarTodayIcon style={{position:"relative",top:5,marginLeft:20}}/>
+                    </Tooltip>
+                    ) : null}
+                    </strong>}
                     secondary={
                       <React.Fragment>
                         <Typography
@@ -308,7 +343,7 @@ export default function SelectDateDialog(props) {
                           <br/>
                         </Typography>
                         <br />
-                        <TodoListPanel todoList={event['todoList']} updateTodoInfo={updateTodo}/>
+                        <TodoListPanel isMy={event["user"]["id"] === localStorage.getItem("ID")} todoList={event['todoList']} updateTodoInfo={updateTodo}/>
                       </React.Fragment>
                     }
                     />
