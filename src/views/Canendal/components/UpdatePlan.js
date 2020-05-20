@@ -1,5 +1,5 @@
-import React, { useEffect, useState,useRef } from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import React, { useEffect, useState,useRef,useContext, createContext } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 
 import Dialog from "@material-ui/core/Dialog";
 import Card from "components/Card/Card.js";
@@ -8,69 +8,163 @@ import Divider from "@material-ui/core/Divider";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 import Grid from "@material-ui/core/Grid";
-import Slider from "@material-ui/core/Slider";
 import CardHeader from "components/Card/CardHeader.js";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import DateFnsUtils from "@date-io/date-fns";
 import MessageBox from 'components/MessageBox/MessageBox';
+import IconButton from "@material-ui/core/IconButton";
+import Paper from "@material-ui/core/Paper";
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import InputBase from "@material-ui/core/InputBase";
+import DeleteIcon from "@material-ui/icons/Delete";
+
+import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
 
 import * as axiosPut from '@axios/put';
+import * as axiosDelete from '@axios/delete';
+import * as axiosPost from '@axios/post';
 
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   cardSize: {
     width: "100%",
     height: "100%",
   },
-});
-
-const PrettoSlider = withStyles({
   root: {
-    color: "#00C6ED",
-    height: 8,
+    float: "left",
+    padding: "2px 4px",
+    marginTop: 10,
+    display: "flex",
+    alignItems: "center",
+    width: 400,
   },
-  thumb: {
-    height: 30,
-    width: 30,
-    backgroundColor: "#fff",
-    border: "2px solid currentColor",
-    marginTop: -8,
-    marginLeft: -12,
-    "&:focus, &:hover, &$active": {
-      boxShadow: "inherit",
-    },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
   },
-  active: {},
-  valueLabel: {
-    left: "calc(-50% + 4px)",
+  iconButton: {
+    padding: 10,
   },
-  track: {
-    height: 14,
-    borderRadius: 4,
+  divider: {
+    height: 28,
+    margin: 4,
   },
-  rail: {
-    height: 14,
-    borderRadius: 4,
-  },
-})(Slider);
+}));
+
+const TodoListArea = ({ todoList, insertTodoList, addTodoList,deleteTodoList,changeTodoList }) => {
+  const messageBoxContext = useContext(MessageBoxContext);
+  const confirmDialogContext = useContext(ConfirmDialogContext);
+  return (
+  <div>
+    {todoList.map((todo, idx) =>
+      todoList.length - 1 === idx && insertTodoList.length === 0 ? (
+        <Todo todo={todo} key={idx} addTodoList={addTodoList} deleteTodoList={deleteTodoList} confirmDialogHandle={confirmDialogContext}  messageBoxHandle={messageBoxContext} isFinal={true} />
+      ) : (
+        <Todo todo={todo} key={idx} deleteTodoList={deleteTodoList} confirmDialogHandle={confirmDialogContext} messageBoxHandle={messageBoxContext} isFinal={false} />
+      )
+    )}
+    {insertTodoList.map((todo,idx)=>(
+      insertTodoList.length - 1 === idx ? (
+        <Todo todo={todo} key={idx} addTodoList={addTodoList} deleteTodoList={deleteTodoList} changeTodoList={changeTodoList} confirmDialogHandle={confirmDialogContext}  messageBoxHandle={messageBoxContext} isFinal={true} />
+        ):
+      <Todo todo={todo} key={idx} deleteTodoList={deleteTodoList} changeTodoList={changeTodoList} confirmDialogHandle={confirmDialogContext}  messageBoxHandle={messageBoxContext} isFinal={false} />
+    ))}
+  </div>
+)};
+
+const TodoListAddArea = ({ addTodoList }) => (
+  <div style={{ float: "right", position: "relative", top: 10, left : -15 }}>
+    <IconButton
+      color="primary"
+      aria-label="add to shopping cart"
+      onClick={addTodoList}
+    >
+      <AddCircleIcon />
+    </IconButton>
+  </div>
+);
+
+const Todo = ({ todo, isFinal, deleteTodoList, addTodoList,changeTodoList,messageBoxHandle,confirmDialogHandle }) => {
+  const classes = useStyles();
+
+  const deleteTodoListHandle = () => {
+    confirmDialogHandle(true,"삭제","정말 삭제하시겠습니까?",()=>{
+      if(todo['ing']){
+        axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/todoList/"+todo['seq'],deleteSuccess);
+        deleteSuccess('origin');
+        return;
+      }
+      deleteSuccess('insert');
+    });
+  }
+  
+  const deleteSuccess = (type) => {
+    deleteTodoList(todo['seq'],type);
+    messageBoxHandle(true,"삭제 완료",2000,'error');    
+  }
+
+  return (
+    <div style={{marginLeft:25}}>
+      <Paper component="div" className={classes.root}>
+        {todo['ing'] ? (
+          <InputBase
+            value={todo['tag'] ? todo['tag'] : todo['title']}
+            className={classes.input}
+            placeholder="일정을 기재해주세요"
+            onChange={(event)=>changeTodoList(event,todo['seq'])}
+            disabled
+          />
+        ) : (
+          <InputBase
+            value={todo['tag'] ? todo['tag'] : todo['title']}
+            className={classes.input}
+            placeholder="일정을 기재해주세요"
+            onChange={(event)=>changeTodoList(event,todo['seq'])}
+          />
+        )}
+        <IconButton
+          color="default"
+          className={classes.iconButton}
+          aria-label="directions"
+        >
+          <DeleteIcon fontSize="small" onClick={deleteTodoListHandle}/>
+        </IconButton>
+      </Paper>
+      {isFinal ? <TodoListAddArea addTodoList={addTodoList} /> : null}
+    </div>
+  );
+};
+
+const MessageBoxContext = createContext();
+const ConfirmDialogContext = createContext();
 
 export default function UpdatePlan(props) {
   const tag = useRef();
   const classes = useStyles();
+  const [confirmDialogState,setConfirmDialogState] = useState({
+    open : false,
+    title : '',
+    content : '',
+    handleYesClick : () => {}, 
+    handleClose : () => {}
+  });
+
+  const [insertTodoList,setInsertTodoList] = useState([]);
+  const [todoListUpdate,setTodoListUpdate] = useState(false);
+  const [todoList,setTodoList] = useState(props['plan'] ? props['plan']['todoList'] ? props['plan']['todoList'] : [] : []);
   const [open, setOpen] = useState(props["open"]);
   const [startDate, setStartDate] = useState(props['plan'] ? props['plan']['start'] : new Date());
   const [endDate, setEndDate] = useState(props['plan'] ? props['plan']['end'] : new Date());
-
   const [startDateError,setStartDateError] = useState('');
   const [endDateError,setEndDateError] = useState('');
-
+  const [updateList,setUpdateList] = useState(false);
+  
   const [showMessageState,setShowMessageState] = useState(false);
   const [MessageBoxState,setMessageBoxState] = useState(
     {
@@ -142,7 +236,31 @@ export default function UpdatePlan(props) {
     setOpen(false);
   };
 
+  const confirmDialogHandle = (open,title,content,handleYesClick) => {
+    setConfirmDialogState({
+      open : open,
+      title : title,
+      content : content,
+      handleYesClick : handleYesClick,
+      handleClose : ()=>{
+        setConfirmDialogState({
+          open:false,
+          title : title,
+          content : content
+        })
+      }
+    });
+  }
+
   const updatePlanHandle = () => {
+    if(insertTodoList.length !== 0){
+      for(let i = 0;i<insertTodoList.length;i++){
+        if(insertTodoList[i]['title'].trim() === ''){
+          messageBoxHandle(true,"모든 TodoList를 입력해주세요.",2000,'error');
+          return;
+        }
+      }
+    }
     if(tag.current.value.trim() === ''){
       messageBoxHandle(true,"일정 태그를 입력해주세요.",2000,'error');
       tag.current.focus();
@@ -165,9 +283,32 @@ export default function UpdatePlan(props) {
   }
 
   const updatePlanSuccess = (res) => {
+    for(let i =0;i<insertTodoList.length;i++){
+      const _todoList = {
+        title : insertTodoList[i]['title']
+      };
+      axiosPost.postContainsData(
+        "http://localhost:8090/api/teamManage/todoList/" + res["seq"],
+        createTodoListSuccess,
+        createTodoListError,
+        _todoList
+        );
+    }
     props.messageBoxHandle(true,"일정 수정 완료.",2000,'success');
     props.updatePlanList();
     handleClose();
+  }
+
+  const successUpdate = (res) => {
+  }
+
+  const errorUpdate = (res) => {
+  }
+
+  const createTodoListSuccess = (res) => {
+  }
+
+  const createTodoListError = (res) => {
   }
 
   const updatePlanError = (res) => {
@@ -189,12 +330,48 @@ export default function UpdatePlan(props) {
     return check;
   }
 
+  const addTodoList = () => {
+    let _todoList = insertTodoList.concat({
+      seq: insertTodoList[insertTodoList.length - 1] ? insertTodoList[insertTodoList.length - 1]['seq'] + 1 : 0,
+      title: "",
+    });
+    setInsertTodoList(_todoList);
+  };
+
+  const deleteTodoList = (seq,type) => {
+    if(type === 'origin'){
+      let _todoList = todoList.filter(value=>value['seq'] !== seq);
+      setTodoList(_todoList);
+    }else{
+      let _todoList = insertTodoList.filter(value=>value['seq'] !== seq);
+      setInsertTodoList(_todoList);
+    }
+    setUpdateList(true);
+  }
+  
+  const changeTodoList = ({target},seq) => {
+    let _todoList = insertTodoList;
+    for(let i = 0;i<_todoList.length;i++){
+      if(_todoList[i]['seq'] === seq){
+        _todoList[i]['title'] = target.value;
+        setInsertTodoList(_todoList);
+        setTodoListUpdate(!todoListUpdate);
+        return;
+      }
+    }
+  }
+
   useEffect(() => {
     if(props['open']){
+      setInsertTodoList([]);
+      setTodoList(props['plan'] ? props['plan']['todoList'] ? props['plan']['todoList'] : [] : []);
       setStartDate(props['plan'] ? props['plan']['start'] : new Date())
       setEndDate(props['plan'] ? props['plan']['end'] : new Date())
       setEndDateError('');
       setStartDateError('');
+    }else{
+      if(updateList)
+        props.updatePlanList();
     }
     setOpen(props["open"]);
   }, [props["open"]]);
@@ -262,7 +439,6 @@ export default function UpdatePlan(props) {
               </Grid>
             </Grid>
           </MuiPickersUtilsProvider>
-
           <TextField
             inputRef={tag}
             id="standard-basic"
@@ -271,6 +447,22 @@ export default function UpdatePlan(props) {
             variant="outlined"
             style={{ width: "100%", marginTop: 15 }}
           />
+          <MessageBoxContext.Provider value={messageBoxHandle}>
+            <ConfirmDialogContext.Provider value={confirmDialogHandle}>
+          {insertTodoList || todoList ? insertTodoList.length !== 0 || todoList.length !== 0 ? (
+            <TodoListArea
+              todoList={todoList}
+              insertTodoList={insertTodoList}
+              addTodoList={addTodoList}
+              deleteTodoList={deleteTodoList}
+              changeTodoList={changeTodoList}
+            />
+          ):
+          (
+            <TodoListAddArea addTodoList={addTodoList}/>
+          ) : null}
+            </ConfirmDialogContext.Provider>
+          </MessageBoxContext.Provider>
         </CardBody>
         <Divider />
         <CardFooter>
@@ -281,7 +473,7 @@ export default function UpdatePlan(props) {
               background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
             }}
             variant="contained"
-            onClick={updatePlanHandle}
+            onClick={()=>confirmDialogHandle(true,'일정 수정','정말 일정을 수정하시겠습니까?',updatePlanHandle)}
           >
             일정 수정하기
           </Button>
@@ -294,6 +486,13 @@ export default function UpdatePlan(props) {
           time={MessageBoxState['time']}
           handleClose={()=>setShowMessageState(false)}
         />
+      <ConfirmDialog
+        open={confirmDialogState['open']}
+        title={confirmDialogState['title']}
+        content={confirmDialogState['content']}
+        yseClick={confirmDialogState['handleYesClick']}
+        handleClose={confirmDialogState['handleClose']}
+      />
     </Dialog>
   );
 }

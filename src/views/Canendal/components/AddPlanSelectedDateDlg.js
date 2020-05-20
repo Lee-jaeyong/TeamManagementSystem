@@ -245,7 +245,7 @@ export default function AddPlanSelectedDateDlg(props) {
     console.log(todoList);
     for(let i =0;i<todoList.length;i++) {
       const _todoList = {
-        tag : todoList[i]['title']
+        title : todoList[i]['title']
       };
       axiosPost.postContainsData(
         "http://localhost:8090/api/teamManage/todoList/" + plan["seq"],
