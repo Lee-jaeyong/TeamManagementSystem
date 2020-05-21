@@ -32,7 +32,7 @@ export default function TodoList(props){
                     <Icon>content_copy</Icon>
                 </CardIcon>
                 <p className={classes.cardCategory}>Todo List</p>
-                <h3 className={classes.cardTitle}>TODO<br/>리스트</h3>
+                <h3 className={classes.cardTitle}>나의<br/>TODO List</h3>
                 <br />
                 </CardHeader>
                 <CardFooter stats>
@@ -41,7 +41,7 @@ export default function TodoList(props){
                     <Store />
                     </Danger>
                     <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    일정 보기
+                    나의 모든 일정 보기
                     </a>
                 </div>
                 </CardFooter>
