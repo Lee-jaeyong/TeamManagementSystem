@@ -1,13 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
-import Button from "@material-ui/core/Button";
+import React, { useEffect, useState, useCallback } from "react";
 import Dialog from "@material-ui/core/Dialog";
-import Chip from "@material-ui/core/Chip";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import Slider from "@material-ui/core/Slider";
 import UpdatePlan from "./UpdatePlan";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import * as axiosDelete from "@axios/delete";
@@ -16,42 +12,10 @@ import * as axiosPut from "@axios/put";
 import MessageBox from "components/MessageBox/MessageBox";
 import CardHeader from "components/Card/CardHeader.js";
 import DialogContent from "@material-ui/core/DialogContent";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItem from "@material-ui/core/ListItem";
-import List from "@material-ui/core/List";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
 
-const PrettoSlider = withStyles({
-  root: {
-    color: "#52af77",
-    height: 8,
-  },
-  thumb: {
-    height: 24,
-    width: 24,
-    backgroundColor: "#fff",
-    border: "2px solid currentColor",
-    marginTop: -8,
-    marginLeft: -12,
-    "&:focus, &:hover, &$active": {
-      boxShadow: "inherit",
-    },
-  },
-  active: {},
-  valueLabel: {
-    left: "calc(-50% + 4px)",
-  },
-  track: {
-    height: 8,
-    borderRadius: 4,
-  },
-  rail: {
-    height: 8,
-    borderRadius: 4,
-  },
-})(Slider);
+import ActionArea from './component_ShowSelectEvent/ActionArea';
+import EventInfo from './component_ShowSelectEvent/EventInfo';
+import TodoListArea from './component_ShowSelectEvent/TodoListArea';
 
 const useStyles = makeStyles({
   root: {
@@ -68,11 +32,13 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
+  todoListArea : {
+    marginLeft:40
+  }
 });
 
 export default function ShowSelectEvent(props) {
   const classes = useStyles();
-  const progress = useRef();
   const [updatePlanState, setUpdatePlanState] = React.useState(false);
   const [confirmState, setConfirmState] = useState(false);
 
@@ -137,24 +103,6 @@ export default function ShowSelectEvent(props) {
           props["event"]["groupId"],
         deletePlanSuccess
       );
-    else {
-      if (!progress.current.value) {
-        messageBoxHandle(
-          true,
-          "진척도가 전 진척도와 동일합니다.",
-          2000,
-          "warning"
-        );
-        return;
-      }
-      axiosPut.putNotContainsData(
-        "http://localhost:8090/api/teamManage/plan/" +
-          props["event"]["groupId"] +
-          "/progress?progress=" +
-          progress.current.value,
-        updateProgressSuccess
-      );
-    }
   };
 
   const updateProgressSuccess = (res) => {
@@ -176,27 +124,14 @@ export default function ShowSelectEvent(props) {
     updatePlanList();
   };
 
-  const deleteHandle = () => {
+  const deleteHandle = useCallback(() => {
     setConfirmDialogState(true);
     setConfirmDialogInfo({
       title: "삭제",
       content: "위 일정을 정말 삭제하시겠습니까?",
     });
     setConfirmState(true);
-  };
-
-  const updateProgress = () => {
-    setConfirmDialogState(true);
-    setConfirmDialogInfo({
-      title: "진척도 변경",
-      content: "정말 진척도를 변경하시겠습니까?",
-    });
-    setConfirmState(false);
-  };
-
-  const updateProgressState = (num) => {
-    progress.current.value = num;
-  };
+  },[]);
 
   useEffect(() => {
     let notYetDate = notYet_d_dayCalculate(event ? event["start"] : null);
@@ -235,118 +170,17 @@ export default function ShowSelectEvent(props) {
           </CardHeader>
           <CardContent>
             <DialogContent>
-              <List
-                component="nav"
-                aria-labelledby="nested-list-subheader"
-                className={classes.root}
-              >
-                <ListItem component="div" alignItems="flex-start" >
-                  <ListItemAvatar>
-                    <Avatar alt="" src="/static/images/avatar/3.jpg" />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={<strong>{event ? event['title'] : null}</strong>}
-                    secondary={
-                      <React.Fragment>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          className={classes.inline}
-                          color="textPrimary"
-                          style={{borderBottom:'1px solid gray'}}
-                        >
-                          <br/>
-                          {event ? event['start'] : null} ~ {event ? event['end'] : null}
-                          <br/>
-                        </Typography>
-                        <br />
-                        <span>
-                          {event ? event["content"] : null}
-                        </span>
-                        <br />
-                        <br />
-                        {event ? 100 - event["progress"] === 0 ? (
-                        <Chip
-                          component="span"
-                          label={"완 료"}
-                          style={{
-                            color: "white",
-                            background: "linear-gradient(45deg, #d81b60 30%, #ad1457 90%)",
-                          }}
-                        />
-                        ) : (
-                          <Chip
-                            component="span"
-                            label={100 - event["progress"] + "% 남음"}
-                            style={{
-                              color: "white",
-                              background: "linear-gradient(45deg, #1e88e5 30%, #1565c0 90%)",
-                            }}
-                          />
-                        ) : null}
-                        <Chip
-                          component="span"
-                          label={event ? event["user"]["name"] : null}
-                          style={{
-                            marginLeft:10,
-                            color: "white",
-                            background: "linear-gradient(45deg, #ff8f00 30%, #ffd54f 90%)",
-                          }}
-                        />
-                      </React.Fragment>
-                    }
-                    />
-                </ListItem>
-              </List>
+              <EventInfo
+                {...{event}}
+              />
+              <TodoListArea messageBoxHandle={_messageBoxHandle} isMy={props["event"] && props["event"]["user"]["id"] === localStorage.getItem("ID")} todoList={props['event'] ? props['event']['todoList'] ? props['event']['todoList'] : [] : []} classes={classes.todoListArea}/>
             </DialogContent>
-            {/* <Chip label={props['event'] ? props['event']['user']['name'] : null} color="primary" style={{marginBottom:30,marginRight:10}}/>
-            <Chip label={checkDate} color="info" style={{marginBottom:30,marginRight:10}}/>
-            <Chip label={props['event'] ? props['event']['progress'] + "% 진행" : null} color="secondary" style={{marginBottom:30}}/>
-            <Typography variant="h6" component="h3">
-              {event ? event['title'] : null}
-              <br />
-            </Typography>
-            <Typography className={classes.pos} color="textSecondary">
-              {event ? event['start'] : null} ~ {event ? event['end'] : null}
-            </Typography>
-            <PrettoSlider valueLabelDisplay="auto" style={{width:'65%'}} aria-label="pretto slider" defaultValue={props['event'] ? props['event']['progress'] : null} onChange={(e,num)=>updateProgressState(num)}/>
-            <input type="hidden" ref={progress}/>
-            {props['event'] && props['event']['user']['id'] === localStorage.getItem('ID') ? 
-            (
-              <Button size="small" style={{float:'right'}} variant="outlined" color="secondary" onClick={updateProgress}>변 경</Button>
-            ) : 
-            null} */}
           </CardContent>
           {props["event"] &&
           props["event"]["user"]["id"] === localStorage.getItem("ID") ? (
-            <CardActions>
-              <Button
-                style={{
-                  width: "100%",
-                  color: "white",
-                  background:
-                    "linear-gradient(45deg, #e91e63 30%, #c2185b 90%)",
-                }}
-                fullWidth
-                variant="contained"
-                onClick={() => setUpdatePlanState(true)}
-              >
-                수정
-              </Button>
-              <Button
-                style={{
-                  width: "100%",
-                  color: "white",
-                  background:
-                    "linear-gradient(45deg, #e91e63 30%, #c2185b 90%)",
-                }}
-                fullWidth
-                variant="contained"
-                onClick={deleteHandle}
-              >
-                삭제
-              </Button>
-            </CardActions>
+            <ActionArea
+              {...{setUpdatePlanState,deleteHandle}}
+            />
           ) : null}
         </Card>
       </Dialog>
