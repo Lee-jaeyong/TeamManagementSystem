@@ -198,9 +198,11 @@ const Todo = ({
       )}
       {!updateFlag ? (
         todoIng !== "NO" ? (
-          <span style={{ textDecorationLine: "line-through" }}>
-            {todo["title"]}
-          </span>
+          <mark>
+            <span style={{ textDecorationLine: "line-through" }}>
+              {todo["title"]}
+            </span>
+          </mark>
         ) : (
           <span>{todo["title"]}</span>
         )
