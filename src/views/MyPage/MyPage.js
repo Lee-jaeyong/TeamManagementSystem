@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 
@@ -6,6 +6,7 @@ import MyPageProject from "./Component/MyPageProject.js";
 import MyAllPlan from "./Component/MyAllPlan.js";
 
 import Profile from "./Component/Profile.js";
+import * as axiosGet from "@axios/get";
 
 const mockData = {
   name: "이재용",
@@ -114,6 +115,94 @@ const mockData = {
 };
 
 export default function MyPage(props) {
+  const [finishedPjtList, setFinishedPjtList] = useState([]);
+  const [unFinishedPjtList, setUnFinishedPjtList] = useState([]);
+  const [totalPage,setTotalPage] = useState(0);
+  const [planList,setPlanList] = useState([]);
+  const [planPage, setPlanPage] = useState(0);
+  const [user,setUser] = useState({id:'',name:'',email:''});
+  const [userImg,setUserImg] = useState();
+
+  useEffect(() => {
+    unFinishedPjt();
+    finishedPjt();
+    getPlanList();
+    getUserInfo();
+  }, []);
+
+  const getUserInfo = () => {
+    axiosGet.getNotContainsData(
+      "http://localhost:8090/api/users",
+      getUserInfoSuccess
+    );
+  }
+
+  const unFinishedPjt = () => {
+    axiosGet.getNotContainsData(
+      "http://localhost:8090/api/teamManage",
+      getUnFinishedSuccess
+    );
+  };
+
+  const finishedPjt = () => {
+    axiosGet.getNotContainsData(
+      "http://localhost:8090/api/teamManage?flag=finished",
+      getFinishedSuccess
+    );
+  };
+
+  const getPlanList = () => {
+    axiosGet.getNotContainsData(
+      "http://localhost:8090/api/teamManage/plan/all?size=10&page=" + planPage,
+      getPlanListSuccess
+    );
+  };
+
+  const getUserInfoSuccess = (res) => {
+    setUser(res['data']);
+    setUserImg(res['image']);
+  }
+
+  const getPlanListSuccess = (res) => {
+    setTotalPage(res['page']['totalPages']);
+    const plan = res["content"];
+    let _data = [];
+    for (let i = 0; i < plan.length; i++) {
+      const todoList = plan[i]["todoList"];
+      let todoListSuccessCount = 0;
+      for (let j = 0; j < todoList.length; j++) {
+        if (todoList[i]["ing"] === "YES") {
+          todoListSuccessCount++;
+        }
+      }
+      _data.push([
+        plan[i]["tag"],
+        plan.length + "중 " + todoListSuccessCount + "개 완료",
+        plan[i]["start"] + " ~ " + plan[i]["end"],
+      ]);
+    }
+    setPlanList(_data);
+  };
+
+  const getUnFinishedSuccess = (res) => {
+    setUnFinishedPjtList(res["content"]);
+  };
+
+  const getFinishedSuccess = (res) => {
+    setFinishedPjtList(res["content"]);
+  };
+
+  const outTeam = (code) => {
+    let outPjt = finishedPjtList.filter((team) => team["code"] !== code);
+    setFinishedPjtList(outPjt);
+    outPjt = unFinishedPjtList.filter((team) => team["code"] !== code);
+    setUnFinishedPjtList(outPjt);
+  };
+
+  const planPageMove = () => {
+    setPlanPage(planPage + 1);
+  }
+
   return (
     <Grid container style={{ padding: 20 }} spacing={5}>
       <Hidden only={["lg", "md", "xl", "sm"]}>
@@ -131,14 +220,19 @@ export default function MyPage(props) {
         <Grid container>
           <Grid item md={12}>
             <MyPageProject
-              joinProject={mockData.ingProject_1} //참여중인프로젝트
-              unfinishedProject={mockData.ingProject_2} //진행중인프로젝트
-              finishedProject={mockData.endingProject_1} //마감된 프로젝트
-              outProject={mockData.endingProject_2} //탈퇴한 프로젝트
+              history={props["history"]}
+              joinProject={unFinishedPjtList} //참여중인프로젝트
+              unfinishedProject={finishedPjtList} //진행중인프로젝트
+              outTeam={outTeam}
             />
           </Grid>
           <Grid item md={12}>
-            <MyAllPlan tableData={mockData.allPlan} />
+            <MyAllPlan 
+            tableData={planList} 
+            totalPage={totalPage}
+            pageMove={planPageMove}
+            isFinal = {totalPage - 1 === planPage}
+            />
           </Grid>
         </Grid>
       </Grid>
@@ -146,10 +240,10 @@ export default function MyPage(props) {
         <Grid item md={4} sm={4} xs={12}>
           <Profile
             history={props["history"]}
-            userName={mockData.name}
-            userId={mockData.userId}
-            userEmail={mockData.userEmail}
-            userImgSrc={mockData.imgSrc}
+            userName={user['name']}
+            userId={user['id']}
+            userEmail={user['email']}
+            userImgSrc={userImg}
           />
         </Grid>
       </Hidden>
