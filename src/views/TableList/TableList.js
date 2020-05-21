@@ -100,6 +100,7 @@ export default function TableList(props) {
     text : ''
   })
 
+  const [leaderImage,setLeaderImage] = useState();
   const [totalPage,setTotalPage] = useState(0);
   const [teamLeader,setTeamLeader] = useState();
   const [pagingTheme, setPagingTheme] = useState(
@@ -282,23 +283,19 @@ export default function TableList(props) {
   }
 
   function getTeamSuccess(res){
-    setTeamLeader(res['teamLeader']['id']);
+    setTeamLeader(res['data']['teamLeader']['id']);
+    setLeaderImage(res['images'][res['images'].length - 1]);
   }
 
-  function topScroll(){
-    try{
-      document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
-    }catch{}  }
-  
   useEffect(()=>{
     getTeamInfo(props.match.params.idx);
     getList(1,'notice');
-    topScroll();
   },[]);
 
   return (
     <div>
       <BoardView
+        leaderImage={leaderImage}
         data={selectBoard}
         open={dialogHandle}
         updateList={()=>pageMove(0)}

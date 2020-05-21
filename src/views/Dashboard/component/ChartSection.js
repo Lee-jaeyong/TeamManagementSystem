@@ -8,79 +8,46 @@ import CardBody from "components/Card/CardBody.js";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
 import Divider from "@material-ui/core/Divider";
-import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(styles);
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </div>
-  );
-}
-
-function a11yProps(index) {
+const chartOption = (maxCount) => {
   return {
-    id: `scrollable-auto-tab-${index}`,
-    "aria-controls": `scrollable-auto-tabpanel-${index}`,
-  };
-}
+  options: {
+    axisX: {
+      showGrid: false,
+    },
+    low: 0,
+    high: maxCount + 5,
+    chartPadding: {
+      top: 0,
+      right: 5,
+      bottom: 0,
+      left: 0,
+    },
+  },
+  animation: {
+    draw: function(data) {
+      if (data.type === "bar") {
+        data.element.animate({
+          opacity: {
+            begin: (data.index + 1) * 80,
+            dur: 500,
+            from: 0,
+            to: 1,
+            easing: "ease",
+          },
+        });
+      }
+    },
+  }}
+};
 
 const chartData = (user, value) => {
   return {
     data: {
       labels: user,
       series: [value],
-    },
-    options: {
-      axisX: {
-        showGrid: false,
-      },
-      low: 0,
-      high: 300,
-      chartPadding: {
-        top: 0,
-        right: 5,
-        bottom: 0,
-        left: 0,
-      },
-    },
-    responsiveOptions: [
-      [
-        "screen and (max-width: 640px)",
-        {
-          seriesBarDistance: 5,
-          axisX: {
-            labelInterpolationFnc: function(value) {
-              return value[0];
-            },
-          },
-        },
-      ],
-    ],
-    animation: {
-      draw: function(data) {
-        if (data.type === "bar") {
-          data.element.animate({
-            opacity: {
-              begin: (data.index + 1) * 80,
-              dur: 500,
-              from: 0,
-              to: 1,
-              easing: "ease",
-            },
-          });
-        }
-      },
     },
   };
 };
@@ -92,28 +59,21 @@ export default function SignUpList(props) {
   const [content, setContent] = useState(
     "팀원과 자신의 일정수를 비교할 수 있습니다."
   );
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    if (newValue === 0) {
-      setTitle("개인별 일정수");
-      setContent("팀원과 자신의 일정수를 비교할 수 있습니다.");
-    } else if (newValue === 1) {
-      setTitle("팀 진척도 현황");
-      setContent("팀의 진척도 현황을 확인할 수 있습니다.");
-    }
-  };
+  const [value, setValue] = useState(0);
+  const [maxCount,setMaxCount] = useState(0);
 
   const parseChartData = (data) => {
-    if(!data['content'])
-      return;
+    if (!data["content"]) return;
     let user = [];
     let value = [];
-    for (let i = 0; i < data['content'].length; i++) {
-      user.push(data['content'][i]["name"]);
-      value.push(data['content'][i]["count"]);
+    let max = 0;
+    for (let i = 0; i < data["content"].length; i++) {
+      user.push(data["content"][i]["name"]);
+      value.push(data["content"][i]["count"]);
+      if(max < data['content'][i]['count'])
+        max = data['content'][i]['count'];
     }
+    setMaxCount(max);
     setData({
       user: user,
       value: value,
@@ -131,13 +91,12 @@ export default function SignUpList(props) {
           style={{ height: 365 }}
           className="ct-chart"
           data={
-            chartData(data ? data["user"] : [], data ? data["value"] : [])
-              .data
+            chartData(data ? data["user"] : [], data ? data["value"] : []).data
           }
           type="Bar"
-          options={chartData.options}
-          responsiveOptions={chartData.responsiveOptions}
-          listener={chartData.animation}
+          options={chartOption(maxCount).options}
+          responsiveOptions={chartOption(maxCount).responsiveOptions}
+          listener={chartOption(maxCount).animation}
         />
       </CardHeader>
       <CardBody>

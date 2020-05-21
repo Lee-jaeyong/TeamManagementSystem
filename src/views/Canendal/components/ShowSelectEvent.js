@@ -7,15 +7,13 @@ import Typography from "@material-ui/core/Typography";
 import UpdatePlan from "./UpdatePlan";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import * as axiosDelete from "@axios/delete";
-import * as axiosPatch from "@axios/patch";
-import * as axiosPut from "@axios/put";
 import MessageBox from "components/MessageBox/MessageBox";
 import CardHeader from "components/Card/CardHeader.js";
 import DialogContent from "@material-ui/core/DialogContent";
 
-import ActionArea from './component_ShowSelectEvent/ActionArea';
-import EventInfo from './component_ShowSelectEvent/EventInfo';
-import TodoListArea from './component_ShowSelectEvent/TodoListArea';
+import ActionArea from "./component_ShowSelectEvent/ActionArea";
+import EventInfo from "./component_ShowSelectEvent/EventInfo";
+import TodoListArea from "./component_ShowSelectEvent/TodoListArea";
 
 const useStyles = makeStyles({
   root: {
@@ -32,9 +30,9 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
-  todoListArea : {
-    marginLeft:40
-  }
+  todoListArea: {
+    marginLeft: 40,
+  },
 });
 
 export default function ShowSelectEvent(props) {
@@ -43,8 +41,9 @@ export default function ShowSelectEvent(props) {
   const [confirmState, setConfirmState] = useState(false);
 
   const [open, setOpen] = React.useState(props["open"]);
-  const [checkDate, setCheckDate] = React.useState(0);
   const { event } = props;
+  const [todoList, setTodoList] = useState([]);
+
   const [confirmDialogState, setConfirmDialogState] = useState(false);
   const [confirmDialogInfo, setConfirmDialogInfo] = useState({
     title: "",
@@ -75,25 +74,23 @@ export default function ShowSelectEvent(props) {
     props["handleClose"]();
   };
 
-  const notYet_d_dayCalculate = (targetDate) => {
-    let _target = new Date(targetDate).getTime();
-    let _now = new Date().getTime();
-    if (_now < _target) {
-      return parseInt((_target - _now) / 86400000);
-    }
-  };
-
-  const remain_d_dayCalcultate = (targetDate) => {
-    let _target = new Date(targetDate).getTime();
-    let _now = new Date().getTime();
-    if (_now < _target) {
-      return parseInt((_now - _target) / 86400000);
-    }
-  };
-
-  const updatePlanList = () => {
-    props.updatePlanList();
+  const updatePlanList = (value) => {
+    props.updatePlanList(value);
     handleClose();
+  };
+
+  const updateTodo = (todo,type) => {
+    let _todoList = todoList;
+    for(let i =0;i<_todoList.length;i++){
+      if(todo['seq'] === _todoList[i]['seq']){
+        _todoList[i] = todo;
+        break;
+      }
+    }
+    setTodoList(_todoList);
+    if(type === 'changeIng'){
+      props.changeIng(todo);
+    }
   };
 
   const yseClickHandle = () => {
@@ -103,20 +100,6 @@ export default function ShowSelectEvent(props) {
           props["event"]["groupId"],
         deletePlanSuccess
       );
-  };
-
-  const updateProgressSuccess = (res) => {
-    messageBoxHandle(true, "진척도 변경 완료", 2000, "success");
-    updatePlanList();
-  };
-
-  const updateProgressError = () => {
-    _messageBoxHandle(
-      true,
-      "진척도 변경 중 오류가 발생했습니다.",
-      2000,
-      "error"
-    );
   };
 
   const deletePlanSuccess = () => {
@@ -131,23 +114,14 @@ export default function ShowSelectEvent(props) {
       content: "위 일정을 정말 삭제하시겠습니까?",
     });
     setConfirmState(true);
-  },[]);
+  }, []);
 
   useEffect(() => {
-    let notYetDate = notYet_d_dayCalculate(event ? event["start"] : null);
-    if (notYetDate) {
-      setCheckDate("일정 시작 " + notYetDate + "일 전");
-    } else {
-      let checkData = remain_d_dayCalcultate(event ? event["end"] : null);
-      checkData || checkData === 0
-        ? setCheckDate("일정 종료까지 " + checkData + "일 남음")
-        : setCheckDate("마감된 일정");
-    }
     setOpen(props["open"]);
   }, [props["open"]]);
 
   useEffect(() => {
-    setCheckDate(0);
+    setTodoList(props["event"] && props["event"]["todoList"] ? props["event"]["todoList"] : []);
   }, [props["event"]]);
 
   return (
@@ -170,23 +144,27 @@ export default function ShowSelectEvent(props) {
           </CardHeader>
           <CardContent>
             <DialogContent>
-              <EventInfo
-                {...{event}}
+              <EventInfo {...{ event }} />
+              <TodoListArea
+                updateTodo={updateTodo}
+                messageBoxHandle={_messageBoxHandle}
+                isMy={
+                  props["event"] &&
+                  props["event"]["user"]["id"] === localStorage.getItem("ID")
+                }
+                todoList={todoList}
+                classes={classes.todoListArea}
               />
-              <TodoListArea messageBoxHandle={_messageBoxHandle} isMy={props["event"] && props["event"]["user"]["id"] === localStorage.getItem("ID")} todoList={props['event'] ? props['event']['todoList'] ? props['event']['todoList'] : [] : []} classes={classes.todoListArea}/>
             </DialogContent>
           </CardContent>
           {props["event"] &&
           props["event"]["user"]["id"] === localStorage.getItem("ID") ? (
-            <ActionArea
-              {...{setUpdatePlanState,deleteHandle}}
-            />
+            <ActionArea {...{ setUpdatePlanState, deleteHandle }} />
           ) : null}
         </Card>
       </Dialog>
       <UpdatePlan
-        updatePlanList={updatePlanList}
-        messageBoxHandle={messageBoxHandle}
+        {...{ updatePlanList, messageBoxHandle }}
         plan={props["event"]}
         open={updatePlanState}
         handleClose={setUpdatePlanState}

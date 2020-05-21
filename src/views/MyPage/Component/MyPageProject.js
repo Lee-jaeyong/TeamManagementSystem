@@ -197,7 +197,6 @@ export default function MyPageProject(props) {
           </IconButton>
         </Grid>
       </CardFooter>
-
       <ConfirmDialog
         title={"프로젝트 탈퇴 및 삭제"}
         content={"정말 해당 프로젝트를 삭제하시겠습니까?"}

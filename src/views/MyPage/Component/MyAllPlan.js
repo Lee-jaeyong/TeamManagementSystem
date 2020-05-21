@@ -41,11 +41,12 @@ export default function MyAllPlan(props) {
         </Typography>
       </CardHeader>
       <CardBody>
-        <Table //테이블 간격 조절하는방법 모르겠음ㅎ..
-          // sellClick={}
-          // pointer
+        <Table
+          sellClick={(seq)=>props.selectPlan(seq)}
+          pointer
+          hidden={{title:"번호",seq:0}}
           tableHeaderColor="primary"
-          tableHead={["일정", "진척도", "날짜"]}
+          tableHead={["번호" ,"내용", "진척도", "날짜"]}
           tableData={props.tableData}
         />
       </CardBody>

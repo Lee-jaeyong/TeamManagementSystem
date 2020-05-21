@@ -4,6 +4,8 @@ import Hidden from "@material-ui/core/Hidden";
 
 import MyPageProject from "./Component/MyPageProject.js";
 import MyAllPlan from "./Component/MyAllPlan.js";
+import ShowSelectEvent from "../Canendal/components/ShowSelectEvent";
+import MessageBox from "components/MessageBox/MessageBox";
 
 import Profile from "./Component/Profile.js";
 import * as axiosGet from "@axios/get";
@@ -117,12 +119,21 @@ const mockData = {
 export default function MyPage(props) {
   const [finishedPjtList, setFinishedPjtList] = useState([]);
   const [unFinishedPjtList, setUnFinishedPjtList] = useState([]);
-  const [totalPage,setTotalPage] = useState(0);
-  const [planList,setPlanList] = useState([]);
+  const [totalPage, setTotalPage] = useState(0);
+  const [planList, setPlanList] = useState([]);
+  const [originPlanList, setOriginPlanList] = useState([]);
   const [planPage, setPlanPage] = useState(0);
-  const [user,setUser] = useState({id:'',name:'',email:''});
-  const [userImg,setUserImg] = useState();
-  const [updateFlag,setUpdateFlag] = useState(false);
+  const [user, setUser] = useState({ id: "", name: "", email: "" });
+  const [userImg, setUserImg] = useState();
+  const [updateFlag, setUpdateFlag] = useState(false);
+  const [selectEvent, setSelectEvent] = useState();
+  const [showSelectEventState, setShowSelectEventState] = useState(false);
+  const [showMessageState, setShowMessageState] = useState(false);
+  const [MessageBoxState, setMessageBoxState] = useState({
+    content: "",
+    level: "success",
+    time: 2000,
+  });
 
   useEffect(() => {
     unFinishedPjt();
@@ -136,7 +147,7 @@ export default function MyPage(props) {
       "http://localhost:8090/api/users",
       getUserInfoSuccess
     );
-  }
+  };
 
   const unFinishedPjt = () => {
     axiosGet.getNotContainsData(
@@ -160,36 +171,30 @@ export default function MyPage(props) {
   };
 
   const getUserInfoSuccess = (res) => {
-    setUser(res['data']);
-    setUserImg(res['image']);
-  }
+    setUser(res["data"]);
+    setUserImg(res["image"]);
+  };
 
   const getPlanListSuccess = (res) => {
-    setTotalPage(res['page']['totalPages']);
+    setTotalPage(res["page"]["totalPages"]);
     const plan = res["content"];
     let _data = [];
     for (let i = 0; i < plan.length; i++) {
-      const todoList = plan[i]["todoList"];
+      const todoList = plan[i]["todoList"] ? plan[i]["todoList"] : [];
       let todoListSuccessCount = 0;
-      try{
-        for (let j = 0; j < todoList.length; j++) {
-          if (todoList[i]["ing"] === "YES") {
-            todoListSuccessCount++;
-          }
+      for (let j = 0; j < todoList.length; j++) {
+        if (todoList[j]["ing"] === "YES") {
+          todoListSuccessCount++;
         }
-        _data.push([
-          plan[i]["tag"],
-          plan.length + "중 " + todoListSuccessCount + "개 완료",
-          plan[i]["start"] + " ~ " + plan[i]["end"],
-        ]);
-      }catch(e){
-        _data.push([
-          plan[i]["tag"],
-          'TodoList가 존재하지 않는 일정입니다.',
-          plan[i]["start"] + " ~ " + plan[i]["end"],
-        ]);
       }
+      _data.push([
+        plan[i]["seq"],
+        plan[i]["tag"],
+        todoList.length + "중 " + todoListSuccessCount + "개 완료",
+        plan[i]["start"] + " ~ " + plan[i]["end"],
+      ]);
     }
+    setOriginPlanList(originPlanList.concat(plan));
     setPlanList(planList.concat(_data));
     setUpdateFlag(!updateFlag);
   };
@@ -212,18 +217,86 @@ export default function MyPage(props) {
   const planPageMove = () => {
     getPlanList(planPage + 1);
     setPlanPage(planPage + 1);
+  };
+
+  const messageBoxHandle = (show, content, time, level) => {
+    setShowMessageState(show);
+    setMessageBoxState({
+      content: content,
+      time: time,
+      level: level,
+    });
+  };
+
+  const selectEventHandle = (seq) => {
+    for (let i = 0; i < originPlanList.length; i++) {
+      if (originPlanList[i]["seq"] === seq) {
+        setSelectEvent(originPlanList[i]);
+        setShowSelectEventState(true);
+        return;
+      }
+    }
+  };
+
+  function updatePlanList(value) {
+    for (let i = 0; i < originPlanList.length; i++) {
+      if (originPlanList[i]["seq"] === value["seq"]) {
+        originPlanList[i] = {
+          ...originPlanList[i],
+          title: value["tag"],
+          start: value["start"],
+          end: value["end"],
+        };
+        planList[i][1] = value["tag"];
+        planList[i][3] = value["start"] + "~" + value["end"];
+      }
+    }
   }
+
+  function changeIng(value) {
+    let _originPlanList = originPlanList;
+    let _data = [];
+    for (let i = 0; i < originPlanList.length; i++) {
+      const todoList = originPlanList[i]["todoList"];
+      let todoListSuccessCount = 0;
+      for (let j = 0; j < todoList.length; j++) {
+        if (value["seq"] === todoList[j]["seq"]) {
+          todoList[j] = value;
+          _originPlanList[i]["todoList"] = todoList;
+        }
+        if (todoList[j]["ing"] === "YES") {
+          todoListSuccessCount++;
+        }
+      }
+      _data.push([
+        _originPlanList[i]["seq"],
+        _originPlanList[i]["tag"],
+        todoList.length + "중 " + todoListSuccessCount + "개 완료",
+        _originPlanList[i]["start"] + " ~ " + _originPlanList[i]["end"],
+      ]);
+    }
+    setPlanList(_data);
+    setOriginPlanList(_originPlanList);
+    setUpdateFlag(!updateFlag);
+  }
+
+  const updateImage = (image, name) => {
+    setUser({ ...user, img: name });
+    setUserImg(image);
+  };
 
   return (
     <Grid container style={{ padding: 20 }} spacing={5}>
       <Hidden only={["lg", "md", "xl", "sm"]}>
         <Grid item md={4} sm={4} xs={12}>
           <Profile
+            updateImage={updateImage}
+            originImage={user["img"]}
             history={props["history"]}
-            userName={mockData.name}
-            userId={mockData.userId}
-            userEmail={mockData.userEmail}
-            userImgSrc={mockData.imgSrc}
+            userName={user["name"]}
+            userId={user["id"]}
+            userEmail={user["email"]}
+            userImgSrc={userImg}
           />
         </Grid>
       </Hidden>
@@ -238,11 +311,12 @@ export default function MyPage(props) {
             />
           </Grid>
           <Grid item md={12}>
-            <MyAllPlan 
-            tableData={planList} 
-            totalPage={totalPage}
-            pageMove={planPageMove}
-            isFinal = {totalPage - 1 === planPage}
+            <MyAllPlan
+              selectPlan={selectEventHandle}
+              tableData={planList}
+              totalPage={totalPage}
+              pageMove={planPageMove}
+              isFinal={totalPage - 1 === planPage}
             />
           </Grid>
         </Grid>
@@ -250,14 +324,31 @@ export default function MyPage(props) {
       <Hidden only="xs">
         <Grid item md={4} sm={4} xs={12}>
           <Profile
+            updateImage={updateImage}
+            originImage={user["img"]}
             history={props["history"]}
-            userName={user['name']}
-            userId={user['id']}
-            userEmail={user['email']}
+            userName={user["name"]}
+            userId={user["id"]}
+            userEmail={user["email"]}
             userImgSrc={userImg}
           />
         </Grid>
       </Hidden>
+      <ShowSelectEvent
+        changeIng={changeIng}
+        messageBoxHandle={messageBoxHandle}
+        updatePlanList={updatePlanList}
+        event={selectEvent}
+        open={showSelectEventState}
+        handleClose={() => setShowSelectEventState(false)}
+      />
+      <MessageBox
+        open={showMessageState}
+        content={MessageBoxState["content"]}
+        level={MessageBoxState["level"]}
+        time={MessageBoxState["time"]}
+        handleClose={() => setShowMessageState(false)}
+      />
     </Grid>
   );
 }

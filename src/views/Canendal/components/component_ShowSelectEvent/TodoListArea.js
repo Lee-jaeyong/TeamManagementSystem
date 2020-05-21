@@ -26,14 +26,14 @@ const style = makeStyles({
 
 const ConfirmDialogContext = createContext();
 
-const TodoItem = ({ todo, messageBoxHandle, isMy }) => {
+const TodoItem = ({ updateTodo,todo, messageBoxHandle, isMy }) => {
   const classes = style();
 
   const confirmDialogContext = useContext(ConfirmDialogContext);
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const [updateTitle, setUpdateTitle] = useState(todo["title"]);
-  const [updateIng, setUpdateIng] = useState(todo["ing"]);
+  const [updateIng, setUpdateIng] = useState(todo["ing"] === 'YES' ? true : false);
 
   const updateHandle = (type) => {
     setUpdateFlag(type);
@@ -48,16 +48,17 @@ const TodoItem = ({ todo, messageBoxHandle, isMy }) => {
     if (todo["title"] === updateTitle) {
       return;
     }
-    const updateTodo = {
+    const _updateTodo = {
       title: updateTitle,
     };
     axiosPut.putContainsData(
       "http://localhost:8090/api/teamManage/todoList/" + todo["seq"],
       () => {
+        updateTodo({...todo,title:updateTitle});
         messageBoxHandle(true, "변경 완료", 2000, "success");
       },
       () => {},
-      updateTodo
+      _updateTodo
     );
   };
 
@@ -68,6 +69,7 @@ const TodoItem = ({ todo, messageBoxHandle, isMy }) => {
           todo["seq"] +
           "/faild",
         () => {
+          updateTodo({...todo,ing:'NO'},'changeIng');
           messageBoxHandle(true, "변경 완료", 2000, "success");
         }
       );
@@ -77,6 +79,7 @@ const TodoItem = ({ todo, messageBoxHandle, isMy }) => {
           todo["seq"] +
           "/success",
         () => {
+          updateTodo({...todo,ing:'YES'},'changeIng')
           messageBoxHandle(true, "변경 완료", 2000, "success");
         }
       );
@@ -168,7 +171,7 @@ const ControllIconButton = ({ title, children, clickHandle }) => (
   </Tooltip>
 );
 
-const TodoListArea = ({ todoList, classes, isMy, messageBoxHandle }) => {
+const TodoListArea = ({ updateTodo,todoList, classes, isMy, messageBoxHandle }) => {
   const [confirmDialogState, setConfirmDialogState] = useState({
     open: false,
     title: "",
@@ -192,13 +195,13 @@ const TodoListArea = ({ todoList, classes, isMy, messageBoxHandle }) => {
       },
     });
   };
-
   return (
     <React.Fragment>
       <List className={classes}>
         {todoList.map((todo, idx) => (
           <ConfirmDialogContext.Provider value={confirmDialogHandle}>
             <TodoItem
+              updateTodo={updateTodo}
               key={idx}
               todo={todo}
               isMy={isMy}

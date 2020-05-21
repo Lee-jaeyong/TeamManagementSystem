@@ -68,6 +68,9 @@ export default function SimpleDialogDemo(props) {
   const signUpSuccess = (res) => {
     props.updateList();
     messageBoxHandle(true,"승인 완료",2000,"success");
+    if(props['signUpList'].length - 1 === 0){
+      handleClose(false);
+    }
   }
 
   const selectHandle = (value) => {

@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ChartistGraph from "react-chartist";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import AccessTime from "@material-ui/icons/AccessTime";
-import DeleteIcon from "@material-ui/icons/Delete";
 
 // core components
 import Card from "components/Card/Card.js";
@@ -20,45 +17,13 @@ import CreateIcon from "@material-ui/icons/Create";
 import Tooltip from "@material-ui/core/Tooltip";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 
 import MessageBox from "components/MessageBox/MessageBox";
 import UpdateTeamDialog from "./component/UpdateTeamDialog";
-import bgImage from "assets/img/teamInfoBack.jpg";
 import { purple } from "@material-ui/core/colors";
 
 const useStyles = makeStyles(styles);
-
-const PrettoSlider = withStyles({
-  root: {
-    color: "#52af77",
-    height: 8,
-  },
-  thumb: {
-    height: 24,
-    width: 24,
-    backgroundColor: "#fff",
-    border: "2px solid currentColor",
-    marginTop: -8,
-    marginLeft: -12,
-    "&:focus, &:hover, &$active": {
-      boxShadow: "inherit",
-    },
-  },
-  active: {},
-  valueLabel: {
-    left: "calc(-50% + 4px)",
-  },
-  track: {
-    height: 8,
-    borderRadius: 4,
-  },
-  rail: {
-    height: 8,
-    borderRadius: 4,
-  },
-})(Slider);
 
 export default function SignUpList(props) {
   const classes = useStyles();
@@ -73,7 +38,7 @@ export default function SignUpList(props) {
   const ColorButton = withStyles((theme) => ({
     root: {
       color: theme.palette.getContrastText(purple[500]),
-      backgroundColor: purple[500],
+      backgroundColor: '#6F30C9',
       "&:hover": {
         backgroundColor: purple[700],
       },
@@ -99,11 +64,10 @@ export default function SignUpList(props) {
     messageBoxHandle(true, "팀 코드가 복사되었습니다.", 2000, "success");
   };
 
-  const { teamInfo } = props;
+  const { teamInfo,joinListImg } = props;
   const updateTeamHandle = () => {
     setUpdateTeam(true);
   };
-
   useEffect(() => {}, []);
 
   return (
@@ -189,15 +153,13 @@ export default function SignUpList(props) {
                         : 1
                     }
                   >
-                    <Avatar alt="" src="/static/images/avatar/1.jpg" />
                     {teamInfo
-                      ? teamInfo["joinPerson"]
-                        ? teamInfo["joinPerson"].map((person, idx) => {
+                      ? joinListImg
+                        ? joinListImg.map((person, idx) => {
                             return (
                               <Avatar
                                 key={idx}
-                                alt=""
-                                src="/static/images/avatar/1.jpg"
+                                src={"data:image/png;base64," + person}
                               />
                             );
                           })

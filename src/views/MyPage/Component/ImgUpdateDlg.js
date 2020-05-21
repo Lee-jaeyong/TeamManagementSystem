@@ -15,9 +15,12 @@ import Divider from "@material-ui/core/Divider";
 
 import ImageUpload from "./ImageUpload";
 
+import * as axiosDelete from '@axios/delete';
+import * as axiosPost from '@axios/post';
+
 export default function ImgUpdateDlg(props) {
   const [open, setOpen] = useState(props["open"]);
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState();
   const [imgByte, setImgByte] = useState();
 
   const styles = (theme) => ({
@@ -42,6 +45,7 @@ export default function ImgUpdateDlg(props) {
     if (_fileExt !== ".jpg" && _fileExt !== ".jpeg" && _fileExt !== ".png") {
       alert("이미지 형식의 파일만 가능");
     } else {
+      setFiles(file);
       getImgSource(file).then((res) => setImgByte(res));
     }
   }
@@ -63,6 +67,23 @@ export default function ImgUpdateDlg(props) {
     setOpen(false);
   };
 
+  const successUpdateImage = (res) => {
+    props.updateImage(imgByte.substring(22,imgByte.length),res['data']['img']);
+    handleClose();
+  }
+
+  const updateImage = () => {
+    const data = new FormData();
+    data.append('file',files);
+    if(props['originImage']){
+      axiosDelete.deleteNotContainsData('http://localhost:8090/api/users/image',()=>{
+        axiosPost.postFileUpload('http://localhost:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
+      });
+    }else{
+      axiosPost.postFileUpload('http://localhost:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
+    }
+  }
+
   const DialogTitle = withStyles(styles)((props) => {
     const { children, classes, onClose, ...other } = props;
     return (
@@ -83,6 +104,8 @@ export default function ImgUpdateDlg(props) {
 
   useEffect(() => {
     setOpen(props["open"]);
+    setImgByte(null);
+    setFiles(null);
   }, [props["open"]]);
 
   return (
@@ -119,15 +142,14 @@ export default function ImgUpdateDlg(props) {
                   color="secondary"
                   onClick={() => {
                     setImgByte();
+                    setFiles(null);
                   }}
                 >
                   다시 업로드
                 </Button>
                 <Button
                   style={{ width: 130, marginLeft: 5 }}
-                  onClick={() => {
-                    alert("저장버튼클릭");
-                  }}
+                  onClick={updateImage}
                   variant="contained"
                   color="primary"
                 >

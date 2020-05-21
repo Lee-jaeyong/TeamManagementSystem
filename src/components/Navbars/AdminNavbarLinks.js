@@ -76,6 +76,7 @@ export default function AdminNavbarLinks(props) {
     setOpenProfile(null);
   };
   const showMyPage = () => {
+    setOpenProfile(null);
     const mypage = encodeURI("/admin/myPage");
     props["history"].push(mypage);
   };

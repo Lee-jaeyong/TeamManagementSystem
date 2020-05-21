@@ -278,13 +278,14 @@ export default function UpdatePlan(props) {
         start:dateFormat(startDate),
         end:dateFormat(endDate),
       }
-      axiosPut.putContainsData("http://localhost:8090/api/teamManage/plan/"+props['plan']['groupId'],updatePlanSuccess,updatePlanError,updatePlan);
+      const seq = props['plan']['groupId'] ? props['plan']['groupId'] : props['plan']['seq'];
+      axiosPut.putContainsData("http://localhost:8090/api/teamManage/plan/"+seq,updatePlanSuccess,updatePlanError,updatePlan);
     }
   }
 
   const updatePlanSuccess = (res) => {
     for(let i =0;i<insertTodoList.length;i++){
-      const _todoList = {
+      let _todoList = {
         title : insertTodoList[i]['title']
       };
       axiosPost.postContainsData(
@@ -294,15 +295,15 @@ export default function UpdatePlan(props) {
         _todoList
         );
     }
+    const updatePlan = {
+      seq:res['seq'],
+      tag:tag.current.value,
+      start:dateFormat(startDate),
+      end:dateFormat(endDate),
+    }
     props.messageBoxHandle(true,"일정 수정 완료.",2000,'success');
-    props.updatePlanList();
+    props.updatePlanList(updatePlan);
     handleClose();
-  }
-
-  const successUpdate = (res) => {
-  }
-
-  const errorUpdate = (res) => {
   }
 
   const createTodoListSuccess = (res) => {
@@ -443,7 +444,7 @@ export default function UpdatePlan(props) {
             inputRef={tag}
             id="standard-basic"
             label="태그"
-            defaultValue={props['plan'] ? props['plan']['title'] ? props['plan']['title'].substring(0,props['plan']['title'].indexOf("<") - 1) : null : null}
+            defaultValue={props['plan'] ? props['plan']['tag'] ? props['plan']['tag'] : props['plan']['title'] ? props['plan']['title'].substring(0,props['plan']['title'].indexOf("<") - 1) : null : null}
             variant="outlined"
             style={{ width: "100%", marginTop: 15 }}
           />

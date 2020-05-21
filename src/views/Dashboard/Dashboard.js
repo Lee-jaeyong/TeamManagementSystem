@@ -8,7 +8,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
-import CustomTabs from "components/CustomTabs/CustomTabs.js";
 
 import SchedulerSection from './component/Scheduler';
 import TodoListSection from './component/TodoList';
@@ -29,6 +28,8 @@ export default function Dashboard(props) {
   const [todayPlan,setTodayPlan] = useState([]);
   const [todayPlanCount,setTodayPlanCount] = useState([]);
   const [teamInfo,setTeamInfo] = useState();
+  const [joinListImg,setJoinListImg] = useState();
+
   const [plan,setPlan] = useState([]);
 
   const [referenceDataList,setReferenceDataList] = useState();
@@ -76,7 +77,6 @@ export default function Dashboard(props) {
   }
   
   const getFreeBoardSuccess = (res) => {
-    console.log(res);
     if(!res['content']){
       setFreeBoardCount([]);
       setFreeBoardList([]);
@@ -110,12 +110,12 @@ export default function Dashboard(props) {
   }
 
   const getChartGroupByUserSuccess = (res) => {
-    console.log(res);
     setChartData(res);
   }
 
   const getTeamSuccess = (res) => {
-    setTeamInfo(res);
+    setTeamInfo(res['data']);
+    setJoinListImg(res['images']);
   }
 
   const getPlanSuccess = (res) => {
@@ -191,7 +191,7 @@ export default function Dashboard(props) {
     <div id="section">
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
-          <TeamInfoSection updateTeamInfo={getTeamInfo} teamInfo={teamInfo}/>
+          <TeamInfoSection joinListImg={joinListImg} updateTeamInfo={getTeamInfo} teamInfo={teamInfo}/>
         </GridItem>
         <GridItem xs={12} sm={12} md={6}>
           <SchedulerSection plan={plan} onClick={showScheduler}/>

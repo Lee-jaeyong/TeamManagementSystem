@@ -46,8 +46,7 @@ export default function UpdateProfileDlg(props) {
               height: 120,
               boxShadow: "2px 2px 7px 2px #939393",
             }}
-            alt="Remy Sharp"
-            src="/images/yunjiwon.png"
+            src={"data:image/png;base64," + props.userImgSrc}
           />
         </div>
       </Grid>

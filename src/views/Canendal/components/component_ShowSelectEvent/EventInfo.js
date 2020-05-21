@@ -10,10 +10,10 @@ import Avatar from "@material-ui/core/Avatar";
 const style = makeStyles({
   root: {
     minWidth: 275,
-  }
+  },
 });
 
-const EventInfo = React.memo(({event}) => {
+const EventInfo = React.memo(({ event }) => {
   const classes = style();
   return (
     <List
@@ -26,7 +26,11 @@ const EventInfo = React.memo(({event}) => {
           <Avatar alt="" src="/static/images/avatar/3.jpg" />
         </ListItemAvatar>
         <ListItemText
-          primary={<strong>{event ? event["title"] : null}</strong>}
+          primary={
+            <strong>
+              {event ? (event["tag"] ? "##" + event["tag"] : event["title"]) : null}
+            </strong>
+          }
           secondary={
             <React.Fragment>
               <Typography

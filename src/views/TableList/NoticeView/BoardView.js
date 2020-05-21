@@ -207,8 +207,12 @@ export default function BoardView(props) {
         <Card className={cardClasses.root}>
           <CardHeader
             avatar={
-              <Avatar aria-label="recipe" className={cardClasses.avatar}>
-              </Avatar>
+              props['leaderImage'] ? (
+              <Avatar aria-label="recipe" className={cardClasses.avatar} src={"data:image/png;base64," + props['leaderImage']}/>
+              ):
+              (
+              <Avatar aria-label="recipe" className={cardClasses.avatar}/>
+              )
             }
             action={
               <ThemeProvider theme={theme}>

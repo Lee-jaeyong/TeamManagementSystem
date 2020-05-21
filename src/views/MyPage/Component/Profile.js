@@ -70,7 +70,6 @@ export default function Profile(props) {
                 height: 120,
                 boxShadow: "2px 2px 7px 2px #939393",
               }}
-              alt="Remy Sharp"
               src={"data:image/png;base64," + props["userImgSrc"]}
             />
           </StyledBadge>
@@ -117,6 +116,7 @@ export default function Profile(props) {
         </IconButton>
       </Grid>
       <UpdateProfileDlg
+        userImgSrc={props["userImgSrc"]}
         name={props.userName}
         email={props.userEmail}
         id={props.userId}
@@ -126,6 +126,8 @@ export default function Profile(props) {
         }}
       />
       <ImgUpdateDlg
+        updateImage={props.updateImage}
+        originImage={props['originImage']}
         open={imgUpdateOpen}
         ImgUpdateDlgClose={() => {
           setImgUpdateOpen(false);
