@@ -122,11 +122,12 @@ export default function MyPage(props) {
   const [planPage, setPlanPage] = useState(0);
   const [user,setUser] = useState({id:'',name:'',email:''});
   const [userImg,setUserImg] = useState();
+  const [updateFlag,setUpdateFlag] = useState(false);
 
   useEffect(() => {
     unFinishedPjt();
     finishedPjt();
-    getPlanList();
+    getPlanList(0);
     getUserInfo();
   }, []);
 
@@ -151,9 +152,9 @@ export default function MyPage(props) {
     );
   };
 
-  const getPlanList = () => {
+  const getPlanList = (page) => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage/plan/all?size=10&page=" + planPage,
+      "http://localhost:8090/api/teamManage/plan/all?size=10&page=" + page,
       getPlanListSuccess
     );
   };
@@ -170,18 +171,27 @@ export default function MyPage(props) {
     for (let i = 0; i < plan.length; i++) {
       const todoList = plan[i]["todoList"];
       let todoListSuccessCount = 0;
-      for (let j = 0; j < todoList.length; j++) {
-        if (todoList[i]["ing"] === "YES") {
-          todoListSuccessCount++;
+      try{
+        for (let j = 0; j < todoList.length; j++) {
+          if (todoList[i]["ing"] === "YES") {
+            todoListSuccessCount++;
+          }
         }
+        _data.push([
+          plan[i]["tag"],
+          plan.length + "중 " + todoListSuccessCount + "개 완료",
+          plan[i]["start"] + " ~ " + plan[i]["end"],
+        ]);
+      }catch(e){
+        _data.push([
+          plan[i]["tag"],
+          'TodoList가 존재하지 않는 일정입니다.',
+          plan[i]["start"] + " ~ " + plan[i]["end"],
+        ]);
       }
-      _data.push([
-        plan[i]["tag"],
-        plan.length + "중 " + todoListSuccessCount + "개 완료",
-        plan[i]["start"] + " ~ " + plan[i]["end"],
-      ]);
     }
-    setPlanList(_data);
+    setPlanList(planList.concat(_data));
+    setUpdateFlag(!updateFlag);
   };
 
   const getUnFinishedSuccess = (res) => {
@@ -200,6 +210,7 @@ export default function MyPage(props) {
   };
 
   const planPageMove = () => {
+    getPlanList(planPage + 1);
     setPlanPage(planPage + 1);
   }
 
