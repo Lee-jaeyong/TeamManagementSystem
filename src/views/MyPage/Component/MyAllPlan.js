@@ -33,7 +33,6 @@ const useStyles = makeStyles(styles);
 
 export default function MyAllPlan(props) {
   const classes = useStyles();
-
   return (
     <Card className={classes.cardSize}>
       <CardHeader color="primary">
@@ -46,26 +45,29 @@ export default function MyAllPlan(props) {
           // sellClick={}
           // pointer
           tableHeaderColor="primary"
-          tableHead={["프로젝트명", "일정", "진척도", "날짜"]}
+          tableHead={["일정", "진척도", "날짜"]}
           tableData={props.tableData}
         />
       </CardBody>
-      <CardFooter>
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justify="center"
-        >
-          <IconButton
-            style={{ color: "#9c27b0" }}
-            aria-label="add to shopping cart"
+      {props["isFinal"] ? null : (
+        <CardFooter>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
           >
-            <MoreVertIcon fontSize="large" style={{ color: "#9c27b0" }} />
-          </IconButton>
-        </Grid>
-      </CardFooter>
+            <IconButton
+              style={{ color: "#9c27b0" }}
+              aria-label="add to shopping cart"
+              onClick={()=>props['pageMove']()}
+            >
+              <MoreVertIcon fontSize="large" style={{ color: "#9c27b0" }} />
+            </IconButton>
+          </Grid>
+        </CardFooter>
+      )}
     </Card>
   );
 }

@@ -57,55 +57,6 @@ export default function Admin({ ...rest }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const [pjtList, setPjtList] = useState([
-    {
-      path: "/dashboard/" + 1,
-      name: "C언어 프로젝트",
-      icon: Dashboard,
-      component: DashboardPage,
-      layout: "/admin"
-    },
-    , {
-      path: "/dashboard/" + 2,
-      name: "자바 프로젝트",
-      icon: Dashboard,
-      component: DashboardPage,
-      layout: "/admin"
-    },
-    , {
-      path: "/dashboard/" + 3,
-      name: "시스템 프로젝트",
-      icon: Dashboard,
-      component: DashboardPage,
-      layout: "/admin"
-    },
-    , {
-      path: "/dashboard/" + 4,
-      name: "JPA 프로젝트",
-      icon: Dashboard,
-      component: DashboardPage,
-      layout: "/admin"
-    },
-    , {
-      path: "/dashboard/" + 5,
-      name: "스프링 프로젝트",
-      icon: Dashboard,
-      component: DashboardPage,
-      layout: "/admin"
-    },
-    , {
-      path: "/dashboard/" + 6,
-      name: "REACT 프로젝트",
-      icon: Dashboard,
-      component: DashboardPage,
-      layout: "/admin"
-    },
-    , {
-      path: "/dashboard/" + 7,
-      name: "운영체제 프로젝트",
-      icon: Dashboard,
-      component: DashboardPage,
-      layout: "/admin"
-    },
   ]);
 
   const handleDrawerToggle = () => {
@@ -184,7 +135,6 @@ export default function Admin({ ...rest }) {
           handleDrawerToggle={handleDrawerToggle}
           {...rest}
         />
-        {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
         {getRoute() ? (
           <div className={classes.content}>
             <div className={classes.container}>{switchRoutes}</div>
