@@ -89,7 +89,8 @@ export default function ShowSelectEvent(props) {
     }
     setTodoList(_todoList);
     if(type === 'changeIng'){
-      props.changeIng(todo);
+      if(props.changeIng)
+        props.changeIng(todo);
     }
   };
 
