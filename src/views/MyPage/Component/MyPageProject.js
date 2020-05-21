@@ -3,20 +3,23 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItem from "@material-ui/core/ListItem";
-import Chip from "@material-ui/core/Chip";
 import { Divider } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
+import IconButton from "@material-ui/core/IconButton";
+import SettingsIcon from "@material-ui/icons/Settings";
 import Card from "components/Card/Card.js";
+import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import Avatar from "@material-ui/core/Avatar";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter";
 import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
+import CloseIcon from '@material-ui/icons/Close';
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CardBody from "components/Card/CardBody.js";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import ListItemText from "@material-ui/core/ListItemText";
+import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog.js";
 
 const styles = {
   cardCategoryWhite: {
@@ -39,33 +42,94 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
+const SettingListItem = ({data,sendToPject,setting,comfirmDlg}) => {
+  return (
+    <Grid container>
+        <ListItemText
+          style={{ marginLeft: 10, marginTop: 10 }}
+          id="projectName"
+          primary={data["project"]}
+        />
+        {!setting ? (
+        <ListItemAvatar style={{ float: "right" }}>
+          <AvatarGroup max={3}>
+            {data["userImgs"]
+              ? data["userImgs"].map((img, idx) => {
+                  return <Avatar key={idx} src={img} />;
+                })
+              : null}
+          </AvatarGroup>
+        </ListItemAvatar>
+        ):
+        (
+        <div style={{ float: "right" }}>
+          <IconButton color="secondary" aria-label="delete" onClick={comfirmDlg}>
+        <DeleteForeverOutlinedIcon />
+      </IconButton>
+        </div >
+        )}
+    </Grid>
+  )
+}
+
+const ProjectInfo = ({data,sendToPject,setting,comfirmDlg}) => (
+  <div>
+    {!setting ? (
+    <ListItem button onClick={sendToPject}>
+      <SettingListItem data={data} sendToPject={sendToPject} setting={setting} />
+    </ListItem>
+    ):(
+    <ListItem>
+      <SettingListItem data={data} sendToPject={sendToPject} setting={setting} comfirmDlg={comfirmDlg}/>
+    </ListItem>
+    )}
+    <Divider />
+  </div>
+);
+
+const ProjectList = ({unfinishedProjectTapData,sendToPject,setting,comfirmDlg}) => ( 
+  unfinishedProjectTapData
+    ? unfinishedProjectTapData.map((data, idx) => {
+        return (
+          <ProjectInfo key={idx} data={data} sendToPject={sendToPject} setting={setting} comfirmDlg={comfirmDlg}/>
+        );
+      })
+  : null
+)
+const deleteYesClick = () => {
+alert("삭제컨펌에서 예 누른경우");
+}
+
 export default function MyPageProject(props) {
   const classes = useStyles();
-  const [progressProjectTabValue, setProgressProjectTabValue] = useState(0);
-  const [pastProjectTabValue, setPastProjectTabValue] = useState(0);
+  const [projectTabValue, setProjectTabValue] = useState(0);
+  const [settingValue, setSettingValue] = useState(false);
+  const [comfirmState,setComfirmState] = useState(false);
 
   const progressTabHandle = (event, newValue) => {
-    setProgressProjectTabValue(newValue);
+    setProjectTabValue(newValue);
   };
 
-  const pastTabHandle = (event, newValue) => {
-    setPastProjectTabValue(newValue);
-  };
+  const settingProject=()=>{
+    setSettingValue(!settingValue);
+  }
+
+  const ConfirmDialogOpen=()=>{
+    setComfirmState(true)
+  }
 
   const [unfinishedProjectTapData, setUnfinishedProjectTapData] = useState();
-  const [finishedProjectTapData, setFinishedProjectTapData] = useState();
 
   useEffect(() => {
     setUnfinishedProjectTapData(
-      progressProjectTabValue == 0 ? props.joinProject : props.unfinishedProject
+      projectTabValue == 0 ? props.joinProject : props.unfinishedProject
     );
-  }, [progressProjectTabValue]);
+  }, [projectTabValue]);
 
-  useEffect(() => {
-    setFinishedProjectTapData(
-      pastProjectTabValue == 0 ? props.finishedProject : props.outProject
-    );
-  }, [pastProjectTabValue]);
+
+  const redirect = () => {
+    alert('fds');
+  }
 
   return (
     <Card className={classes.cardSize}>
@@ -76,118 +140,41 @@ export default function MyPageProject(props) {
       </CardHeader>
       <CardBody>
         <Grid container style={{ paddingTop: 17 }} spacing={2}>
-          <Grid item md={6} sm={12} xs={12}>
-            <Paper>
-              <Chip
-                style={{ margin: 20 }}
-                label="진행중인 프로젝트"
-                color="primary"
-              />
+          <Grid item xs={12}>
               <Tabs
-                value={progressProjectTabValue}
+                value={projectTabValue}
                 indicatorColor="primary"
                 textColor="primary"
                 onChange={progressTabHandle}
-                aria-label="disabled tabs example"
               >
-                <Tooltip title="구성원으로 참여중인 프로젝트" placement="left">
-                  <Tab label="참여중인 프로젝트" />
-                </Tooltip>
-                <Tooltip title="팀장으로 진행중인 프로젝트" placement="right">
-                  <Tab label="진행중인 프로젝트" />
-                </Tooltip>
-              </Tabs>
-              <Divider />
+                <Tab label="진행중인 프로젝트" />
+                <Tab label="마감된 프로젝트" />
 
-              {unfinishedProjectTapData
-                ? unfinishedProjectTapData.map((data, idx) => {
-                    return (
-                      <div key={idx}>
-                        <ListItem button>
-                          <Grid container>
-                            <ListItemText
-                              style={{ marginRight: 15, marginTop: 10 }}
-                              id="projectName"
-                              primary={data["project"]}
-                            />
-                            <ListItemAvatar style={{ float: "right" }}>
-                              <AvatarGroup max={3}>
-                                {data["userImgs"]
-                                  ? data["userImgs"].map((img, idx) => {
-                                      return <Avatar key={idx} src={img} />;
-                                    })
-                                  : null}
-                              </AvatarGroup>
-                            </ListItemAvatar>
-                          </Grid>
-                        </ListItem>
-                        <Divider />
-                      </div>
-                    );
-                  })
-                : null}
-            </Paper>
-          </Grid>
-          <Grid item md={6} sm={12} xs={12}>
-            <Paper>
-              <Chip
-                style={{ margin: 20 }}
-                label="지난 프로젝트"
-                color="secondary"
-              />
-              <Tabs
-                value={pastProjectTabValue}
-                indicatorColor="secondary"
-                textColor="secondary"
-                onChange={pastTabHandle}
-                aria-label="disabled tabs example"
-              >
-                <Tab label="만료된 프로젝트" />
-                <Tab label="탈퇴한 프로젝트" />
               </Tabs>
-              <Divider />
-              {finishedProjectTapData ? (
-                finishedProjectTapData.map((data, idx) => {
-                  return (
-                    <div key={idx}>
-                      <ListItem button>
-                        <Grid container>
-                          <ListItemText
-                            style={{ marginRight: 15, marginTop: 10 }}
-                            id="projectName"
-                            primary={data["project"]}
-                          />
-                          <ListItemAvatar style={{ float: "right" }}>
-                            <AvatarGroup max={3}>
-                              {data["userImgs"]
-                                ? data["userImgs"].map((img, idx) => {
-                                    return <Avatar key={idx} src={img} />;
-                                  })
-                                : null}
-                            </AvatarGroup>
-                          </ListItemAvatar>
-                        </Grid>
-                      </ListItem>
-                      <Divider />
-                    </div>
-                  );
-                })
-              ) : (
-                <ListItem button>
-                  <Grid container>
-                    <ListItemText
-                      style={{ marginRight: 15, marginTop: 10 }}
-                      id="projectName"
-                      primary="데이터가 없습니다."
-                    />
-                  </Grid>
-                </ListItem>
-              )}
-            </Paper>
+              <Divider/>
           </Grid>
-        </Grid>
-      </CardBody>
-      <CardFooter></CardFooter>
+          <Grid item xs={12}>
+          <ProjectList unfinishedProjectTapData={unfinishedProjectTapData} sendToPject={redirect} setting={settingValue} comfirmDlg={ConfirmDialogOpen}/>
+          </Grid>
+          </Grid>
+          </CardBody>
+      <CardFooter>
+      <Grid
+        container
+        alignItems="flex-start"
+        justify="flex-end"
+        direction="row"
+      >
+        <IconButton
+          onClick={settingProject}
+        >
+          {!settingValue?<SettingsIcon />:<CloseIcon/>}
+          
+        </IconButton>
+      </Grid>
+      </CardFooter>
+
+      <ConfirmDialog title={"프로젝트 탈퇴 및 삭제"} content={"정말 해당 프로젝트를 삭제하시겠습니까?"} yseClick={deleteYesClick} open={comfirmState} handleClose={()=>setComfirmState(false)}/>
     </Card>
   );
 }
