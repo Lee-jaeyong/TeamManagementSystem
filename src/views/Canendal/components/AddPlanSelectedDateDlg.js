@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -20,6 +20,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import * as axiosPost from "@axios/post";
 import Paper from "@material-ui/core/Paper";
+
+import PlanInfo from './component_AddPlanSelectDate/PlanInfo';
 
 import {
   MuiPickersUtilsProvider,
@@ -130,7 +132,7 @@ export default function AddPlanSelectedDateDlg(props) {
     });
   };
 
-  const handleStartDateChange = (date) => {
+  const handleStartDateChange = useCallback((date) => {
     if (date.toString() === "Invalid Date") {
       setStartDateError("일정을 다시 입력해주세요");
       setStartDate(null);
@@ -151,9 +153,9 @@ export default function AddPlanSelectedDateDlg(props) {
         setStartDate(date);
       }
     }
-  };
+  },[]);
 
-  const handleEndDateChange = (date) => {
+  const handleEndDateChange = useCallback((date) => {
     if (date.toString() === "Invalid Date") {
       setEndDateError("일정을 다시 입력해주세요");
       setEndDate(null);
@@ -174,7 +176,7 @@ export default function AddPlanSelectedDateDlg(props) {
         setEndDate(date);
       }
     }
-  };
+  },[]);
 
   const handleClose = () => {
     props.handleClose();
@@ -326,61 +328,14 @@ export default function AddPlanSelectedDateDlg(props) {
           </Typography>
         </CardHeader>
         <CardBody>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container>
-              <Grid item xs={5}>
-                <KeyboardDatePicker
-                  autoOk
-                  disableToolbar
-                  variant="inline"
-                  format="yyyy-MM-dd"
-                  margin="normal"
-                  id="startDate"
-                  label="시작날짜"
-                  error={startDateError ? true : false}
-                  helperText={startDateError}
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
-                  }}
-                />
-              </Grid>
-              <Grid style={{ textAlign: "center" }} item xs={2}>
-                <Typography
-                  variant="h4"
-                  component="h4"
-                  style={{ position: "relative", top: 20 }}
-                >
-                  ~
-                </Typography>
-              </Grid>
-              <Grid item xs={5}>
-                <KeyboardDatePicker
-                  autoOk
-                  disableToolbar
-                  variant="inline"
-                  format="yyyy-MM-dd"
-                  error={endDateError ? true : false}
-                  helperText={endDateError}
-                  margin="normal"
-                  id="endDate"
-                  label="종료날짜"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </MuiPickersUtilsProvider>
-          <TextField
-            inputRef={tag}
-            id="standard-basic"
-            label="태그"
-            variant="outlined"
-            style={{ width: "100%", marginTop: 15 }}
+          <PlanInfo
+            startDateError={startDateError}
+            endDateError={endDateError}
+            startDate={startDate}
+            endDate={endDate}
+            handleStartDateChange={handleStartDateChange}
+            handleEndDateChange={handleEndDateChange}
+            tag={tag}
           />
           {todoList.length !== 0 ? (
             <TodoListArea
