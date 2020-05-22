@@ -74,38 +74,39 @@ export default function ShowSelectEvent(props) {
     props["handleClose"]();
   };
 
-  const updatePlanList = (value) => {
-    props.updatePlanList(value);
+  const updatePlanList = (value,type) => {
+    props.updatePlanList(value,type);
     handleClose();
   };
 
-  const updateTodo = (todo,type) => {
+  const updateTodo = (todo, type) => {
     let _todoList = todoList;
-    for(let i =0;i<_todoList.length;i++){
-      if(todo['seq'] === _todoList[i]['seq']){
+    for (let i = 0; i < _todoList.length; i++) {
+      if (todo["seq"] === _todoList[i]["seq"]) {
         _todoList[i] = todo;
         break;
       }
     }
     setTodoList(_todoList);
-    if(type === 'changeIng'){
-      if(props.changeIng)
-        props.changeIng(todo);
+    if (type === "changeIng") {
+      if (props.changeIng) props.changeIng(todo);
     }
   };
 
   const yseClickHandle = () => {
+    const seq = props["event"]["groupId"]
+      ? props["event"]["groupId"]
+      : props["event"]["seq"];
     if (confirmState)
       axiosDelete.deleteNotContainsData(
-        "http://localhost:8090/api/teamManage/plan/" +
-          props["event"]["groupId"],
+        "http://localhost:8090/api/teamManage/plan/" + seq,
         deletePlanSuccess
       );
   };
 
   const deletePlanSuccess = () => {
     props.messageBoxHandle(true, "일정 삭제 완료", 2000, "success");
-    updatePlanList();
+    updatePlanList(props['event'],'delete');
   };
 
   const deleteHandle = useCallback(() => {
@@ -122,7 +123,11 @@ export default function ShowSelectEvent(props) {
   }, [props["open"]]);
 
   useEffect(() => {
-    setTodoList(props["event"] && props["event"]["todoList"] ? props["event"]["todoList"] : []);
+    setTodoList(
+      props["event"] && props["event"]["todoList"]
+        ? props["event"]["todoList"]
+        : []
+    );
   }, [props["event"]]);
 
   return (
@@ -169,6 +174,7 @@ export default function ShowSelectEvent(props) {
         plan={props["event"]}
         open={updatePlanState}
         handleClose={setUpdatePlanState}
+        notUpdate={props.notUpdate}
       />
       <ConfirmDialog
         yseClick={yseClickHandle}

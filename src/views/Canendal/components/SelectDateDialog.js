@@ -383,15 +383,14 @@ export default function SelectDateDialog(props) {
     updatePlanList();
   };
 
-  const updatePlanList = () => {
-    props.updatePlanList();
+  const updatePlanList = (value) => {
+    props["updatePlan"]();
     handleClose();
   };
 
   const updateTodo = (seq, tag) => {
     props.messageBoxHandle(true, "TodoList 변경 완료", 2000, "success");
     updatePlanList();
-    handleClose();
   };
 
   const confirmDialogHandle = (open, title, content, handleYesClick) => {
@@ -412,12 +411,7 @@ export default function SelectDateDialog(props) {
 
   useEffect(() => {
     setOpen(props["open"]);
-    if (!props["open"]) {
-      updatePlanList();
-    }
   }, [props["open"]]);
-
-  useEffect(() => {}, [props["eventList"]]);
 
   return (
     <div>
@@ -490,9 +484,10 @@ export default function SelectDateDialog(props) {
                             <span style={{ float: "right", marginTop: 0 }}>
                               <Tooltip title="수정" aria-label="add">
                                 <IconButton
-                                  onClick={() =>
-                                    selectUpdatePlan(event["groupId"])
-                                  }
+                                  onClick={() => {
+                                    selectUpdatePlan(event["groupId"]);
+                                    handleClose();
+                                  }}
                                   component="span"
                                 >
                                   <EditIcon />

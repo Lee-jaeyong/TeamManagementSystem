@@ -25,3 +25,14 @@ export async function postContainsData(URL,func,error,data){
     }).then(res=>func(res.data))
     .catch(res=>{error(res)});
 }
+
+
+export async function awitPostContainsData(URL,data){
+    let res = await axios.post(URL,data,{
+        headers: {
+            Authorization:localStorage.getItem('token_type')+' '+localStorage.getItem('access_token'),
+            'Content-Type': 'application/json'
+        }
+    });
+    return res.data;
+}

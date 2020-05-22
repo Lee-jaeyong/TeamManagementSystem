@@ -83,7 +83,7 @@ export default function Scheduler(props) {
     
     return (
     <div id="planList">
-      <Fade in timeout={200}>
+      <Fade in timeout={1000}>
         <Paper style={{ padding: 30 }} elevation={3}>
           <FullCalendar
             events={props['plan']}
