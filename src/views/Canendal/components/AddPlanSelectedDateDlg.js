@@ -20,6 +20,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import * as axiosPost from "@axios/post";
 import Paper from "@material-ui/core/Paper";
+import SockJsClient from 'react-stomp';
 
 import PlanInfo from './component_AddPlanSelectDate/PlanInfo';
 
@@ -104,6 +105,7 @@ const TodoListAddArea = ({ addTodoList }) => (
 );
 
 export default function AddPlanSelectedDateDlg(props) {
+  const [socket,setSocket] = useState();
   const tag = useRef();
   const classes = useStyles();
   const [open, setOpen] = useState(props["open"]);
@@ -244,7 +246,6 @@ export default function AddPlanSelectedDateDlg(props) {
 
   const createPlanSuccess = (res) => {
     const plan = res;
-    console.log(todoList);
     for(let i =0;i<todoList.length;i++) {
       const _todoList = {
         title : todoList[i]['title']
@@ -256,6 +257,7 @@ export default function AddPlanSelectedDateDlg(props) {
         _todoList
       );
     }
+    socket.sendMessage('/topics/'+props["idx"],JSON.stringify({code:props['idx']}));
     props.messageBoxHandle(true, "일정 등록 완료", 2000, "success");
     props.updatePlanList();
     handleClose();
@@ -321,6 +323,13 @@ export default function AddPlanSelectedDateDlg(props) {
       open={open}
       PaperComponent="div"
     >
+      <SockJsClient
+        headers={
+          {'Authorization':localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')}
+        }
+        url='http://localhost:8090/chat'
+        ref={ (client) => { setSocket(client) }} 
+      />
       <Card className={classes.cardSize}>
         <CardHeader color="info">
           <Typography variant="h6" component="h6">

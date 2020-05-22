@@ -15,11 +15,12 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/logo.png";
+import SockJsClient from "react-stomp";
 
 import Dashboard from "@material-ui/icons/Dashboard";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 
-import * as axiosGet from '@axios/get';
+import * as axiosGet from "@axios/get";
 
 let ps;
 
@@ -37,9 +38,7 @@ const switchRoutes = (
       }
       return null;
     })}
-    <Route
-      path={'/login'}
-    />
+    <Route path={"/login"} />
     <Redirect from="/admin" to="/admin/main" />
   </Switch>
 );
@@ -47,7 +46,8 @@ const switchRoutes = (
 const useStyles = makeStyles(styles);
 
 export default function Admin({ ...rest }) {
-  // styles
+  const [pjtCodeArr, setPjtCodeArr] = useState([]);
+  const [alarm, setAlarm] = useState([]);
   const classes = useStyles();
   // ref to help us initialize PerfectScrollbar on windows devices
   const mainPanel = React.createRef();
@@ -56,8 +56,7 @@ export default function Admin({ ...rest }) {
   const [color] = React.useState("blue");
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const [pjtList, setPjtList] = useState([
-  ]);
+  const [pjtList, setPjtList] = useState([]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -72,38 +71,59 @@ export default function Admin({ ...rest }) {
   };
 
   const getTeams = () => {
-    axiosGet.getNotContainsData("http://localhost:8090/api/teamManage",getTeamSuccess)
-  }
+    axiosGet.getNotContainsData(
+      "http://localhost:8090/api/teamManage",
+      getTeamSuccess
+    );
+  };
 
   const getTeamSuccess = (res) => {
-    const content = res['content'];
+    const content = res["content"];
     let contentArr = [];
-    for(let i =0;i<content.length;i++){
-      contentArr.push(
-        {
-          path: "/dashboard/" + content[i]['code'],
-          name: content[i]['name'],
-          code : content[i]['code'],
-          icon: Dashboard,
-          component: DashboardPage,
-          layout: "/admin"
-        }
-      )
+    let codeArr = [];
+    for (let i = 0; i < content.length; i++) {
+      contentArr.push({
+        path: "/dashboard/" + content[i]["code"],
+        name: content[i]["name"],
+        code: content[i]["code"],
+        icon: Dashboard,
+        component: DashboardPage,
+        layout: "/admin",
+      });
+      codeArr.push("/topics/" + content[i]["code"]);
     }
+    setPjtCodeArr(codeArr);
     setPjtList(contentArr);
+  };
+
+  const planBloker = (value) => {
+    for (let i = 0; i < pjtList.length; i++) {
+      if (pjtList[i]["code"] === value["code"]) {
+        for(let j = 0;j<alarm.length;j++){
+          if(alarm[j]['code'] === value['code']){
+            return;
+          }
+        }
+        let result = pjtList[i];
+        setAlarm([...alarm, result]);
+        return;
+      }
+    }
+  };
+
+  const showAlarm = (value) => {
+    setAlarm([...alarm.filter((alarmInfo)=>alarmInfo['code'] !== value['code'])]);
   }
 
-  // initialize and destroy the PerfectScrollbar plugin
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(mainPanel.current, {
         suppressScrollX: true,
-        suppressScrollY: false
+        suppressScrollY: false,
       });
       document.body.style.overflow = "hidden";
     }
     window.addEventListener("resize", resizeFunction);
-    // Specify how to clean up after this effect:
     return function cleanup() {
       if (navigator.platform.indexOf("Win") > -1) {
         ps.destroy();
@@ -118,6 +138,19 @@ export default function Admin({ ...rest }) {
 
   return (
     <div className={classes.wrapper}>
+      {pjtCodeArr.length !== 0 ? (
+        <SockJsClient
+          headers={{
+            Authorization:
+              localStorage.getItem("token_type") +
+              " " +
+              localStorage.getItem("access_token"),
+          }}
+          url="http://localhost:8090/chat"
+          topics={pjtCodeArr}
+          onMessage={planBloker}
+        />
+      ) : null}
       <Sidebar
         routes={pjtList}
         logoText={"Planner System"}
@@ -130,6 +163,8 @@ export default function Admin({ ...rest }) {
       />
       <div className={classes.mainPanel} ref={mainPanel}>
         <Navbar
+          showAlarm={showAlarm}
+          alarm={alarm}
           menuUpdate={getTeams}
           routes={routes}
           handleDrawerToggle={handleDrawerToggle}
@@ -140,8 +175,8 @@ export default function Admin({ ...rest }) {
             <div className={classes.container}>{switchRoutes}</div>
           </div>
         ) : (
-            <div className={classes.map}>{switchRoutes}</div>
-          )}
+          <div className={classes.map}>{switchRoutes}</div>
+        )}
         {getRoute() ? <Footer /> : null}
       </div>
     </div>

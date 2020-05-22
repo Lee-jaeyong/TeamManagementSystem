@@ -44,7 +44,6 @@ export default function AdminNavbarLinks(props) {
     level: "success",
     time: 2000,
   });
-
   const messageBoxHandle = (show, content, time, level) => {
     setShowMessageState(show);
     setMessageBoxState({
@@ -61,7 +60,8 @@ export default function AdminNavbarLinks(props) {
       setOpenNotification(event.currentTarget);
     }
   };
-  const handleCloseNotification = () => {
+  const handleCloseNotification = (value) => {
+    if (value) props.showAlarm(value);
     setOpenNotification(null);
   };
 
@@ -166,7 +166,13 @@ export default function AdminNavbarLinks(props) {
           className={classes.buttonLink}
         >
           <Notifications className={classes.icons} />
-          <span className={classes.notifications}>5</span>
+          {props["alarm"] ? (
+            props["alarm"].length !== 0 ? (
+              <span className={classes.notifications}>
+                {props["alarm"].length}
+              </span>
+            ) : null
+          ) : null}
           <Hidden mdUp implementation="css">
             <p onClick={handleCloseNotification} className={classes.linkText}>
               알 림
@@ -196,36 +202,27 @@ export default function AdminNavbarLinks(props) {
               <Paper>
                 <ClickAwayListener onClickAway={handleCloseNotification}>
                   <MenuList role="menu">
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      C언어 프로젝트 공지사항이 등록되었습니다.
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      C언어 프로젝트 공지사항이 등록되었습니다.
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      시스템 프로젝트 공지사항이 등록되었습니다.
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      스프링 프로젝트 참고자료가 등록되었습니다.
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseNotification}
-                      className={classes.dropdownItem}
-                    >
-                      운영체제 프로젝트 참고자료가 등록되었습니다.
-                    </MenuItem>
+                    {props["alarm"] ? (
+                      props["alarm"].length === 0 ? (
+                        <MenuItem
+                          onClick={() => handleCloseNotification()}
+                          className={classes.dropdownItem}
+                        >
+                          {"등록된 일정이 존재하지 않습니다."}
+                        </MenuItem>
+                      ) : (
+                        props["alarm"].map((alarm, idx) => (
+                          <MenuItem
+                            onClick={() => handleCloseNotification(alarm)}
+                            className={classes.dropdownItem}
+                          >
+                            {"< " +
+                              alarm["name"] +
+                              " > 팀의 일정이 등록되었습니다."}
+                          </MenuItem>
+                        ))
+                      )
+                    ) : null}
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
