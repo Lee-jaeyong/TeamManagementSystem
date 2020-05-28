@@ -14,6 +14,9 @@ import * as axiosGet from "@axios/get";
 export default function MyPage(props) {
   const [finishedPjtList, setFinishedPjtList] = useState([]);
   const [unFinishedPjtList, setUnFinishedPjtList] = useState([]);
+  const [mySignUpList, setMySignUpList] = useState([]);
+  const [notSuccessPjt, setNotSuccessPjt] = useState([]);
+
   const [totalPage, setTotalPage] = useState(0);
   const [planList, setPlanList] = useState([]);
   const [originPlanList, setOriginPlanList] = useState([]);
@@ -33,34 +36,56 @@ export default function MyPage(props) {
   useEffect(() => {
     unFinishedPjt();
     finishedPjt();
+    getMySignUpList();
     getPlanList(0);
     getUserInfo();
   }, []);
 
   const getUserInfo = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/users",
+      "http://172.30.1.37:8090/api/users",
       getUserInfoSuccess
     );
   };
 
   const unFinishedPjt = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage",
+      "http://172.30.1.37:8090/api/teamManage",
       getUnFinishedSuccess
     );
   };
 
+  const getMySignUpList = () => {
+    axiosGet.getNotContainsData(
+      "http://172.30.1.37:8090/api/teamManage/signUpList",
+      getMySignUpListSuccess
+    );
+  };
+
+  const getMySignUpListSuccess = (res) => {
+    let mySingUpList_ready = [];
+    let notSuccessPjtList = [];
+    for (let i = 0; i < res["content"].length; i++) {
+      if(res['content'][i]['state'] === 'NO' && res['content'][i]['reson'] !== null){
+        notSuccessPjtList.push(res['content'][i]);
+      }else if(res['content'][i]['state'] === 'NO'){
+        mySingUpList_ready.push(res['content'][i]);
+      }
+    }
+    setNotSuccessPjt(notSuccessPjtList);
+    setMySignUpList(mySingUpList_ready);
+  };
+
   const finishedPjt = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage?flag=finished",
+      "http://172.30.1.37:8090/api/teamManage?flag=finished",
       getFinishedSuccess
     );
   };
 
   const getPlanList = (page) => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage/plan/all?size=10&page=" + page,
+      "http://172.30.1.37:8090/api/teamManage/plan/all?size=10&page=" + page,
       getPlanListSuccess
     );
   };
@@ -205,7 +230,10 @@ export default function MyPage(props) {
             <Fade in {...{ timeout: 1000 }}>
               <div>
                 <MyPageProject
+                  messageBoxHandle={messageBoxHandle}
                   history={props["history"]}
+                  notSuccessPjt={notSuccessPjt}
+                  mySignUpList={mySignUpList}
                   joinProject={unFinishedPjtList} //참여중인프로젝트
                   unfinishedProject={finishedPjtList} //진행중인프로젝트
                   outTeam={outTeam}

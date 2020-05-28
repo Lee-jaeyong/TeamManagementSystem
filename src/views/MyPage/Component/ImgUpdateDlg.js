@@ -42,6 +42,10 @@ export default function ImgUpdateDlg(props) {
     let _fileLen = fileName.length;
     let _lastDot = fileName.lastIndexOf(".");
     let _fileExt = fileName.substring(_lastDot, _fileLen).toLowerCase();
+    if(file.size > 20971520){
+      alert("바이트 초과");
+      return;
+    }
     if (_fileExt !== ".jpg" && _fileExt !== ".jpeg" && _fileExt !== ".png") {
       alert("이미지 형식의 파일만 가능");
     } else {
@@ -76,11 +80,11 @@ export default function ImgUpdateDlg(props) {
     const data = new FormData();
     data.append('file',files);
     if(props['originImage']){
-      axiosDelete.deleteNotContainsData('http://localhost:8090/api/users/image',()=>{
-        axiosPost.postFileUpload('http://localhost:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
+      axiosDelete.deleteNotContainsData('http://172.30.1.37:8090/api/users/image',()=>{
+        axiosPost.postFileUpload('http://172.30.1.37:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
       });
     }else{
-      axiosPost.postFileUpload('http://localhost:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
+      axiosPost.postFileUpload('http://172.30.1.37:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
     }
   }
 

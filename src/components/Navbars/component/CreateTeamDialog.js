@@ -85,7 +85,7 @@ export default function FormDialog(props) {
         description: description.current.value
       };
       axiosPost.postContainsData(
-        "http://localhost:8090/api/teamManage",
+        "http://172.30.1.37:8090/api/teamManage",
         createSuccess,
         createError,
         team

@@ -74,8 +74,8 @@ export default function ShowSelectEvent(props) {
     props["handleClose"]();
   };
 
-  const updatePlanList = (value,type) => {
-    props.updatePlanList(value,type);
+  const updatePlanList = (value, type) => {
+    props.updatePlanList(value, type);
     handleClose();
   };
 
@@ -99,14 +99,14 @@ export default function ShowSelectEvent(props) {
       : props["event"]["seq"];
     if (confirmState)
       axiosDelete.deleteNotContainsData(
-        "http://localhost:8090/api/teamManage/plan/" + seq,
+        "http://172.30.1.37:8090/api/teamManage/plan/" + seq,
         deletePlanSuccess
       );
   };
 
   const deletePlanSuccess = () => {
     props.messageBoxHandle(true, "일정 삭제 완료", 2000, "success");
-    updatePlanList(props['event'],'delete');
+    updatePlanList(props["event"], "delete");
   };
 
   const deleteHandle = useCallback(() => {
@@ -117,6 +117,18 @@ export default function ShowSelectEvent(props) {
     });
     setConfirmState(true);
   }, []);
+
+  const updateTodoList = (todo) => {
+    let updateTodoList = event["todoList"].filter(
+      (value) => todo["seq"] != value["seq"]
+    );
+    updateTodoList.push(todo);
+    let updateEvent = {
+      ...event,
+      todoList: updateTodoList,
+    };
+    props.updatePlanList(updateEvent);
+  };
 
   useEffect(() => {
     setOpen(props["open"]);
@@ -152,6 +164,7 @@ export default function ShowSelectEvent(props) {
             <DialogContent>
               <EventInfo {...{ event }} />
               <TodoListArea
+                updateTodoList={updateTodoList}
                 updateTodo={updateTodo}
                 messageBoxHandle={_messageBoxHandle}
                 isMy={
@@ -170,6 +183,8 @@ export default function ShowSelectEvent(props) {
         </Card>
       </Dialog>
       <UpdatePlan
+        headerColor={"rose"}
+        btnColor={"linear-gradient(45deg, #ec407a 30%, #d81b60 90%)"}
         {...{ updatePlanList, messageBoxHandle }}
         plan={props["event"]}
         open={updatePlanState}

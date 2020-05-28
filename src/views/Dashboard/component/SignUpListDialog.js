@@ -62,7 +62,7 @@ export default function SimpleDialogDemo(props) {
   };
 
   const yesClickHandle = () => {
-    axiosPut.putNotContainsData("http://localhost:8090/api/teamManage/" + selectSignUp + "/joinTeam/success",signUpSuccess);
+    axiosPut.putNotContainsData("http://172.30.1.37:8090/api/teamManage/" + selectSignUp + "/joinTeam/success",signUpSuccess);
   }
 
   const signUpSuccess = (res) => {

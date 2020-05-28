@@ -41,7 +41,7 @@ export default function JoinTeamDialog(props) {
       teamCode.current.focus();
     } else {
       axiosPost.postNotContainsData(
-        "http://localhost:8090/api/teamManage/" +
+        "http://172.30.1.37:8090/api/teamManage/" +
           teamCode.current.value +
           "/joinTeam",
         successJoin,

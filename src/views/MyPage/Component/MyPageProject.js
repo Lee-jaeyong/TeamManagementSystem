@@ -22,7 +22,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog.js";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import * as axiosDelete from '@axios/delete';
+import * as axiosDelete from "@axios/delete";
+import MySignUpListDialog from "./component_MyPageProject/MySignUpList";
 
 const styles = {
   cardCategoryWhite: {
@@ -120,11 +121,29 @@ export default function MyPageProject(props) {
   const [projectTabValue, setProjectTabValue] = useState(0);
   const [settingValue, setSettingValue] = useState(false);
   const [comfirmState, setComfirmState] = useState(false);
-  const [deleteTeamCode,setDeleteTeamCode] = useState('');
+  const [deleteTeamCode, setDeleteTeamCode] = useState("");
   const [unfinishedProjectTapData, setUnfinishedProjectTapData] = useState();
+  const [mySignUpDialogState, setMySignUpDialogState] = useState(false);
+  const [notSuccessPjtDialogState, setNotSuccessPjtDialogState] = useState(
+    false
+  );
 
   const progressTabHandle = (event, newValue) => {
-    setProjectTabValue(newValue);
+    if (newValue === 2) {
+      if(props['mySignUpList'].length === 0){
+        props['messageBoxHandle'](true,"신청 현황이 존재하지 않습니다.",2000,'error');
+      }else{
+        handleMySignUpDialogState(true);
+      }
+    } else if (newValue === 3) {
+      if(props['notSuccessPjt'].length === 0){
+        props['messageBoxHandle'](true,"반려 현황이 존재하지 않습니다.",2000,'error');
+      }else{
+        handleNotSuccessDialogState(true);
+      }
+    } else {
+      setProjectTabValue(newValue);
+    }
   };
 
   const settingProject = () => {
@@ -137,21 +156,34 @@ export default function MyPageProject(props) {
   };
 
   const deleteYesClick = () => {
-    axiosDelete.deleteNotContainsData('http://localhost:8090/api/teamManage/'+deleteTeamCode+'/out',deleteSuccess);
+    axiosDelete.deleteNotContainsData(
+      "http://172.30.1.37:8090/api/teamManage/" + deleteTeamCode + "/out",
+      deleteSuccess
+    );
+  };
+
+  const handleMySignUpDialogState = (type) => {
+    setMySignUpDialogState(type);
+  };
+
+  const handleNotSuccessDialogState = (type) => {
+    setNotSuccessPjtDialogState(type);
   };
 
   const deleteSuccess = (res) => {
-    props.outTeam(res['code']);
-  }
+    props.outTeam(res["code"]);
+  };
 
   const redirect = (code) => {
     props["history"].push("./dashboard/" + code);
   };
 
   useEffect(() => {
-    setUnfinishedProjectTapData(
-      projectTabValue == 0 ? props.joinProject : props.unfinishedProject
-    );
+    if (projectTabValue === 0) {
+      setUnfinishedProjectTapData(props["joinProject"]);
+    } else if (projectTabValue === 1) {
+      setUnfinishedProjectTapData(props["unfinishedProject"]);
+    }
   });
 
   return (
@@ -172,6 +204,8 @@ export default function MyPageProject(props) {
             >
               <Tab label="진행중인 프로젝트" />
               <Tab label="마감된 프로젝트" />
+              <Tab label="프로젝트 신청 현황" />
+              <Tab label="반려 현황" />
             </Tabs>
             <Divider />
           </Grid>
@@ -203,6 +237,18 @@ export default function MyPageProject(props) {
         yseClick={deleteYesClick}
         open={comfirmState}
         handleClose={() => setComfirmState(false)}
+      />
+      <MySignUpListDialog
+        type={true}
+        mySignUpList={props["mySignUpList"]}
+        open={mySignUpDialogState}
+        handleClose={() => handleMySignUpDialogState(false)}
+        />
+      <MySignUpListDialog
+        type={false}
+        mySignUpList={props["notSuccessPjt"]}
+        open={notSuccessPjtDialogState}
+        handleClose={() => handleNotSuccessDialogState(false)}
       />
     </Card>
   );

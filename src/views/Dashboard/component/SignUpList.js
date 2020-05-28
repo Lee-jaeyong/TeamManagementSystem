@@ -43,7 +43,7 @@ export default function SignUpList(props){
     }
 
     const getSignUpList = () => {
-        axiosGet.getNotContainsData("http://localhost:8090/api/teamManage/" + props['code'] + "/signUpList",getSignUpListSuccess);
+        axiosGet.getNotContainsData("http://172.30.1.37:8090/api/teamManage/" + props['code'] + "/signUpList",getSignUpListSuccess);
     }
 
     const getSignUpListSuccess = (res) => {

@@ -72,7 +72,7 @@ export default function Admin({ ...rest }) {
 
   const getTeams = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage",
+      "http://172.30.1.37:8090/api/teamManage",
       getTeamSuccess
     );
   };
@@ -146,7 +146,7 @@ export default function Admin({ ...rest }) {
               " " +
               localStorage.getItem("access_token"),
           }}
-          url="http://localhost:8090/chat"
+          url="http://172.30.1.37:8090/chat"
           topics={pjtCodeArr}
           onMessage={planBloker}
         />

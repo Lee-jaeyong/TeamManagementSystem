@@ -64,7 +64,7 @@ export default function TableList(props) {
       size: 6,
     };
     axiosGet.getContainsData(
-      "http://localhost:8090/api/teamManage/plan/" +
+      "http://172.30.1.37:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/search",
       getPlanListUnFinishedSuccess,
@@ -161,6 +161,8 @@ export default function TableList(props) {
         handleClose={() => setShowMessageState(false)}
       />
       <UpdatePlan
+        headerColor={"rose"}
+        btnColor={"linear-gradient(45deg, #ec407a 30%, #d81b60 90%)"}
         updatePlanList={updatePlan}
         messageBoxHandle={messageBoxHandle}
         plan={selectEvent}

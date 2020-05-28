@@ -23,7 +23,7 @@ const EventInfo = React.memo(({ event }) => {
     >
       <ListItem component="div" alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar alt="" src="/static/images/avatar/3.jpg" />
+          <Avatar alt="" src={"data:image/png;base64,"+event['user']['myImg']} />
         </ListItemAvatar>
         <ListItemText
           primary={

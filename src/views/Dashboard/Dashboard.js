@@ -33,90 +33,20 @@ export default function Dashboard(props) {
 
   const [plan, setPlan] = useState([]);
 
-  const [referenceDataList, setReferenceDataList] = useState();
-  const [referenceDataCount, setReferenceDataCount] = useState([]);
-
-  const [freeBoardList, setFreeBoardList] = useState();
-  const [freeBoardCount, setFreeBoardCount] = useState([]);
-
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {}, [props.match.params.idx]);
-
-  const getReferenceData = () => {
-    const data = {
-      page: 0,
-      size: 5,
-    };
-    axiosGet.getContainsData(
-      "http://localhost:8090/api/teamManage/referenceData/" +
-        props.match.params.idx +
-        "/all",
-      getReferenceDataSuccess,
-      data,
-      true
-    );
-  };
-
-  const getReferenceDataSuccess = (res) => {
-    if (!res["content"]) {
-      setReferenceDataCount([]);
-      setReferenceDataList([]);
-      return;
-    }
-    const data = res["content"];
-    let resultArr = [];
-    let resultCount = [];
-    for (let i = 0; i < data.length; i++) {
-      resultArr.push([data[i]["title"]]);
-      resultCount.push(i);
-    }
-    setReferenceDataList(resultArr);
-    setReferenceDataCount(resultCount);
-  };
-
-  const getFreeBoard = () => {
-    const data = {
-      page: 0,
-      size: 5,
-    };
-    axiosGet.getContainsData(
-      "http://localhost:8090/api/teamManage/freeBoard/" +
-        props.match.params.idx +
-        "/all",
-      getFreeBoardSuccess,
-      data,
-      true
-    );
-  };
-
-  const getFreeBoardSuccess = (res) => {
-    if (!res["content"]) {
-      setFreeBoardCount([]);
-      setFreeBoardList([]);
-      return;
-    }
-    const data = res["content"];
-    let resultArr = [];
-    let resultCount = [];
-    for (let i = 0; i < data.length; i++) {
-      resultArr.push([data[i]["title"]]);
-      resultCount.push(i);
-    }
-    setFreeBoardList(resultArr);
-    setFreeBoardCount(resultCount);
-  };
 
   const updatePlan = () => {
     let now = new Date();
     let page = {
       date:
         now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
-      size: 50,
+      size: 100,
       page: 0,
     };
     axiosGet.getContainsData(
-      "http://localhost:8090/api/teamManage/plan/" +
+      "http://172.30.1.37:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/search/all",
       getPlanSuccess,
@@ -125,7 +55,7 @@ export default function Dashboard(props) {
     );
     getTeamInfo();
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage/plan/" +
+      "http://172.30.1.37:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/group-by-user",
       getChartGroupByUserSuccess
@@ -134,7 +64,7 @@ export default function Dashboard(props) {
 
   const getTeamInfo = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage/" + props.match.params.idx,
+      "http://172.30.1.37:8090/api/teamManage/" + props.match.params.idx,
       getTeamSuccess
     );
   };
@@ -218,14 +148,10 @@ export default function Dashboard(props) {
   useEffect(() => {
     setTeamInfo(null);
     setPlan(null);
-    setReferenceDataList(null);
-    setFreeBoardList(null);
     updatePlan();
-    getReferenceData();
-    getFreeBoard();
   }, [props.match.params.idx]);
 
-  return !teamInfo || !plan || !referenceDataList || !freeBoardList ? (
+  return !teamInfo || !plan ? (
     <Backdrop className={classes.backdrop} open={true}>
       <CircularProgress color="inherit" />
     </Backdrop>

@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import MessageBox from 'components/MessageBox/MessageBox';
 
-import * as axiosPatch from '@axios/patch';
+import * as axiosPut from '@axios/put';
 
 export default function FaildSignUp(props) {
   const reson = React.useRef();
@@ -42,9 +42,7 @@ export default function FaildSignUp(props) {
       reson.current.focus();
       return;
     }
-    let data = new FormData();
-    data.append("reson",reson.current.value);
-    axiosPatch.patchContainsData("http://localhost:8090/api/teamManage/"+props['signUpSeq']+"/joinTeam/faild",success,error,data);
+    axiosPut.putNotContainsData("http://172.30.1.37:8090/api/teamManage/"+props['signUpSeq']+"/joinTeam/faild?reson="+reson.current.value.trim(),success);
     handleClose();
   }
 
@@ -53,10 +51,6 @@ export default function FaildSignUp(props) {
     props['updateList']();
   }
   
-  const error = (res) => {
-    props.messageBoxHandle(true,"반려 실패",2000,'error');
-  }
-
   useEffect(()=>{
     setOpen(props['open']);
   },[props['open']]);

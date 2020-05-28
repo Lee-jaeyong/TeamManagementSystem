@@ -7,12 +7,10 @@ import Divider from "@material-ui/core/Divider";
 
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-import Grid from "@material-ui/core/Grid";
 import CardHeader from "components/Card/CardHeader.js";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import DateFnsUtils from "@date-io/date-fns";
 import MessageBox from "components/MessageBox/MessageBox";
 import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
@@ -20,14 +18,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import * as axiosPost from "@axios/post";
 import Paper from "@material-ui/core/Paper";
-import SockJsClient from 'react-stomp';
 
 import PlanInfo from './component_AddPlanSelectDate/PlanInfo';
-
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
 
 const useStyles = makeStyles((theme) => ({
   cardSize: {
@@ -222,7 +214,7 @@ export default function AddPlanSelectedDateDlg(props) {
         end: dateFormat(endDate + ""),
       };
       axiosPost.postContainsData(
-        "http://localhost:8090/api/teamManage/plan/" + props["idx"],
+        "http://172.30.1.37:8090/api/teamManage/plan/" + props["idx"],
         createPlanSuccess,
         createPlanError,
         plan
@@ -251,7 +243,7 @@ export default function AddPlanSelectedDateDlg(props) {
         title : todoList[i]['title']
       };
       axiosPost.postContainsData(
-        "http://localhost:8090/api/teamManage/todoList/" + plan["seq"],
+        "http://172.30.1.37:8090/api/teamManage/todoList/" + plan["seq"],
         createTodoListSuccess,
         createTodoListError,
         _todoList
@@ -323,13 +315,6 @@ export default function AddPlanSelectedDateDlg(props) {
       open={open}
       PaperComponent="div"
     >
-      <SockJsClient
-        headers={
-          {'Authorization':localStorage.getItem('token_type')+' '+localStorage.getItem('access_token')}
-        }
-        url='http://localhost:8090/chat'
-        ref={ (client) => { setSocket(client) }} 
-      />
       <Card className={classes.cardSize}>
         <CardHeader color="info">
           <Typography variant="h6" component="h6">

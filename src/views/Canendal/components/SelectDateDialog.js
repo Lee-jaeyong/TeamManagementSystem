@@ -82,6 +82,12 @@ const Todo = ({
   const updateTodo = () => {
     setUpdateFlag(!updateFlag);
   };
+  
+  useEffect(()=>{
+    setUpdateTag(todo['title']);
+    setTodoIng(todo['ing']);
+    setUpdateFlag(false);
+  });
 
   const updateTodoSuccess = () => {
     if (updateTag.trim() === "") {
@@ -96,7 +102,7 @@ const Todo = ({
       title: updateTag,
     };
     axiosPut.putContainsData(
-      "http://localhost:8090/api/teamManage/todoList/" + todo["seq"],
+      "http://172.30.1.37:8090/api/teamManage/todoList/" + todo["seq"],
       successUpdate,
       errorUpdate,
       updateTodo
@@ -112,7 +118,7 @@ const Todo = ({
   const changeTodoIng = (type) => {
     if (type === "YES") {
       axiosPut.putNotContainsData(
-        "http://localhost:8090/api/teamManage/todoList/" +
+        "http://172.30.1.37:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/faild",
         successHandle
@@ -120,7 +126,7 @@ const Todo = ({
       updateCount("decrement");
     } else {
       axiosPut.putNotContainsData(
-        "http://localhost:8090/api/teamManage/todoList/" +
+        "http://172.30.1.37:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/success",
         successHandle
@@ -238,6 +244,10 @@ const TodoListPanel = ({ todoList, updateTodoInfo, isMy }) => {
       setFinishCount(finishCount - 1);
     }
   };
+
+  useEffect(()=>{
+    setFinishCount(finishTodoList.length);
+  });
 
   return todoList.length !== 0 ? (
     <ExpansionPanel style={{ width: 700 }}>
@@ -373,7 +383,7 @@ export default function SelectDateDialog(props) {
 
   const deletePlan = () => {
     axiosDelete.deleteNotContainsData(
-      "http://localhost:8090/api/teamManage/plan/" + selectPlan,
+      "http://172.30.1.37:8090/api/teamManage/plan/" + selectPlan,
       deletePlanSuccess
     );
   };
@@ -451,7 +461,7 @@ export default function SelectDateDialog(props) {
                   style={{ width: "180%", marginBottom: 100 }}
                 >
                   <ListItemAvatar>
-                    <Avatar alt="" src="/static/images/avatar/3.jpg" />
+                    <Avatar alt="" src={"data:image/png;base64," + event['user']['myImg']} />
                   </ListItemAvatar>
                   <ListItemText
                     primary={
@@ -544,6 +554,8 @@ export default function SelectDateDialog(props) {
         />
       </Dialog>
       <UpdatePlan
+        headerColor={"warning"}
+        btnColor={"linear-gradient(45deg, #ffb300 30%, #ff8f00 90%)"}
         updatePlanList={updatePlanList}
         messageBoxHandle={messageBoxHandle}
         plan={selectPlan}

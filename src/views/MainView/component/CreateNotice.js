@@ -125,7 +125,7 @@ export default function CreateNotice(props) {
         title: name.current.value,
         content: content.current.value,
       };
-      axiosPost.postContainsData("http://localhost:8090/api/teamManage/"+props['createState']['type']+"/" + props['idx'],createNoticeSuccess,createNoticeError,createInfo);
+      axiosPost.postContainsData("http://172.30.1.37:8090/api/teamManage/"+props['createState']['type']+"/" + props['idx'],createNoticeSuccess,createNoticeError,createInfo);
     }
   };
 
@@ -142,14 +142,14 @@ export default function CreateNotice(props) {
       for(let i =0;i<imgs.length;i++){
         data.append("files",imgs[i]);
       }
-      axiosPost.postFileUpload("http://localhost:8090/api/teamManage/"+props['createState']['type']+"/" + seq + "/fileUpload/IMG",ImgUploadSuccess,data);
+      axiosPost.postFileUpload("http://172.30.1.37:8090/api/teamManage/"+props['createState']['type']+"/" + seq + "/fileUpload/IMG",ImgUploadSuccess,data);
     }
     if(files.length > 0){
       let data = new FormData();
       for(let i =0;i<files.length;i++){
         data.append("files",files[i]);
       }
-      axiosPost.postFileUpload("http://localhost:8090/api/teamManage/"+props['createState']['type']+"/" + seq + "/fileUpload/FILE",FileUploadSuccess,data);
+      axiosPost.postFileUpload("http://172.30.1.37:8090/api/teamManage/"+props['createState']['type']+"/" + seq + "/fileUpload/FILE",FileUploadSuccess,data);
     }
   }
 

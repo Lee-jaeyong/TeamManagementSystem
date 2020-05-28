@@ -20,20 +20,28 @@ import * as axiosPut from "@axios/put";
 const style = makeStyles({
   checkIcon: {
     marginLeft: 22,
-    marginTop: 3
+    marginTop: 3,
   },
 });
 
 const ConfirmDialogContext = createContext();
 
-const TodoItem = ({ updateTodo,todo, messageBoxHandle, isMy }) => {
+const TodoItem = ({
+  updateTodo,
+  todo,
+  messageBoxHandle,
+  isMy,
+  updateTodoList,
+}) => {
   const classes = style();
 
   const confirmDialogContext = useContext(ConfirmDialogContext);
 
   const [updateFlag, setUpdateFlag] = useState(false);
   const [updateTitle, setUpdateTitle] = useState(todo["title"]);
-  const [updateIng, setUpdateIng] = useState(todo["ing"] === 'YES' ? true : false);
+  const [updateIng, setUpdateIng] = useState(
+    todo["ing"] === "YES" ? true : false
+  );
 
   const updateHandle = (type) => {
     setUpdateFlag(type);
@@ -52,10 +60,11 @@ const TodoItem = ({ updateTodo,todo, messageBoxHandle, isMy }) => {
       title: updateTitle,
     };
     axiosPut.putContainsData(
-      "http://localhost:8090/api/teamManage/todoList/" + todo["seq"],
+      "http://172.30.1.37:8090/api/teamManage/todoList/" + todo["seq"],
       () => {
-        updateTodo({...todo,title:updateTitle});
+        updateTodo({ ...todo, title: updateTitle });
         messageBoxHandle(true, "변경 완료", 2000, "success");
+        updateTodoList({ ...todo, title: updateTitle });
       },
       () => {},
       _updateTodo
@@ -65,22 +74,24 @@ const TodoItem = ({ updateTodo,todo, messageBoxHandle, isMy }) => {
   const updateIngHandle = () => {
     if (updateIng) {
       axiosPut.putNotContainsData(
-        "http://localhost:8090/api/teamManage/todoList/" +
+        "http://172.30.1.37:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/faild",
         () => {
-          updateTodo({...todo,ing:'NO'},'changeIng');
+          updateTodo({ ...todo, ing: "NO" }, "changeIng");
           messageBoxHandle(true, "변경 완료", 2000, "success");
+          updateTodoList({ ...todo, ing: "NO" });
         }
       );
     } else {
       axiosPut.putNotContainsData(
-        "http://localhost:8090/api/teamManage/todoList/" +
+        "http://172.30.1.37:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/success",
         () => {
-          updateTodo({...todo,ing:'YES'},'changeIng')
+          updateTodo({ ...todo, ing: "YES" }, "changeIng");
           messageBoxHandle(true, "변경 완료", 2000, "success");
+          updateTodoList({ ...todo, ing: "YES" });
         }
       );
     }
@@ -153,7 +164,19 @@ const TodoItem = ({ updateTodo,todo, messageBoxHandle, isMy }) => {
         ) : null}
       </ListItemAvatar>
       {!updateFlag ? (
-        <ListItemText primary={updateIng ? <mark><span style={{textDecorationLine: "line-through"}}>{updateTitle}</span></mark> : updateTitle} />
+        <ListItemText
+          primary={
+            updateIng ? (
+              <mark>
+                <span style={{ textDecorationLine: "line-through" }}>
+                  {updateTitle}
+                </span>
+              </mark>
+            ) : (
+              updateTitle
+            )
+          }
+        />
       ) : (
         <TextField
           variant="outlined"
@@ -171,7 +194,14 @@ const ControllIconButton = ({ title, children, clickHandle }) => (
   </Tooltip>
 );
 
-const TodoListArea = ({ updateTodo,todoList, classes, isMy, messageBoxHandle }) => {
+const TodoListArea = ({
+  updateTodo,
+  todoList,
+  classes,
+  isMy,
+  messageBoxHandle,
+  updateTodoList,
+}) => {
   const [confirmDialogState, setConfirmDialogState] = useState({
     open: false,
     title: "",
@@ -201,6 +231,7 @@ const TodoListArea = ({ updateTodo,todoList, classes, isMy, messageBoxHandle }) 
         {todoList.map((todo, idx) => (
           <ConfirmDialogContext.Provider value={confirmDialogHandle}>
             <TodoItem
+              updateTodoList={updateTodoList}
               updateTodo={updateTodo}
               key={idx}
               todo={todo}

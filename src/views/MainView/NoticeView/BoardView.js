@@ -137,7 +137,7 @@ export default function BoardView(props) {
   };
 
   const deleteYesClick = () => {
-    axiosDelete.deleteNotContainsData("http://localhost:8090/api/teamManage/notice/" + props['data']['data']['seq'],deleteSuccess);
+    axiosDelete.deleteNotContainsData("http://172.30.1.37:8090/api/teamManage/notice/" + props['data']['data']['seq'],deleteSuccess);
   }
 
   const deleteSuccess = (res) => {
@@ -253,7 +253,7 @@ export default function BoardView(props) {
                     avatar={<GetAppIcon />}
                     label={files['name']}
                     onClick={() => {
-                      axiosGet.getFileDownload("http://localhost:8090/api/teamManage/notice/" + data['data']['seq'] + "/downloadFile/" + files['name'],files['name']);
+                      axiosGet.getFileDownload("http://172.30.1.37:8090/api/teamManage/notice/" + data['data']['seq'] + "/downloadFile/" + files['name'],files['name']);
                     }}
                     size="small"
                     variant="outlined"

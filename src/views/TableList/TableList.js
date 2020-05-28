@@ -150,17 +150,17 @@ export default function TableList(props) {
   const selectNoticeInfo = (type, seq) => {
     if (type === "notice")
       axiosGet.getNotContainsData(
-        "http://localhost:8090/api/teamManage/" + type + "/" + seq,
+        "http://172.30.1.37:8090/api/teamManage/" + type + "/" + seq,
         selectNoticeInfoSuccess
       );
     else if (type === "referenceData") {
       axiosGet.getNotContainsData(
-        "http://localhost:8090/api/teamManage/" + type + "/" + seq,
+        "http://172.30.1.37:8090/api/teamManage/" + type + "/" + seq,
         selectReferenceDataInfoSuccess
       );
     } else if (type === "freeBoard") {
       axiosGet.getNotContainsData(
-        "http://localhost:8090/api/teamManage/" + type + "/" + seq,
+        "http://172.30.1.37:8090/api/teamManage/" + type + "/" + seq,
         selectFreeBoardSuccess
       );
     }
@@ -233,7 +233,7 @@ export default function TableList(props) {
       size: 10,
     };
     axiosGet.getContainsData(
-      "http://localhost:8090/api/teamManage/" +
+      "http://172.30.1.37:8090/api/teamManage/" +
         type +
         "/" +
         props.match.params.idx +
@@ -302,7 +302,7 @@ export default function TableList(props) {
 
   function getTeamInfo(code) {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage/" + code,
+      "http://172.30.1.37:8090/api/teamManage/" + code,
       getTeamSuccess
     );
   }

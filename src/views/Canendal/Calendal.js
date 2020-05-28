@@ -126,7 +126,7 @@ export default function App(props) {
       page: 0,
     };
     axiosGet.getContainsData(
-      "http://localhost:8090/api/teamManage/plan/" +
+      "http://172.30.1.37:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/all",
       getPlanSuccess,
@@ -135,35 +135,6 @@ export default function App(props) {
       null
     );
   };
-
-  const updatePlan = (value,type) => {
-    let _eventList = [];
-    let _originList = [];
-    for(let i =0;i<fileterEventList.length;i++){
-      if(fileterEventList[i]['seq'] === value['seq']){
-        if(type === 'delete'){
-          continue;
-        }else{
-          _eventList.push(value);
-        }
-      }else{
-        _eventList.push(fileterEventList[i]);
-      }
-    }
-    for(let i = 0;i<plan.length;i++){
-      if(plan[i]['seq'] === value['seq']){
-        if(type === 'delete'){
-          continue;
-        }else{
-          _originList.push(value);
-        }
-      }else{
-        _originList.push(plan[i]);
-      }
-    }
-    setPlan(_originList);
-    setFilterEventList(_eventList);
-  }
 
   const getPlanSuccess = (res) => {
     if (!res["content"]) {
