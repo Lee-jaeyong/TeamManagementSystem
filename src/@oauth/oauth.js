@@ -10,7 +10,7 @@ const accessToken = (res,user) => {
 
 export async function getAccessToken(user,callBack,error){
     axios.defaults.headers.common['Authorization'] = 'Basic S01hcHA6cGFzcw==';
-    axios.post("http://172.30.1.37:8090/oauth/token?grant_type=password&username="+user.id+"&password="+user.pass+"",{
+    axios.post("http://localhost:8090/oauth/token?grant_type=password&username="+user.id+"&password="+user.pass+"",{
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -23,7 +23,7 @@ export async function getAccessToken(user,callBack,error){
 }
 
 export async function revokeToken(){
-    axios.get("http://172.30.1.37:8090/api/users/oauth/revoke-token",{
+    axios.get("http://localhost:8090/api/users/oauth/revoke-token",{
         headers: {
             Authorization:localStorage.getItem('access_token')
         }

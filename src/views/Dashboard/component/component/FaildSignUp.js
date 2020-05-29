@@ -42,7 +42,7 @@ export default function FaildSignUp(props) {
       reson.current.focus();
       return;
     }
-    axiosPut.putNotContainsData("http://172.30.1.37:8090/api/teamManage/"+props['signUpSeq']+"/joinTeam/faild?reson="+reson.current.value.trim(),success);
+    axiosPut.putNotContainsData("http://localhost:8090/api/teamManage/"+props['signUpSeq']+"/joinTeam/faild?reson="+reson.current.value.trim(),success);
     handleClose();
   }
 

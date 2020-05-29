@@ -1,4 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
+import {useDispatch} from 'react-redux';
+
+import {showMessageHandle} from '@store/actions/MessageAction';
+
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,8 +25,8 @@ import AddCircleIcon from "@material-ui/icons/AddCircle";
 import LanguageIcon from "@material-ui/icons/Language";
 import Tooltip from "@material-ui/core/Tooltip";
 
-import JoinTeamDialog from "./component/JoinTeamDialog";
-import CreateTeamDialog from "./component/CreateTeamDialog";
+import JoinTeamDialog from "@commons/team/component/insert/JoinTeamDialog";
+import CreateTeamDialog from "@commons/team/component/insert/CreateTeamDialog";
 import MessageBox from "components/MessageBox/MessageBox";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
@@ -32,26 +36,13 @@ import * as Oauth from "@oauth/oauth";
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks(props) {
+  const dispatch = useDispatch();
   const inputRef = useRef();
   const classes = useStyles();
   const [openNotification, setOpenNotification] = useState(null);
   const [openProfile, setOpenProfile] = useState(null);
   const [joinTeamDialogState, setJoinTeamDialog] = useState(false);
   const [createTeamDialogState, setCreateTeamDialogState] = useState(false);
-  const [showMessageState, setShowMessageState] = useState(false);
-  const [MessageBoxState, setMessageBoxState] = useState({
-    content: "",
-    level: "success",
-    time: 2000,
-  });
-  const messageBoxHandle = (show, content, time, level) => {
-    setShowMessageState(show);
-    setMessageBoxState({
-      content: content,
-      time: time,
-      level: level,
-    });
-  };
 
   const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
@@ -83,7 +74,7 @@ export default function AdminNavbarLinks(props) {
 
   const showSearchResult = () => {
     if (inputRef.current.value.trim() === "") {
-      messageBoxHandle(true, "검색어를 입력해주세요", 2000, "error");
+      dispatch(showMessageHandle({open:true,content:"검색어를 입력해주세요",level:"error"}))
       return;
     }
     const search = encodeURI("/admin/search/" + inputRef.current.value);
@@ -292,22 +283,14 @@ export default function AdminNavbarLinks(props) {
         </Poppers>
       </div>
       <JoinTeamDialog
-        messageBoxHandle={messageBoxHandle}
+        callBack={()=>dispatch(showMessageHandle({open:true,content:"팀 신청 완료",level:"success"}))}
         open={joinTeamDialogState}
         handleClose={() => setJoinTeamDialog(false)}
       />
       <CreateTeamDialog
-        messageBoxHandle={messageBoxHandle}
-        menuUpdate={props["menuUpdate"]}
+        callBack={()=>dispatch(showMessageHandle({open:true,content:"팀 등록 완료",level:"success"}))}
         open={createTeamDialogState}
         handleClose={() => setCreateTeamDialogState(false)}
-      />
-      <MessageBox
-        open={showMessageState}
-        content={MessageBoxState["content"]}
-        level={MessageBoxState["level"]}
-        time={MessageBoxState["time"]}
-        handleClose={() => setShowMessageState(false)}
       />
     </div>
   );

@@ -102,7 +102,7 @@ const Todo = ({
       title: updateTag,
     };
     axiosPut.putContainsData(
-      "http://172.30.1.37:8090/api/teamManage/todoList/" + todo["seq"],
+      "http://localhost:8090/api/teamManage/todoList/" + todo["seq"],
       successUpdate,
       errorUpdate,
       updateTodo
@@ -118,7 +118,7 @@ const Todo = ({
   const changeTodoIng = (type) => {
     if (type === "YES") {
       axiosPut.putNotContainsData(
-        "http://172.30.1.37:8090/api/teamManage/todoList/" +
+        "http://localhost:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/faild",
         successHandle
@@ -126,7 +126,7 @@ const Todo = ({
       updateCount("decrement");
     } else {
       axiosPut.putNotContainsData(
-        "http://172.30.1.37:8090/api/teamManage/todoList/" +
+        "http://localhost:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/success",
         successHandle
@@ -383,7 +383,7 @@ export default function SelectDateDialog(props) {
 
   const deletePlan = () => {
     axiosDelete.deleteNotContainsData(
-      "http://172.30.1.37:8090/api/teamManage/plan/" + selectPlan,
+      "http://localhost:8090/api/teamManage/plan/" + selectPlan,
       deletePlanSuccess
     );
   };

@@ -46,7 +46,7 @@ export default function Dashboard(props) {
       page: 0,
     };
     axiosGet.getContainsData(
-      "http://172.30.1.37:8090/api/teamManage/plan/" +
+      "http://localhost:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/search/all",
       getPlanSuccess,
@@ -55,7 +55,7 @@ export default function Dashboard(props) {
     );
     getTeamInfo();
     axiosGet.getNotContainsData(
-      "http://172.30.1.37:8090/api/teamManage/plan/" +
+      "http://localhost:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/group-by-user",
       getChartGroupByUserSuccess
@@ -64,7 +64,7 @@ export default function Dashboard(props) {
 
   const getTeamInfo = () => {
     axiosGet.getNotContainsData(
-      "http://172.30.1.37:8090/api/teamManage/" + props.match.params.idx,
+      "http://localhost:8090/api/teamManage/" + props.match.params.idx,
       getTeamSuccess
     );
   };

@@ -64,7 +64,7 @@ export default function TableList(props) {
       size: 6,
     };
     axiosGet.getContainsData(
-      "http://172.30.1.37:8090/api/teamManage/plan/" +
+      "http://localhost:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/search",
       getPlanListUnFinishedSuccess,

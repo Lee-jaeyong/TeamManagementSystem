@@ -93,18 +93,7 @@ export default function Scheduler(props) {
             plugins={[dayGridPlugin, interactionPlugin]}
             titleFormat={{ year: "numeric", month: "short", day: "numeric" }}
             customButtons={{
-              addSchedule: {
-                text: "선택 일정 등록",
-                click: function() {
-                  setSelectedDateBtnOpen(true);
-                },
-              },
-              showMyTodoList: {
-                text: "나의 TODO 리스트",
-                click: function() {
-                  props["history"].push("/admin/todoList/" + props["location"]);
-                },
-              },
+       
               print: {
                 text: "일정 인쇄",
                 click: function() {
@@ -115,7 +104,7 @@ export default function Scheduler(props) {
             header={{
               left: "prev,next today",
               center: "title",
-              right: "print addSchedule showMyTodoList",
+              right: "print addSchedule",
             }}
           />
         </Paper>

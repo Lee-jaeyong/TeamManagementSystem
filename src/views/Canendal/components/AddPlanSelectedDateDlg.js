@@ -214,7 +214,7 @@ export default function AddPlanSelectedDateDlg(props) {
         end: dateFormat(endDate + ""),
       };
       axiosPost.postContainsData(
-        "http://172.30.1.37:8090/api/teamManage/plan/" + props["idx"],
+        "http://localhost:8090/api/teamManage/plan/" + props["idx"],
         createPlanSuccess,
         createPlanError,
         plan
@@ -243,7 +243,7 @@ export default function AddPlanSelectedDateDlg(props) {
         title : todoList[i]['title']
       };
       axiosPost.postContainsData(
-        "http://172.30.1.37:8090/api/teamManage/todoList/" + plan["seq"],
+        "http://localhost:8090/api/teamManage/todoList/" + plan["seq"],
         createTodoListSuccess,
         createTodoListError,
         _todoList

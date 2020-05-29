@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+
+// redux
+import { useDispatch, useSelector } from "react-redux";
+import { readTeamHandle } from "@store/actions/Team/TeamAction";
+
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -20,7 +25,9 @@ import SockJsClient from "react-stomp";
 import Dashboard from "@material-ui/icons/Dashboard";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 
-import * as axiosGet from "@axios/get";
+import MessageBox from "@commons/component/MessageBox";
+
+import { getTeamList } from "@commons/team/methods/TeamAccess";
 
 let ps;
 
@@ -46,6 +53,9 @@ const switchRoutes = (
 const useStyles = makeStyles(styles);
 
 export default function Admin({ ...rest }) {
+  const dispatch = useDispatch();
+  const myPjtList = useSelector(state=>state['Team']['teamList'],[]);
+
   const [pjtCodeArr, setPjtCodeArr] = useState([]);
   const [alarm, setAlarm] = useState([]);
   const classes = useStyles();
@@ -70,17 +80,9 @@ export default function Admin({ ...rest }) {
     }
   };
 
-  const getTeams = () => {
-    axiosGet.getNotContainsData(
-      "http://172.30.1.37:8090/api/teamManage",
-      getTeamSuccess
-    );
-  };
-
-  const getTeamSuccess = (res) => {
-    const content = res["content"];
+  const createMenu = (data) => {
+    const content = data;
     let contentArr = [];
-    let codeArr = [];
     for (let i = 0; i < content.length; i++) {
       contentArr.push({
         path: "/dashboard/" + content[i]["code"],
@@ -90,17 +92,29 @@ export default function Admin({ ...rest }) {
         component: DashboardPage,
         layout: "/admin",
       });
+    }
+    return contentArr;
+  }
+
+  const createCodeArr = (data) => {
+    const content = data;
+    let codeArr = [];
+    for (let i = 0; i < content.length; i++) {
       codeArr.push("/topics/" + content[i]["code"]);
     }
-    setPjtCodeArr(codeArr);
-    setPjtList(contentArr);
-  };
+    return codeArr;
+  }
+
+  async function getTeams() {
+    let res = await getTeamList();
+    dispatch(readTeamHandle(res['content']));
+  }
 
   const planBloker = (value) => {
     for (let i = 0; i < pjtList.length; i++) {
       if (pjtList[i]["code"] === value["code"]) {
-        for(let j = 0;j<alarm.length;j++){
-          if(alarm[j]['code'] === value['code']){
+        for (let j = 0; j < alarm.length; j++) {
+          if (alarm[j]["code"] === value["code"]) {
             return;
           }
         }
@@ -112,8 +126,19 @@ export default function Admin({ ...rest }) {
   };
 
   const showAlarm = (value) => {
-    setAlarm([...alarm.filter((alarmInfo)=>alarmInfo['code'] !== value['code'])]);
-  }
+    setAlarm([
+      ...alarm.filter((alarmInfo) => alarmInfo["code"] !== value["code"]),
+    ]);
+  };
+
+  useEffect(()=>{
+    getTeams();
+  },[]);
+
+  useEffect(()=>{
+    setPjtCodeArr(createCodeArr(myPjtList));
+    setPjtList(createMenu(myPjtList));
+  },[myPjtList]);
 
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -132,12 +157,9 @@ export default function Admin({ ...rest }) {
     };
   }, [mainPanel]);
 
-  useEffect(() => {
-    getTeams();
-  }, []);
-
   return (
     <div className={classes.wrapper}>
+      <MessageBox />
       {pjtCodeArr.length !== 0 ? (
         <SockJsClient
           headers={{
@@ -146,7 +168,7 @@ export default function Admin({ ...rest }) {
               " " +
               localStorage.getItem("access_token"),
           }}
-          url="http://172.30.1.37:8090/chat"
+          url="http://localhost:8090/chat"
           topics={pjtCodeArr}
           onMessage={planBloker}
         />

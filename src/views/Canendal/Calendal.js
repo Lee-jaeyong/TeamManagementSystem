@@ -126,7 +126,7 @@ export default function App(props) {
       page: 0,
     };
     axiosGet.getContainsData(
-      "http://172.30.1.37:8090/api/teamManage/plan/" +
+      "http://localhost:8090/api/teamManage/plan/" +
         props.match.params.idx +
         "/all",
       getPlanSuccess,

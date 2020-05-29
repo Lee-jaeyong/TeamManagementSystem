@@ -116,7 +116,7 @@ export default function FormDialog(props) {
         description: description.current.value,
       };
       axiosPut.putContainsData(
-        "http://172.30.1.37:8090/api/teamManage/" + props["team"]["code"],
+        "http://localhost:8090/api/teamManage/" + props["team"]["code"],
         updateTeamSuccess,
         updateTeamError,
         team
