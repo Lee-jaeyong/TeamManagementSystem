@@ -7,13 +7,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { CardActionArea } from "@material-ui/core";
 
 // @material-ui/icons
-import Store from "@material-ui/icons/Store";
 import Danger from "components/Typography/Danger.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardFooter from "components/Card/CardFooter.js";
-import DateRange from "@material-ui/icons/DateRange";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
@@ -22,8 +20,7 @@ import SignUpListDialog from "@commons/team/component/readList/SignUpListDialog"
 import { getJoinTeamList } from "@commons/team/methods/TeamAccess";
 import { updateJoinTeam } from "@store/actions/Team/TeamAction";
 import { showMessageHandle } from "@store/actions/MessageAction";
-
-import * as axiosGet from "@axios/get";
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
 const useStyles = makeStyles(styles);
 
@@ -77,9 +74,9 @@ export default function SignUpList(props) {
       <CardActionArea onClick={ShowSignUpDialog}>
         <CardHeader color="rose" stats icon>
           <CardIcon color="rose">
-            <Store />
+            <GroupAddIcon />
           </CardIcon>
-          <p className={classes.cardCategory}>Board</p>
+          <p className={classes.cardCategory}>SignUpList</p>
           <h3 className={classes.cardTitle}>
             신청
             <br /> 현황
@@ -89,7 +86,7 @@ export default function SignUpList(props) {
         <CardFooter stats>
           <div className={classes.stats}>
             <Danger>
-              <DateRange />
+              <GroupAddIcon />
             </Danger>
             신청 현황
           </div>

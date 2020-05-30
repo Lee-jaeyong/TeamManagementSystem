@@ -7,6 +7,7 @@ import CardBody from "components/Card/CardBody.js";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
 import Divider from "@material-ui/core/Divider";
+import Button from "@material-ui/core/Button";
 import GroupByUserChart from "@commons/plan/component/readList/GroupByUserChart";
 
 const useStyles = makeStyles(styles);
@@ -19,14 +20,30 @@ const ChartSection = memo(({ data }) => {
   );
   const [value, setValue] = useState(0);
 
+  const printChart = () => {
+    let mywindow = window.open('', '', 'height=400,width=600');
+    mywindow.document.write(document.getElementById("chartSection").innerHTML);
+    mywindow.document.close();
+    mywindow.focus();
+    mywindow.print();
+    mywindow.close();
+  }
+
   return (
     <Card chart>
       <CardHeader color={value === 0 ? "warning" : "success"}>
-        <GroupByUserChart data={data} />
+        <div id="chartSection">
+          <GroupByUserChart data={data} />
+        </div>
       </CardHeader>
       <CardBody>
         <h4 className={classes.cardTitle}>{title ? title : null}</h4>
-        <p className={classes.cardCategory}>{content ? content : null}</p>
+        <p className={classes.cardCategory}>
+          {content ? content : null}
+          <Button onClick={printChart} style={{marginLeft:30}} size="small" variant="outlined" color="primary">
+            차트 인쇄
+          </Button>
+        </p>
         <Divider style={{ marginTop: 7, marginBottom: 0 }} />
       </CardBody>
     </Card>
