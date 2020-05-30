@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 
 // redux
 import { useDispatch, useSelector } from "react-redux";
-import { readTeamHandle } from "@store/actions/Team/TeamAction";
+import { readTeamListHandle } from "@store/actions/Team/TeamAction";
 
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
@@ -26,6 +26,7 @@ import Dashboard from "@material-ui/icons/Dashboard";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 
 import MessageBox from "@commons/component/MessageBox";
+import ConfirmDialog from '@commons/component/ConfirmDialog';
 
 import { getTeamList } from "@commons/team/methods/TeamAccess";
 
@@ -107,7 +108,7 @@ export default function Admin({ ...rest }) {
 
   async function getTeams() {
     let res = await getTeamList();
-    dispatch(readTeamHandle(res['content']));
+    dispatch(readTeamListHandle(res['content']));
   }
 
   const planBloker = (value) => {
@@ -160,6 +161,7 @@ export default function Admin({ ...rest }) {
   return (
     <div className={classes.wrapper}>
       <MessageBox />
+      <ConfirmDialog/>
       {pjtCodeArr.length !== 0 ? (
         <SockJsClient
           headers={{

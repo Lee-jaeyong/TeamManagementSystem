@@ -283,12 +283,10 @@ export default function AdminNavbarLinks(props) {
         </Poppers>
       </div>
       <JoinTeamDialog
-        callBack={()=>dispatch(showMessageHandle({open:true,content:"팀 신청 완료",level:"success"}))}
         open={joinTeamDialogState}
         handleClose={() => setJoinTeamDialog(false)}
       />
       <CreateTeamDialog
-        callBack={()=>dispatch(showMessageHandle({open:true,content:"팀 등록 완료",level:"success"}))}
         open={createTeamDialogState}
         handleClose={() => setCreateTeamDialogState(false)}
       />

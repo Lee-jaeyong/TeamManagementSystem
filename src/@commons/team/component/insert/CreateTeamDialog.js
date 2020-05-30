@@ -14,14 +14,14 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
-import MessageBox from "components/MessageBox/MessageBox";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import KeyBoardDatePickerSection from "@commons/component/KeyBoardDatePickerSection";
 
 import * as TeamAccess from "@commons/team/methods/TeamAccess";
+import { insertTeamHandle } from "@store/actions/Team/TeamAction";
 
-export const CreateTeamDialog = memo(({ callBack, open, handleClose }) => {
+export const CreateTeamDialog = memo(({ open, handleClose }) => {
   const dispatch = useDispatch();
   const name = useRef();
   const description = useRef();
@@ -31,7 +31,7 @@ export const CreateTeamDialog = memo(({ callBack, open, handleClose }) => {
   const [checkDate, setCheckDate] = useState(false);
 
   const messageBoxHandle = (open, content, level) => {
-    dispatch(showMessageHandle({open:open,content:content,level:level}));
+    dispatch(showMessageHandle({ open: open, content: content, level: level }));
   };
 
   async function createTeamHandle() {
@@ -55,7 +55,14 @@ export const CreateTeamDialog = memo(({ callBack, open, handleClose }) => {
         description: description.current.value,
       };
       let successTeam = await TeamAccess.createTeam(team);
-      callBack(successTeam);
+      dispatch(insertTeamHandle(successTeam));
+      dispatch(
+        showMessageHandle({
+          open: true,
+          content: "팀 등록 완료",
+          level: "success",
+        })
+      );
       handleClose();
     }
   }
@@ -75,7 +82,6 @@ export const CreateTeamDialog = memo(({ callBack, open, handleClose }) => {
       <Dialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="form-dialog-title"
         PaperComponent="div"
       >
         <Card>

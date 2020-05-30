@@ -16,7 +16,7 @@ import CardHeader from "components/Card/CardHeader.js";
 
 import * as TeamAccess from "@commons/team/methods/TeamAccess";
 
-export const JoinTeamDialog = memo(({ open, handleClose, callBack }) => {
+export const JoinTeamDialog = memo(({ open, handleClose }) => {
   const dispatch = useDispatch();
   const teamCode = useRef();
 
@@ -31,7 +31,13 @@ export const JoinTeamDialog = memo(({ open, handleClose, callBack }) => {
     } else {
       try {
         await TeamAccess.joinTeam(teamCode.current.value);
-        callBack();
+        dispatch(
+          showMessageHandle({
+            open: true,
+            content: "팀 신청 완료",
+            level: "success",
+          })
+        );
         handleClose();
       } catch {
         messageBoxHandle(

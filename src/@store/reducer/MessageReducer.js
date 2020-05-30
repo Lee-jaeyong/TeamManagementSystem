@@ -1,4 +1,4 @@
-import { showMessage } from "../actions/MessageAction";
+import { SHOW_MESSAGE } from "../actions/MessageAction";
 
 const init_MessageState = {
   open: false,
@@ -8,7 +8,7 @@ const init_MessageState = {
 
 const MessageReducer = (state = init_MessageState, action) => {
   switch (action.type) {
-    case showMessage:
+    case SHOW_MESSAGE:
       return Object.assign({}, state, {
         ...action["messageBox"],
       });

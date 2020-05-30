@@ -75,14 +75,19 @@ export async function postAccess(URL, data) {
         "Content-Type": "application/json",
       },
     });
-  else
-    res = await axios.post(URL, {
-      headers: {
-        Authorization:
-          localStorage.getItem("token_type") +
-          " " +
-          localStorage.getItem("access_token")
-      },
-    });
+  else {
+    res = await axios.post(
+      URL,
+      {},
+      {
+        headers: {
+          Authorization:
+            localStorage.getItem("token_type") +
+            " " +
+            localStorage.getItem("access_token"),
+        },
+      }
+    );
+  }
   return res.data;
 }
