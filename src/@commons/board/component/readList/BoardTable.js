@@ -10,6 +10,25 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Fade from "@material-ui/core/Fade";
 import Chip from "@material-ui/core/Chip";
+import StarsIcon from "@material-ui/icons/Stars";
+import Tooltip from "@material-ui/core/Tooltip";
+
+function plusZeroDate(day) {
+  return day < 10 ? "0" + day : day;
+}
+
+function nowDateCompare(date) {
+  let now = new Date();
+  let compareDate = new Date(date);
+  let _now = new Date(
+    now.getFullYear() +
+      "-" +
+      plusZeroDate(now.getMonth() + 1) +
+      "-" +
+      plusZeroDate(now.getDate())
+  );
+  return compareDate.getTime() === _now.getTime();
+}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -68,7 +87,7 @@ function EnhancedTableHead(props) {
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
+              direction={orderBy === headCell.id ? order : "desc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
@@ -121,8 +140,8 @@ const BoardTable = memo(
     cellClick,
   }) => {
     const classes = useStyles();
-    const [order, setOrder] = React.useState("asc");
-    const [orderBy, setOrderBy] = React.useState("seq");
+    const [order, setOrder] = React.useState("desc");
+    const [orderBy, setOrderBy] = React.useState("desc");
     const [selected, setSelected] = React.useState([]);
 
     const handleRequestSort = (event, property) => {
@@ -174,7 +193,17 @@ const BoardTable = memo(
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                       <Fade key={index} in={true} timeout={index * 150}>
-                        <TableRow hover {...(cellClick ? {style:{cursor:'pointer'},onClick:()=>{cellClick(row['seq'])}} : "")}>
+                        <TableRow
+                          hover
+                          {...(cellClick
+                            ? {
+                                style: { cursor: "pointer" },
+                                onClick: () => {
+                                  cellClick(row["seq"]);
+                                },
+                              }
+                            : "")}
+                        >
                           <TableCell
                             component="th"
                             id={labelId}
@@ -186,7 +215,21 @@ const BoardTable = memo(
                           <TableCell align="right">
                             {row.user["name"]}
                           </TableCell>
-                          <TableCell align="right">{row.title}</TableCell>
+                          <TableCell align="right">
+                            {nowDateCompare(row.date) ? (
+                              <Tooltip title={"신규 게시글"}>
+                                <StarsIcon
+                                  color={"primary"}
+                                  style={{
+                                    position: "relative",
+                                    top: 5,
+                                    marginRight: 10,
+                                  }}
+                                />
+                              </Tooltip>
+                            ) : null}
+                            {row.title}
+                          </TableCell>
                           <TableCell align="right">
                             <Chip label={row.date} />
                           </TableCell>

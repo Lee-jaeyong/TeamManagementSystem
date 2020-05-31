@@ -1,7 +1,5 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { showMessageHandle } from "@store/actions/MessageAction";
-
 import Dialog from "@material-ui/core/Dialog";
 import {
   ListItem,
@@ -9,30 +7,69 @@ import {
   Avatar,
   ListItemText,
   TextField,
-  Divider,
   Chip,
 } from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import Card from "components/Card/Card.js";
-import { Typography, Grid } from "@material-ui/core";
+import { Typography, Grid, Button } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import CardHeader from "components/Card/CardHeader.js";
 import ImageGridView from "@commons/component/ImageGridView";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import DeleteIcon from "@material-ui/icons/Delete";
+import UpdateIcon from "@material-ui/icons/Update";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import Tooltip from "@material-ui/core/Tooltip";
 
-const TopInfo = memo(({ userImg, author, date }) => {
-  return (
-    <ListItem>
-      <ListItemAvatar>
-        <Avatar
-          {...(userImg ? { src: "data:image/png;base64," + userImg } : null)}
-        />
-      </ListItemAvatar>
-      <ListItemText primary={author} secondary={date} />
-    </ListItem>
-  );
-});
+import UpdateBoardDialog from "@commons/board/component/update/UpdateBoardDialog";
+
+import {
+  deleteBoard as _deleteBoard,
+  fileDownLoad as _fileDownLoad,
+  fileAllDownload,
+} from "@commons/board/methods/BoardAccess";
+import { showConfirmHandle } from "@store/actions/ConfirmAction";
+import { showMessageHandle } from "@store/actions/MessageAction";
+import { deleteBoard } from "@store/actions/Board/BoardAction";
+
+const TopInfo = memo(
+  ({ userImg, author, date, isMy, deleteHandle, updateHandle }) => {
+    return (
+      <ListItem>
+        <ListItemAvatar>
+          <Avatar
+            {...(userImg ? { src: "data:image/png;base64," + userImg } : null)}
+          />
+        </ListItemAvatar>
+        <ListItemText primary={author} secondary={date} />
+        {isMy ? (
+          <React.Fragment>
+            <Button
+              onClick={updateHandle}
+              startIcon={<UpdateIcon />}
+              size="small"
+              variant="contained"
+              style={{ marginRight: 10 }}
+              color="primary"
+            >
+              수정
+            </Button>
+            <Button
+              onClick={deleteHandle}
+              startIcon={<DeleteIcon />}
+              size="small"
+              variant="contained"
+              color="secondary"
+            >
+              삭제
+            </Button>
+          </React.Fragment>
+        ) : null}
+      </ListItem>
+    );
+  }
+);
 
 const MiddleInfo = memo(({ content }) => {
   return (
@@ -68,24 +105,42 @@ const ImageArea = memo(({ images }) => {
   );
 });
 
+const FileDownLoadArea = memo(({ allFileDownload }) => {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <Button
+        onClick={allFileDownload}
+        startIcon={<CloudUploadIcon />}
+        color="primary"
+        variant="contained"
+      >
+        모든 파일 다운로드
+      </Button>
+    </div>
+  );
+});
+
 const fileDivider = (files, type) => {
   return files.filter((value) => value["type"] === type);
 };
 
-const FileArea = memo(({ files }) => {
+const FileArea = memo(({ files, fileDownLoad }) => {
   return (
     <div style={{ marginBottom: 30 }}>
       {files &&
-        fileDivider(files, "FILE").map((file) => {
+        fileDivider(files, "FILE").map((file, idx) => {
           return (
-            <React.Fragment>
-              <Chip
-                icon={<GetAppIcon />}
-                clickable
-                variant="outlined"
-                label={file["name"]}
-                style={{ marginBottom: 10 }}
-              />
+            <React.Fragment key={idx}>
+              <Tooltip title="파일 다운로드" placement={"right"}>
+                <Chip
+                  onClick={() => fileDownLoad(file["name"])}
+                  icon={<GetAppIcon />}
+                  clickable
+                  variant="outlined"
+                  label={file["name"]}
+                  style={{ marginBottom: 10 }}
+                />
+              </Tooltip>
               <br />
             </React.Fragment>
           );
@@ -94,27 +149,61 @@ const FileArea = memo(({ files }) => {
   );
 });
 
-export const BoardReadDialog = memo(({ open, handleClose, board }) => {
+export const BoardReadDialog = memo(({ open, handleClose, board, type }) => {
   const dispatch = useDispatch();
+  const [updateBoardDialogState, setUpdateBoardDialogState] = useState(false);
 
-  const messageBoxHandle = useCallback((open, content, level) => {
-    dispatch(showMessageHandle({ open: open, content: content, level: level }));
-  }, []);
+  const fileDownLoad = (fileName) => {
+    _fileDownLoad(type, board["seq"], fileName);
+  };
 
+  const allFileDownload = () => {
+    fileAllDownload(type, board["seq"], board["title"]);
+  };
+
+  const yseClick = () => {
+    _deleteBoard(type, board["seq"]);
+    dispatch(deleteBoard(board));
+    dispatch(
+      showMessageHandle({ open: true, content: "삭제 완료", level: "success" })
+    );
+    handleClose();
+  };
+
+  const deleteHandle = () => {
+    dispatch(
+      showConfirmHandle({
+        open: true,
+        title: "삭제",
+        content: "정말 삭제하시겠습니까?",
+        yseClick: yseClick,
+      })
+    );
+  };
+
+  const updateHandle = () => {
+    setUpdateBoardDialogState(true);
+  };
   return (
     <Dialog
+      scroll={"body"}
       PaperComponent="div"
       maxWidth={"md"}
       fullWidth
       open={open}
       onClose={handleClose}
     >
+      <UpdateBoardDialog
+        open={updateBoardDialogState}
+        handleClose={() => setUpdateBoardDialogState(false)}
+        {...{ board, type }}
+      />
       <Card>
         <CardHeader color="info">
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">
-                {board['title']}
+                {board["title"]}
               </Typography>
             </Grid>
             <Grid item>
@@ -134,6 +223,7 @@ export const BoardReadDialog = memo(({ open, handleClose, board }) => {
         </CardHeader>
         <DialogContent>
           <TopInfo
+            {...{ updateHandle, deleteHandle }}
             userImg={
               board["user"] && board["user"]["myImg"]
                 ? board["user"]["myImg"]
@@ -144,11 +234,19 @@ export const BoardReadDialog = memo(({ open, handleClose, board }) => {
                 ? board["user"]["name"]
                 : null
             }
+            isMy={
+              board["user"] && board["user"]["id"]
+                ? board["user"]["id"] === localStorage.getItem("ID")
+                : false
+            }
             date={board["date"]}
           />
           <MiddleInfo content={board["content"]} />
-          <ImageArea images={board["noticeFileAndImg"]} />
-          <FileArea files={board["noticeFileAndImg"]} />
+          {board["fileList"] && board["fileList"].length > 0 ? (
+            <FileDownLoadArea {...{ allFileDownload }} />
+          ) : null}
+          <ImageArea images={board["fileList"]} />
+          <FileArea {...{ fileDownLoad }} files={board["fileList"]} />
         </DialogContent>
       </Card>
     </Dialog>

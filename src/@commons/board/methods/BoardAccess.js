@@ -1,12 +1,36 @@
 import { postAccess, postAccessFileUpload } from "@axios/post";
-import { getAccess } from "@axios/get";
-import * as axiosPut from "@axios/put";
+import { getAccess, getAccessFileDownLoad } from "@axios/get";
+import { deleteAccess } from "@axios/delete";
+import { putAccess } from "@axios/put";
 
 // readOne
 export async function getBoard(type, seq) {
   return getAccess(
     "http://localhost:8090/api/teamManage/" + type + "/" + seq
   ).then((res) => res);
+}
+
+export function fileDownLoad(type, seq, fileName) {
+  return getAccessFileDownLoad(
+    "http://localhost:8090/api/teamManage/" +
+      type +
+      "/" +
+      seq +
+      "/downloadFile/" +
+      fileName,
+    fileName
+  );
+}
+
+export function fileAllDownload(type, seq, fileName) {
+  return getAccessFileDownLoad(
+    "http://localhost:8090/api/teamManage/" +
+      type +
+      "/" +
+      seq +
+      "/downloadFile/all",
+    fileName
+  );
 }
 
 // readList
@@ -44,3 +68,28 @@ export async function insertFile(fileType, seq, type, formData) {
 }
 
 //update
+export async function updateBoard(type, seq, data) {
+  return putAccess(
+    "http://localhost:8090/api/teamManage/" + type + "/" + seq,
+    data
+  );
+}
+
+//delete
+export async function deleteBoard(type, seq) {
+  return deleteAccess(
+    "http://localhost:8090/api/teamManage/" + type + "/" + seq
+  );
+}
+
+export async function deleteFile(type, seq, fileName) {
+  return postAccessFileUpload(
+    "http://localhost:8090/api/teamManage/" +
+      type +
+      "/" +
+      seq +
+      "/fileUpload/" +
+      fileName +
+      "/delete"
+  );
+}
