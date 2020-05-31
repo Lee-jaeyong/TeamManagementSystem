@@ -5,11 +5,14 @@ import Form from './reducer/FormReducer';
 
 import Team from './reducer/team/TeamReducer';
 import Plan from './reducer/plan/PlanReducer';
+import Board from './reducer/Board/BoardReducer';
 
 const commonReducers = combineReducers({
-    Message,
     Team,
     Plan,
+    Board,
+    /////////////////////
+    Message,
     Confirm,
     Form
 });
