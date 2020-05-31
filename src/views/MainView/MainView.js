@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { showMessage, showMessageHandle } from "@store/actions/MessageAction";
 import PlanListTab from "@commons/plan/component/readList/PlanListTab";
 import PlanListDialog from "@commons/plan/component/readList/PlanListDialog";
-
+import CreatePlanDialog from '@commons/plan/component/insert/CreatePlanDialog';
 const mockData = [
   {
     seq: 0,
@@ -18,7 +18,7 @@ const mockData = [
       email: "wldnj@naver.com",
       myImg: null,
     },
-    todoList: [{title:"todoList13",ing:'YES'},{title:"todoLis412412t1",ing:'YES'},{title:"todoList1",ing:'YES'}],
+    todoList: [{title:"todoList13",ing:'YES'},{title:"todoLis412412t1todoLdoLis4124oLis412412t1",ing:'YES'},{title:"todoList1",ing:'YES'}],
     links: [],
   },
   {
@@ -152,5 +152,6 @@ const mockData = [
 ];
 
 export default function TableList(props) {
-  return <PlanListDialog open={true} data={mockData} />;
+  const [createTeamDialogState, setCreateTeamDialogState] = useState(true);
+  return <CreatePlanDialog  open={createTeamDialogState} handleClose={() => setCreateTeamDialogState(false)} />;
 }
