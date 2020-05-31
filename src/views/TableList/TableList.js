@@ -19,53 +19,9 @@ import CreateBoardDialog from "@commons/board/component/insert/CreateBoardDialog
 import BoardTable from "@commons/board/component/readList/BoardTable";
 import BoardReadDialog from "@commons/board/component/readOne/BoardReadDialog";
 
-const styles = {
-  cardCategoryWhite: {
-    "&,& a,& a:hover,& a:focus": {
-      color: "rgba(255,255,255,.62)",
-      margin: "0",
-      fontSize: "14px",
-      marginTop: "0",
-      marginBottom: "0",
-    },
-    "& a,& a:hover,& a:focus": {
-      color: "#FFFFFF",
-    },
-  },
-  cardTitleWhite: {
-    color: "#FFFFFF",
-    marginTop: "0px",
-    minHeight: "auto",
-    fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: "3px",
-    textDecoration: "none",
-    "& small": {
-      color: "#777",
-      fontSize: "65%",
-      fontWeight: "400",
-      lineHeight: "1",
-    },
-  },
-};
-
-const theme = createMuiTheme({
-  overrides: {
-    // Style sheet name ⚛️
-    MuiPaginationItem: {
-      // Name of the rule
-      page: {
-        "&:hover": {
-          backgroundColor: "#9c27b0",
-          color: "white",
-        },
-      },
-    },
-  },
-});
-
 const BoardSection = memo(
   ({
+    checkAddBtn,
     page,
     size,
     _getBoardList,
@@ -73,32 +29,51 @@ const BoardSection = memo(
     boardList,
     createBoardHandle,
     cellClick,
-  }) => (
-    <React.Fragment>
-      <div style={{ float: "right" }}>
-        <Button
-          onClick={createBoardHandle}
-          color="primary"
-          size="small"
-          variant="contained"
-          startIcon={<CreateIcon />}
-        >
-          글쓰기
-        </Button>
-      </div>
-      <BoardTable
-        tableData={boardList}
-        totalCount={totalCount}
-        changePage={_getBoardList}
-        changeSize={_getBoardList}
-        {...{
-          cellClick,
-          page,
-          size,
-        }}
-      />
-    </React.Fragment>
-  )
+  }) => {
+    const teamInfo = useSelector(({ Team }) => Team["team"]["data"]);
+    return (
+      <React.Fragment>
+        <div style={{ float: "right" }}>
+          {checkAddBtn ? (
+            teamInfo ? (
+              localStorage.getItem("ID") === teamInfo["teamLeader"]["id"] ? (
+                <Button
+                  onClick={createBoardHandle}
+                  color="primary"
+                  size="small"
+                  variant="contained"
+                  startIcon={<CreateIcon />}
+                >
+                  글쓰기
+                </Button>
+              ) : null
+            ) : null
+          ) : (
+            <Button
+              onClick={createBoardHandle}
+              color="primary"
+              size="small"
+              variant="contained"
+              startIcon={<CreateIcon />}
+            >
+              글쓰기
+            </Button>
+          )}
+        </div>
+        <BoardTable
+          tableData={boardList}
+          totalCount={totalCount}
+          changePage={_getBoardList}
+          changeSize={_getBoardList}
+          {...{
+            cellClick,
+            page,
+            size,
+          }}
+        />
+      </React.Fragment>
+    );
+  }
 );
 
 export default function TableList(props) {
@@ -110,9 +85,9 @@ export default function TableList(props) {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(5);
 
+  const boardInfo = useSelector((state) => state["Board"]["board"], []);
   const boardList = useSelector((state) => state["Board"]["boardList"], []);
   const totalCount = useSelector((state) => state["Board"]["totalCount"], []);
-  const boardInfo = useSelector((state) => state["Board"]["board"], []);
 
   async function _getBoardList(_page, _size, type) {
     setPage(_page);
@@ -158,6 +133,7 @@ export default function TableList(props) {
     <Fade in timeout={1000}>
       <div>
         <BoardReadDialog
+          type={createType}
           open={boardReadDialogState}
           handleClose={() => setBoardReadDialogState(false)}
           board={boardInfo}
@@ -180,6 +156,7 @@ export default function TableList(props) {
                   tabIcon: NotificationsActiveIcon,
                   tabContent: (
                     <BoardSection
+                      checkAddBtn
                       {...{
                         cellClick,
                         boardList,
