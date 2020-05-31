@@ -102,13 +102,13 @@ export default function TodoList({ todoList }) {
 
   return (
     <List className={classes.root} subheader={<li />}>
-      {todoList.map((todo, idx) => (
+      {todoList.length!==0?todoList.map((todo, idx) => (
         <Fade key={idx} in={true} timeout={(idx + 1) * 300}>
           <div>
             <Todo {...{ todo }} />
           </div>
         </Fade>
-      ))}
+      )):<h6>TODO리스트가 존재하지 않습니다.</h6>}
     </List>
   );
 }
