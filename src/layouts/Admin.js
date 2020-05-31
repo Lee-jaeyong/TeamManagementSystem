@@ -22,11 +22,14 @@ import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/logo.png";
 import SockJsClient from "react-stomp";
 
-import Dashboard from "@material-ui/icons/Dashboard";
+import PeopleIcon from "@material-ui/icons/People";
+import ContactsIcon from "@material-ui/icons/Contacts";
+
 import DashboardPage from "views/Dashboard/Dashboard.js";
 
 import MessageBox from "@commons/component/MessageBox";
-import ConfirmDialog from '@commons/component/ConfirmDialog';
+import ConfirmDialog from "@commons/component/ConfirmDialog";
+import FormDialog from "@commons/component/FormDialog";
 
 import { getTeamList } from "@commons/team/methods/TeamAccess";
 
@@ -55,7 +58,7 @@ const useStyles = makeStyles(styles);
 
 export default function Admin({ ...rest }) {
   const dispatch = useDispatch();
-  const myPjtList = useSelector(state=>state['Team']['teamList'],[]);
+  const myPjtList = useSelector((state) => state["Team"]["teamList"], []);
 
   const [pjtCodeArr, setPjtCodeArr] = useState([]);
   const [alarm, setAlarm] = useState([]);
@@ -89,13 +92,16 @@ export default function Admin({ ...rest }) {
         path: "/dashboard/" + content[i]["code"],
         name: content[i]["name"],
         code: content[i]["code"],
-        icon: Dashboard,
+        icon:
+          content[i]["teamLeader"]["id"] === localStorage.getItem("ID")
+            ? ContactsIcon
+            : PeopleIcon,
         component: DashboardPage,
         layout: "/admin",
       });
     }
     return contentArr;
-  }
+  };
 
   const createCodeArr = (data) => {
     const content = data;
@@ -104,11 +110,11 @@ export default function Admin({ ...rest }) {
       codeArr.push("/topics/" + content[i]["code"]);
     }
     return codeArr;
-  }
+  };
 
   async function getTeams() {
     let res = await getTeamList();
-    dispatch(readTeamListHandle(res['content']));
+    dispatch(readTeamListHandle(res["content"]));
   }
 
   const planBloker = (value) => {
@@ -132,14 +138,14 @@ export default function Admin({ ...rest }) {
     ]);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     getTeams();
-  },[]);
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setPjtCodeArr(createCodeArr(myPjtList));
     setPjtList(createMenu(myPjtList));
-  },[myPjtList]);
+  }, [myPjtList]);
 
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -160,8 +166,9 @@ export default function Admin({ ...rest }) {
 
   return (
     <div className={classes.wrapper}>
+      <FormDialog />
       <MessageBox />
-      <ConfirmDialog/>
+      <ConfirmDialog />
       {pjtCodeArr.length !== 0 ? (
         <SockJsClient
           headers={{

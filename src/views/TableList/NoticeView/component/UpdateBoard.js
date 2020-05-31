@@ -262,7 +262,6 @@ export default function CreateNotice(props) {
   useEffect(() => {
     setOpen(props['open']);
     setFiles([]);
-    console.log(props['data']);
     if(props['data'] && props['data']['data']['noticeFileAndImg']){
       let imageArr = [];
       let fileArr = [];

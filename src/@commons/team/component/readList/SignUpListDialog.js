@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,13 +21,12 @@ import CardHeader from "components/Card/CardHeader.js";
 import PersonIcon from "@material-ui/icons/Person";
 import { blue } from "@material-ui/core/colors";
 
-import { successJoinTeam } from "@commons/team/methods/TeamAccess";
-import { deleteJoinTeamData } from '@commons/team/methods/updateStore/TeamListUpdate';
+import { successJoinTeam,faildJoinTeam } from "@commons/team/methods/TeamAccess";
+import { deleteJoinTeamData } from "@commons/team/methods/updateStore/TeamListUpdate";
 import { showMessageHandle } from "@store/actions/MessageAction";
 import { showConfirmHandle } from "@store/actions/ConfirmAction";
-import {
-  updateJoinTeam,
-} from "@store/actions/Team/TeamAction";
+import { updateJoinTeam } from "@store/actions/Team/TeamAction";
+import { showForm } from "@store/actions/FormAction";
 
 const useStyles = makeStyles({
   avatar: {
@@ -51,16 +50,39 @@ export default function SignUpListDiloag({ open, signUpList, handleClose }) {
     );
   };
 
-  useEffect(()=>{
-    if(open && (!signUpList || signUpList.length === 0)){
-      dispatch(showMessageHandle({open:true,content:"신청 명단이 존재하지 않습니다.",level:"warning"}));
+  const showFormDialog = (idx) => {
+    dispatch(
+      showForm({
+        open: true,
+        title: "반려",
+        content: "반려 사유를 입력해주세요",
+        yseClick: (value) => _falidJoinTeam(value, idx),
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (open && (!signUpList || signUpList.length === 0)) {
+      dispatch(
+        showMessageHandle({
+          open: true,
+          content: "신청 명단이 존재하지 않습니다.",
+          level: "warning",
+        })
+      );
       handleClose();
     }
-  },[signUpList]);
+  }, [signUpList]);
+
+  async function _falidJoinTeam(value, idx) {
+    let res = await faildJoinTeam(idx,value);
+    let _updateJoinTeam = deleteJoinTeamData(signUpList, { seq: idx });
+    dispatch(updateJoinTeam(_updateJoinTeam));
+  }
 
   async function yseClick(idx) {
     let res = await successJoinTeam(idx);
-    let _updateJoinTeam = deleteJoinTeamData(signUpList,res);
+    let _updateJoinTeam = deleteJoinTeamData(signUpList, res);
     dispatch(updateJoinTeam(_updateJoinTeam));
   }
 
@@ -111,7 +133,7 @@ export default function SignUpListDiloag({ open, signUpList, handleClose }) {
                 <Button
                   variant="outlined"
                   color="secondary"
-                  // onClick={() => setFaildSignUp(user["seq"])}
+                  onClick={() => showFormDialog(user["seq"])}
                 >
                   반려
                 </Button>
@@ -119,15 +141,6 @@ export default function SignUpListDiloag({ open, signUpList, handleClose }) {
             </ListItem>
           ))}
         </List>
-        {/* <ConfirmDialog yseClick={yesClickHandle} handleClose={()=>setConfirmState(false)} open={confirmState} title={confirmInfo['title']} content={confirmInfo['content']}/>
-    <FaildSignUp open={faildSignUpState} messageBoxHandle={messageBoxHandle} updateList={props['updateList']} handleClose={()=>setFaildSignUpState(false)} signUpSeq={selectSignUp}/>
-    <MessageBox
-      open={showMessageState}
-      content={MessageBoxState['content']}
-      level={MessageBoxState['level']}
-      time={MessageBoxState['time']}
-      handleClose={()=>setShowMessageState(false)}
-    /> */}
       </Card>
     </Dialog>
   );

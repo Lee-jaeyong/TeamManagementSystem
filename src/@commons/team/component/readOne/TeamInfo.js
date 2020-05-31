@@ -23,6 +23,8 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 
 import UpdateTeamDialog from "../update/UpdateTeamDialog";
+import UserListDialog from "@commons/users/component/readList/UserListDialog";
+
 import { purple } from "@material-ui/core/colors";
 
 const ColorButton = withStyles((theme) => ({
@@ -37,10 +39,31 @@ const ColorButton = withStyles((theme) => ({
 
 const useStyles = makeStyles(styles);
 
+const totalJoinPerson = (leader, data, images) => {
+  let result = [];
+  const _data = {
+    ...leader,
+    myImg: images[images.length - 1],
+  };
+  result.push(_data);
+  if (data)
+    data.map((dataInfo, idx) => {
+      if (dataInfo["state"] !== "NO") {
+        const _data = {
+          ...dataInfo["user"],
+          myImg: images[idx],
+        };
+        result.push(_data);
+      }
+    });
+  return result;
+};
+
 const TeamInfo = memo(({ teamInfo, joinListImg }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [updateTeam, setUpdateTeam] = useState(false);
+  const [userListDialogState, setUserListDialogState] = useState(false);
 
   const copyCode = useCallback(() => {
     let dummy = document.createElement("textarea");
@@ -63,7 +86,13 @@ const TeamInfo = memo(({ teamInfo, joinListImg }) => {
   return (
     <div>
       <Card className={classes.cardSize}>
-        <CardHeader color="primary">
+        <CardHeader
+          color={
+            teamInfo["teamLeader"]["id"] === localStorage.getItem("ID")
+              ? "primary"
+              : "success"
+          }
+        >
           <Grid container>
             <Grid item>
               <Typography variant="h6" component="h6">
@@ -135,41 +164,37 @@ const TeamInfo = memo(({ teamInfo, joinListImg }) => {
             </Grid>
             <Grid item>
               <div className={classes.cardCategory}>
-                {teamInfo ? (
-                  teamInfo["joinPerson"] ? (
-                    <AvatarGroup
-                      style={{ marginTop: -10, float: "right" }}
-                      max={
-                        teamInfo
-                          ? teamInfo["joinPerson"]
-                            ? teamInfo["joinPerson"].length + 1
-                            : 1
-                          : 1
-                      }
-                    >
-                      {teamInfo
-                        ? joinListImg
-                          ? joinListImg.map((person, idx) => {
-                              return (
-                                <Avatar
-                                  key={idx}
-                                  src={"data:image/png;base64," + person}
-                                />
-                              );
-                            })
-                          : null
-                        : null}
-                    </AvatarGroup>
-                  ) : (
-                    <Avatar
-                      alt=""
-                      style={{ marginTop: 20 }}
-                      src="/static/images/avatar/1.jpg"
-                    />
-                  )
-                ) : (
-                  ""
-                )}
+                <React.Fragment>
+                  <AvatarGroup
+                    style={{ marginTop: -10, float: "right" }}
+                    max={
+                      totalJoinPerson(
+                        teamInfo["teamLeader"],
+                        teamInfo["joinPerson"],
+                        joinListImg
+                      ).length + 1
+                    }
+                  >
+                    {totalJoinPerson(
+                      teamInfo["teamLeader"],
+                      teamInfo["joinPerson"],
+                      joinListImg
+                    ).map((person, idx) => (
+                      <Avatar
+                        key={idx}
+                        src={"data:image/png;base64," + person["myImg"]}
+                      />
+                    ))}
+                  </AvatarGroup>
+                  <Button
+                    style={{ marginRight: 30, marginTop: -8 }}
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => setUserListDialogState(true)}
+                  >
+                    팀원 목록
+                  </Button>
+                </React.Fragment>
               </div>
             </Grid>
           </Grid>
@@ -194,6 +219,15 @@ const TeamInfo = memo(({ teamInfo, joinListImg }) => {
           handleClose={() => setUpdateTeam(false)}
         />
       </Card>
+      <UserListDialog
+        open={userListDialogState}
+        handleClose={() => setUserListDialogState(false)}
+        userList={totalJoinPerson(
+          teamInfo["teamLeader"],
+          teamInfo["joinPerson"],
+          joinListImg
+        )}
+      />
     </div>
   );
 });

@@ -61,7 +61,7 @@ export default function Dashboard(props) {
     };
     const planList = await getPlanList(props.match.params.idx, data);
     const planCount = await getPlanCount(props.match.params.idx);
-    dispatch(readPlanListCountHandle(planCount));
+    dispatch(readPlanListCountHandle(planCount['content']));
     dispatch(readPlanListHandle(planList["content"]));
   }
 

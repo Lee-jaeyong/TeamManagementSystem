@@ -63,6 +63,18 @@ export async function awitPostContainsData(URL, data) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+export async function postAccessFileUpload(URL, formData) {
+  let res = await axios.post(URL, formData, {
+    headers: {
+      Authorization:
+        localStorage.getItem("token_type") +
+        " " +
+        localStorage.getItem("access_token"),
+    },
+  });
+  return res.data;
+}
+
 export async function postAccess(URL, data) {
   let res;
   if (data)

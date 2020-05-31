@@ -51,3 +51,9 @@ export async function successJoinTeam(data) {
     "http://localhost:8090/api/teamManage/" + data + "/joinTeam/success"
   );
 }
+
+export async function faildJoinTeam(seq, reson) {
+  return axiosPut.putAccess(
+    "http://localhost:8090/api/teamManage/" + seq + "/joinTeam/faild?reson=" + reson
+  );
+}
