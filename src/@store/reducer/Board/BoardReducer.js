@@ -24,6 +24,21 @@ const updateBoardList = (boardList, board) => {
   return result;
 };
 
+function parseDate(day) {
+  let date = new Date(day);
+  return (
+    date.getFullYear() +
+    "-" +
+    plusZeroDate(date.getMonth() + 1) +
+    "-" +
+    plusZeroDate(date.getDate())
+  );
+}
+
+function plusZeroDate(day) {
+  return day < 10 ? "0" + day : day;
+}
+
 export default function BoardReducer(
   state = init,
   { boardList, board, totalCount, type }
@@ -39,6 +54,10 @@ export default function BoardReducer(
         board: board,
       });
     case INSERT_BOARD:
+      board = {
+        ...board,
+        date : parseDate(board['date'])
+      }
       return Object.assign({}, state, {
         totalCount: state["totalCount"] + 1,
         boardList: state["boardList"].concat(board),

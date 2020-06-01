@@ -26,7 +26,6 @@ import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js"
 import { getTeam } from "@commons/team/methods/TeamAccess";
 import { readTeamOneHandle } from "@store/actions/Team/TeamAction";
 
-import * as axiosGet from "@axios/get";
 import { getPlanList, getPlanCount } from "@commons/plan/methods/PlanAccess";
 import {
   readPlanListHandle,
