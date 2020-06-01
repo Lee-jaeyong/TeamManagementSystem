@@ -54,9 +54,20 @@ export default function PlanDialog({ open, handleClose, plan }) {
           <CardContent>
             <DialogContent>
               <PlanInfo {...{ plan }} />
-              <TodoList todoList={plan["todoList"]} />
+              <TodoList
+                todoList={plan["todoList"]}
+                isMy={
+                  plan["user"] &&
+                  localStorage.getItem("ID") === plan["user"]["id"]
+                    ? true
+                    : false
+                }
+              />
             </DialogContent>
-            <PlanActionArea {...{ plan, handleClose }} />
+            {plan["user"] &&
+            localStorage.getItem("ID") === plan["user"]["id"] ? (
+              <PlanActionArea {...{ plan, handleClose }} />
+            ) : null}
           </CardContent>
         </Card>
       </Dialog>

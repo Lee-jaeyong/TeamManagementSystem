@@ -11,6 +11,8 @@ import CreateIcon from "@material-ui/icons/Create";
 import UpdateIcon from "@material-ui/icons/Update";
 import TextField from "@material-ui/core/TextField";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -21,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Todo = memo(({ todo }) => {
+const Todo = ({ todo, isMy }) => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [updateTitle, setUpdateTitle] = useState(todo["title"]);
   const [updateIng, setUpdateIng] = useState(
@@ -41,9 +43,9 @@ const Todo = memo(({ todo }) => {
   };
 
   const cencelHandle = () => {
-      setIsUpdate(false);
-      setUpdateTitle(todo['title']);
-  }
+    setIsUpdate(false);
+    setUpdateTitle(todo["title"]);
+  };
 
   const init = () => {
     setUpdateTitle(todo["title"]);
@@ -57,32 +59,37 @@ const Todo = memo(({ todo }) => {
 
   return (
     <ListItem dense>
-      <ListItemIcon>
-        {isUpdate ? (
+      {isMy ? (
+        <ListItemIcon>
+          {isUpdate ? (
+            <React.Fragment>
+              <IconButton onClick={updateTitleHandle}>
+                <UpdateIcon />
+              </IconButton>
+              <IconButton style={{ marginLeft: -15 }} onClick={cencelHandle}>
+                <HighlightOffIcon />
+              </IconButton>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <IconButton onClick={() => setIsUpdate(true)}>
+                <CreateIcon />
+              </IconButton>
+              <Checkbox
+                style={{ marginLeft: -15 }}
+                checked={updateIng}
+                onChange={updateIngHandle}
+              />
+            </React.Fragment>
+          )}
+        </ListItemIcon>
+      ) : (
+        <ListItemIcon>
           <React.Fragment>
-            <IconButton onClick={updateTitleHandle}>
-              <UpdateIcon />
-            </IconButton>
-            <IconButton
-              style={{ marginLeft: -15 }}
-              onClick={cencelHandle}
-            >
-              <HighlightOffIcon/>
-            </IconButton>
+            <CheckBoxOutlineBlankIcon />
           </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <IconButton onClick={() => setIsUpdate(true)}>
-              <CreateIcon />
-            </IconButton>
-            <Checkbox
-              style={{ marginLeft: -15 }}
-              checked={updateIng}
-              onChange={updateIngHandle}
-            />
-          </React.Fragment>
-        )}
-      </ListItemIcon>
+        </ListItemIcon>
+      )}
       {isUpdate ? (
         <TextField
           fullWidth
@@ -95,20 +102,24 @@ const Todo = memo(({ todo }) => {
       )}
     </ListItem>
   );
-});
+};
 
-export default function TodoList({ todoList }) {
+export default function TodoList({ todoList, isMy }) {
   const classes = useStyles();
 
   return (
     <List className={classes.root} subheader={<li />}>
-      {todoList.length!==0?todoList.map((todo, idx) => (
-        <Fade key={idx} in={true} timeout={(idx + 1) * 300}>
-          <div>
-            <Todo {...{ todo }} />
-          </div>
-        </Fade>
-      )):<h6>TODO리스트가 존재하지 않습니다.</h6>}
+      {todoList.length !== 0 ? (
+        todoList.map((todo, idx) => (
+          <Fade key={idx} in={true} timeout={(idx + 1) * 300}>
+            <div>
+              <Todo {...{ todo, isMy }} />
+            </div>
+          </Fade>
+        ))
+      ) : (
+        <h6>TODO리스트가 존재하지 않습니다.</h6>
+      )}
     </List>
   );
 }

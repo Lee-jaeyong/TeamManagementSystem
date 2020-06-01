@@ -91,6 +91,7 @@ export default function Scheduler({
           month: "short",
           day: "numeric",
         }}
+        {...(dateClick ? { dateClick: dateClick } : null)}
         {...(eventClick ? { eventClick: eventClick } : null)}
         droppable={droppable}
         editable={editable}

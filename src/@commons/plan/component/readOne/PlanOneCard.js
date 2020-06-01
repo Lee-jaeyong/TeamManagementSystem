@@ -6,13 +6,10 @@ import Avatar from '@material-ui/core/Avatar';
 import ImageIcon from '@material-ui/icons/Image';
 
 const PlanOneCard = memo(({ plan,customStyle }) => {
-  console.log(plan);
   return (
     <ListItem>
       <ListItemAvatar>
-        <Avatar>
-          <ImageIcon />
-        </Avatar>
+        <Avatar src={"data:image/png;base64,"+plan['user']['myImg']}/>
       </ListItemAvatar>
       <ListItemText primary={plan['tag']} secondary={plan['start'] + "~" + plan['end']} />
     </ListItem>
