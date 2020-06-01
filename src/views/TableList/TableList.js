@@ -2,7 +2,6 @@ import React, { useState, useEffect, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // @material-ui/core components
 import Fade from "@material-ui/core/Fade";
-import { createMuiTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import CreateIcon from "@material-ui/icons/Create";
 import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
@@ -19,18 +18,21 @@ import CreateBoardDialog from "@commons/board/component/insert/CreateBoardDialog
 import BoardTable from "@commons/board/component/readList/BoardTable";
 import BoardReadDialog from "@commons/board/component/readOne/BoardReadDialog";
 
+import { getTeam } from "@commons/team/methods/TeamAccess";
+import { readTeamOneHandle } from "@store/actions/Team/TeamAction";
+
 const BoardSection = memo(
   ({
     checkAddBtn,
     page,
     size,
+    teamInfo,
     _getBoardList,
     totalCount,
     boardList,
     createBoardHandle,
     cellClick,
   }) => {
-    const teamInfo = useSelector(({ Team }) => Team["team"]["data"]);
     return (
       <React.Fragment>
         <div style={{ float: "right" }}>
@@ -88,6 +90,7 @@ export default function TableList(props) {
   const boardInfo = useSelector((state) => state["Board"]["board"], []);
   const boardList = useSelector((state) => state["Board"]["boardList"], []);
   const totalCount = useSelector((state) => state["Board"]["totalCount"], []);
+  const teamInfo = useSelector(({ Team }) => Team["team"]["data"]);
 
   async function _getBoardList(_page, _size, type) {
     setPage(_page);
@@ -125,7 +128,13 @@ export default function TableList(props) {
     setBoardReadDialogState(true);
   }
 
+  async function getTeamInfo(data) {
+    let res = await getTeam(data);
+    dispatch(readTeamOneHandle(res));
+  }
+
   useEffect(() => {
+    if (!teamInfo) getTeamInfo(props.match.params.idx);
     _getBoardList(page, size);
   }, []);
 
@@ -158,6 +167,7 @@ export default function TableList(props) {
                     <BoardSection
                       checkAddBtn
                       {...{
+                        teamInfo,
                         cellClick,
                         boardList,
                         totalCount,
@@ -175,6 +185,7 @@ export default function TableList(props) {
                   tabContent: (
                     <BoardSection
                       {...{
+                        teamInfo,
                         cellClick,
                         boardList,
                         totalCount,
@@ -192,6 +203,7 @@ export default function TableList(props) {
                   tabContent: (
                     <BoardSection
                       {...{
+                        teamInfo,
                         cellClick,
                         boardList,
                         totalCount,
