@@ -13,13 +13,22 @@ const colors = [
   "#747474",
 ];
 
-export default function Scheduler({ plan }) {
+export default function Scheduler({
+  plan,
+  nextPrevBtn,
+  showToday,
+  editable,
+  dateClick,
+  eventClick,
+  droppable,
+  header,
+}) {
   const [planList, setPlanList] = useState([]);
   const parsePlan = (planValue, name, isMyPlan, users) => {
     let color = "";
-    for(let i =0;i<users.length;i++){
-      if(users[i]['id'] === planValue["user"]['id']){
-        color = users[i]['color'];
+    for (let i = 0; i < users.length; i++) {
+      if (users[i]["id"] === planValue["user"]["id"]) {
+        color = users[i]["color"];
         break;
       }
     }
@@ -39,15 +48,15 @@ export default function Scheduler({ plan }) {
     let plans = [];
     if (!planValue) return plans;
     let users = [];
-    planValue.map((plan,idx) => {
+    planValue.map((plan, idx) => {
       let check = true;
       for (let i = 0; i < users.length; i++) {
-        if (users[i]['id'] === plan["user"]["id"]) {
+        if (users[i]["id"] === plan["user"]["id"]) {
           check = false;
           break;
         }
       }
-      if (check) users.push({id:plan["user"]["id"],color:colors[idx]});
+      if (check) users.push({ id: plan["user"]["id"], color: colors[idx] });
     });
     planValue.map((plan) => {
       plans.push(
@@ -69,6 +78,7 @@ export default function Scheduler({ plan }) {
   return (
     <div>
       <FullCalendar
+        rerenderEvent={planList}
         events={planList}
         buttonText={{
           today: "today",
@@ -81,10 +91,13 @@ export default function Scheduler({ plan }) {
           month: "short",
           day: "numeric",
         }}
+        {...(eventClick ? { eventClick: eventClick } : null)}
+        droppable={droppable}
+        editable={editable}
         header={{
-          left: "",
-          center: "",
-          right: "",
+          left: header ? header["left"] : "",
+          center: header ? header["center"] : "",
+          right: header ? header["right"] : "",
         }}
       />
     </div>

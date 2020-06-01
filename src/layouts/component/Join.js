@@ -97,14 +97,14 @@ export default function FormDialog(props) {
   };
 
   const checkDupId = (input) => {
-    if (input.trim() === "") {
+    if (input.target.value.trim() === "") {
       setDupCheck(null);
       return;
     }
     axiosGet.getContainsData(
       "http://localhost:8090/api/users/dupId",
       getResponse,
-      { id: input },
+      { id: input.target.value },
       false
     );
     function getResponse(data) {
@@ -155,10 +155,6 @@ export default function FormDialog(props) {
     }
   };
 
-  const triggerImgUpload = () =>{
-    imgUpload.current.click();
-  }
-
   useEffect(() => {
     if (props["open"]) {
       setOpen(true);
@@ -193,7 +189,7 @@ export default function FormDialog(props) {
                         formControlProps={{
                           fullWidth: true,
                         }}
-                        onKeyUp={(e) => checkDupId(e.target.value)}
+                        onBlur={checkDupId}
                       />
                       {dupCheck ? (
                         <div style={{ color: "red" }}>

@@ -13,13 +13,24 @@ import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import CreateTodoList from "./CreateTodoList";
+import CreateTodoList from "../insert/CreateTodoList";
 import KeyBoardDatePickerSection from "@commons/component/KeyBoardDatePickerSection";
 import CloseIcon from "@material-ui/icons/Close";
 
-import { insertPlan, insertTodo } from "@commons/plan/methods/PlanAccess";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Chip from "@material-ui/core/Chip";
+
+import {
+  insertTodo,
+  updatePlan as _updatePlan,
+  deleteTodo as _deleteTodo,
+  getPlan
+} from "@commons/plan/methods/PlanAccess";
 import { showConfirmHandle } from "@store/actions/ConfirmAction";
-import {insertPlanList} from '@store/actions/Plan/PlanAction';
+import { updatePlan } from "@store/actions/Plan/PlanAction";
 
 const useStyles = makeStyles((theme) => ({
   okButton: {
@@ -29,11 +40,44 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CreatePlanDialog({ open, handleClose, teamCode }) {
+const OriginTodoList = ({ todoList, deleteTodoHandle }) => {
+  const dispatch = useDispatch();
+  async function yseClick(seq) {
+    let res = _deleteTodo(seq);
+    deleteTodoHandle(todoList.filter((todo) => todo["seq"] !== seq));
+  }
+
+  const deleteTodo = (seq) => {
+    dispatch(
+      showConfirmHandle({
+        open: true,
+        title: "단건 일정 삭제",
+        content: "정말 삭제하시겠습니까?",
+        yseClick: () => yseClick(seq),
+      })
+    );
+  };
+  return (
+    <List style={{ padding: 10 }}>
+      {todoList.map((todo, idx) => (
+        <ListItem key={idx}>
+          <Chip color={"secondary"} label={todo["title"]} />
+          <ListItemSecondaryAction>
+            <IconButton onClick={() => deleteTodo(todo["seq"])}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+      ))}
+    </List>
+  );
+};
+
+export default function UpdatePlanDialog({ open, handleClose, plan }) {
   const classes = useStyles();
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [checkDate, setCheckDate] = useState(false);
+  const [startDate, setStartDate] = useState(plan["start"]);
+  const [endDate, setEndDate] = useState(plan["end"]);
+  const [checkDate, setCheckDate] = useState(true);
   const tag = useRef();
   const dispatch = useDispatch();
 
@@ -43,22 +87,17 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
     dispatch(showMessageHandle({ open: open, content: content, level: level }));
   };
 
-  async function yseClick(plan) {
-    let _todoList = [];
-    let res = await insertPlan(teamCode, plan);
+  async function yseClick(_plan) {
+    let res = await _updatePlan(plan["seq"], _plan);
     for (let i = 0; i < todoList.length; i++) {
       const todo = {
         title: todoList[i]["title"],
       };
       const _todo = await insertTodo(res["seq"], todo);
-      _todoList.push(_todo);
     }
-    res = {
-      ...res,
-      todoList : _todoList
-    }
-    dispatch(insertPlanList(res));
-    messageBoxHandle(true, "일정 등록 완료", "success");
+    res = await getPlan(plan['seq']);
+    dispatch(updatePlan(res));
+    messageBoxHandle(true, "일정 수정 완료", "success");
     handleClose();
   }
 
@@ -110,18 +149,27 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
       dispatch(
         showConfirmHandle({
           open: true,
-          title: "일정 등록",
-          content: "정말 등록하시겠습니까?",
+          title: "일정 수정",
+          content: "정말 수정하시겠습니까?",
           yseClick: () => yseClick(createPlan),
         })
       );
     }
   }
 
+  const deleteTodoHandle = (todoList) => {
+    const deleteTodoPlan = {
+      ...plan,
+      todoList: todoList,
+    };
+    dispatch(updatePlan(deleteTodoPlan));
+    messageBoxHandle(true, "단건 일정 삭제 완료", "success");
+  };
+
   const init = useCallback(() => {
-    setStartDate(new Date());
-    setEndDate(new Date());
-    setCheckDate(false);
+    setStartDate(plan["start"]);
+    setEndDate(plan["end"]);
+    setCheckDate(true);
   }, []);
 
   useEffect(() => {
@@ -144,7 +192,7 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">
-                일정 등록
+                일정 수정
               </Typography>
             </Grid>
             <Grid item>
@@ -180,9 +228,14 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
             fullWidth
             label="태그"
             id="tag"
+            defaultValue={plan["tag"]}
             inputRef={tag}
             style={{ marginTop: 15, marginBottom: 15 }}
             variant="outlined"
+          />
+          <OriginTodoList
+            todoList={plan["todoList"]}
+            {...{ deleteTodoHandle }}
           />
           <CreateTodoList {...{ todoList, setTodoList }} />
         </CardBody>

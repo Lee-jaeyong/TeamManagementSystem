@@ -27,7 +27,8 @@ export default function CustomInput(props) {
     success,
     inputRef,
     enterClick,
-    onKeyUp
+    onKeyUp,
+    onBlur
   } = props;
 
   const labelClasses = classNames({
@@ -66,12 +67,10 @@ export default function CustomInput(props) {
         id={id}
         inputRef={inputRef}
         {...inputProps}
+        onBlur={onBlur}
         onKeyUp={(e)=>{
           if(enterClick && window.event.keyCode===13)
             enterClick();
-          if(onKeyUp){
-            onKeyUp(e);
-          }
         }}
       />
       {error ? (

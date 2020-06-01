@@ -4,13 +4,17 @@ import Chart from "react-google-charts";
 const parseChartData = (data) => {
   let result = [];
   result.push(["", "전체 일정", "전체 TodoList", "완료 TodoList"]);
-  data.map((dataInfo)=>{
-    result.push([dataInfo['name'],parseInt(dataInfo['planCount']),parseInt(dataInfo['todoCount']),parseInt(dataInfo['successTodoCount'])]);
+  data.map((dataInfo) => {
+    result.push([
+      dataInfo["name"],
+      parseInt(dataInfo["planCount"]),
+      parseInt(dataInfo["todoCount"]),
+      parseInt(dataInfo["successTodoCount"]),
+    ]);
   });
-  if(result.length === 1)
-    result.push(["일정 없음",0,0,0]);
+  if (result.length === 1) result.push(["일정 없음", 0, 0, 0]);
   return result;
-}
+};
 
 const GroupByUserChart = memo(({ data }) => {
   return (

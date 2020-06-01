@@ -31,24 +31,6 @@ import * as Oauth from "@oauth/oauth";
 
 let ps;
 
-const switchRoutes = (
-  <Switch>
-    {routes.map((prop, key) => {
-      if (prop.layout === "/login") {
-        return (
-          <Route
-            path={prop.layout + prop.path}
-            component={prop.component}
-            key={key}
-          />
-        );
-      }
-      return null;
-    })}
-    <Redirect from="/login" to="/login" />
-  </Switch>
-);
-
 const useStyles = makeStyles(styles);
 
 export default function Admin({ ...rest }) {
