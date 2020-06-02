@@ -1,58 +1,57 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Dialog from "@material-ui/core/Dialog";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+import Card from "components/Card/Card.js";
 import Typography from "@material-ui/core/Typography";
 import CardHeader from "components/Card/CardHeader.js";
-import DialogContent from "@material-ui/core/DialogContent";
+import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import CardBody from "components/Card/CardBody.js";
 
 import PlanInfo from "@commons/plan/component/readOne/PlanInfo";
 import TodoList from "@commons/plan/component/readList/TodoList";
 import PlanActionArea from "./PlanActionArea";
 
 const useStyles = makeStyles({
-  root: {
-    minWidth: 275,
-  },
-  bullet: {
-    display: "inline-block",
-    margin: "0 2px",
-    transform: "scale(0.8)",
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-  todoListArea: {
-    marginLeft: 40,
-  },
+ 
 });
 
 export default function PlanDialog({ open, handleClose, plan }) {
   const classes = useStyles();
   return (
-    <div>
       <Dialog
         open={open}
-        PaperComponent="div"
         onClose={handleClose}
         maxWidth={"sm"}
         fullWidth
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        PaperComponent="div"
       >
-        <Card className={classes.root}>
-          <br />
+        <Card>
           <CardHeader color="rose">
-            <Typography variant="h6" component="h6">
-              일정 정보
-            </Typography>
-          </CardHeader>
-          <CardContent>
-            <DialogContent>
+          <Grid container justify="space-between">
+            <Grid item>
+              <Typography variant="h6" component="h6">
+                일정 정보
+              </Typography>
+            </Grid>
+            <Grid item>
+              <IconButton
+                size={"small"}
+                aria-label="close"
+                onClick={handleClose}
+              >
+                <CloseIcon
+                  style={{
+                    color: "white",
+                  }}
+                />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </CardHeader>
+         
+          <CardBody>
               <PlanInfo {...{ plan }} />
               <TodoList
                 todoList={plan["todoList"]}
@@ -63,14 +62,12 @@ export default function PlanDialog({ open, handleClose, plan }) {
                     : false
                 }
               />
-            </DialogContent>
             {plan["user"] &&
             localStorage.getItem("ID") === plan["user"]["id"] ? (
               <PlanActionArea {...{ plan, handleClose }} />
             ) : null}
-          </CardContent>
+          </CardBody>
         </Card>
       </Dialog>
-    </div>
   );
 }

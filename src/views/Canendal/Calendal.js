@@ -148,7 +148,7 @@ export default function Calendal(props) {
   }, []);
 
   return (
-    <div>
+    <React.Fragment>
       <PlanListDialog
         data={selectDatePlanList ? selectDatePlanList : []}
         open={planListDialogState}
@@ -192,6 +192,6 @@ export default function Calendal(props) {
         </CardBody>
         <CardFooter chart></CardFooter>
       </Card>
-    </div>
+    </React.Fragment>
   );
 }

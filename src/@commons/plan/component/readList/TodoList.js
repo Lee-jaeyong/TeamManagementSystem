@@ -106,9 +106,8 @@ const Todo = ({ todo, isMy }) => {
 
 export default function TodoList({ todoList, isMy }) {
   const classes = useStyles();
-
   return (
-    <List className={classes.root} subheader={<li />}>
+    <List className={classes.root} subheader={<li/>}>
       {todoList.length !== 0 ? (
         todoList.map((todo, idx) => (
           <Fade key={idx} in={true} timeout={(idx + 1) * 300}>

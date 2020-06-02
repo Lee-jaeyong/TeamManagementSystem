@@ -424,7 +424,7 @@ export default function SelectDateDialog(props) {
   }, [props["open"]]);
 
   return (
-    <div>
+    <React.Fragment>
       <Dialog
         PaperComponent="div"
         open={open}
@@ -569,6 +569,6 @@ export default function SelectDateDialog(props) {
         yseClick={confirmDialogState["handleYesClick"]}
         handleClose={confirmDialogState["handleClose"]}
       />
-    </div>
+    </React.Fragment>
   );
 }
