@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
+import { useDispatch } from "react-redux";
 import Dialog from "@material-ui/core/Dialog";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -6,6 +7,8 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import CardHeader from "components/Card/CardHeader.js";
 import DialogContent from "@material-ui/core/DialogContent";
+
+import { updatePlan } from "@store/actions/Plan/PlanAction";
 
 import PlanInfo from "@commons/plan/component/readOne/PlanInfo";
 import TodoList from "@commons/plan/component/readList/TodoList";
@@ -32,6 +35,15 @@ const useStyles = makeStyles({
 });
 
 export default function PlanDialog({ open, handleClose, plan }) {
+  const dispatch = useDispatch();
+  const updateTodoList = (todo) => {
+    const _plan = {
+      ...plan,
+      todoList: todo["todoList"],
+    };
+    dispatch(updatePlan(_plan));
+  };
+
   const classes = useStyles();
   return (
     <div>
@@ -55,6 +67,7 @@ export default function PlanDialog({ open, handleClose, plan }) {
             <DialogContent>
               <PlanInfo {...{ plan }} />
               <TodoList
+                _updateTodoList={(todo) => updateTodoList(todo)}
                 todoList={plan["todoList"]}
                 isMy={
                   plan["user"] &&

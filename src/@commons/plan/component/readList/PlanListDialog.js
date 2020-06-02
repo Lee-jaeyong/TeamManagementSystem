@@ -13,10 +13,15 @@ import CardHeader from "components/Card/CardHeader.js";
 import PlanListTab from "./PlanListTab";
 
 export const PlanListDialog = memo(({ open, handleClose, data }) => {
-  const dispatch = useDispatch();
 
   return (
-    <Dialog PaperComponent="div" maxWidth={"md"} fullWidth open={open} onClose={handleClose}>
+    <Dialog
+      PaperComponent="div"
+      maxWidth={"md"}
+      fullWidth
+      open={open}
+      onClose={handleClose}
+    >
       <Card>
         <CardHeader color="warning">
           <Grid container justify="space-between">

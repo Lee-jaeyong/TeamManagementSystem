@@ -17,7 +17,6 @@ const KeyBoardDatePickerSection = memo(({
 }) => {
   const [startDateError, setStartDateError] = useState("");
   const [endDateError, setEndDateError] = useState("");
-
   const handleStartDateChange = useCallback((date) => {
     if (date.toString() === "Invalid Date") {
       setStartDateError(error['start']);
@@ -32,7 +31,7 @@ const KeyBoardDatePickerSection = memo(({
       setCheckDate(true);
     } else {
       let _endDate = new Date(endDate).getTime();
-      if (_endDate < new Date(date).getTime()) {
+      if (_endDate <= new Date(date).getTime()) {
         setStartDateError(error['start']);
         setStartDate(dateFormat(date+""));
         setCheckDate(false);
@@ -43,7 +42,7 @@ const KeyBoardDatePickerSection = memo(({
         setCheckDate(true);
       }
     }
-  },[]);
+  },[startDate,endDate]);
 
   const handleEndDateChange = useCallback((date) => {
     if (date.toString() === "Invalid Date") {
@@ -59,7 +58,7 @@ const KeyBoardDatePickerSection = memo(({
       setCheckDate(true);
     } else {
       let _startDate = new Date(startDate).getTime();
-      if (_startDate > new Date(date).getTime()) {
+      if (_startDate >= new Date(date).getTime()) {
         setEndDateError(error['end']);
         setEndDate(dateFormat(date+""));
         setCheckDate(false);
@@ -70,7 +69,7 @@ const KeyBoardDatePickerSection = memo(({
         setCheckDate(true);
       }
     }
-  },[]);
+  },[startDate,endDate]);
 
   const dateFormat = useCallback((beforeDate) => {
     let date = new Date(beforeDate);
@@ -79,13 +78,11 @@ const KeyBoardDatePickerSection = memo(({
     let day = dateMonthCheck(date.getDate());
     return year + "-" + month + "-" + day;
   },[]);
-
+  
   const dateMonthCheck = useCallback((value) => {
-    const check = value + "";
-    if (check.length === 1) return "0" + check;
-    return check;
+    return value < 10 ? "0" + value : value;
   },[]);
-
+  
   useEffect(() => {
     setStartDateError("");
     setEndDateError("");

@@ -33,7 +33,7 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
   const classes = useStyles();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [checkDate, setCheckDate] = useState(false);
+  const [checkDate, setCheckDate] = useState(true);
   const tag = useRef();
   const dispatch = useDispatch();
 
@@ -107,6 +107,7 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
         start: parseDate(startDate),
         end: parseDate(endDate),
       };
+      console.log(createPlan)
       dispatch(
         showConfirmHandle({
           open: true,
@@ -121,7 +122,7 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
   const init = useCallback(() => {
     setStartDate(new Date());
     setEndDate(new Date());
-    setCheckDate(false);
+    setCheckDate(true);
   }, []);
 
   useEffect(() => {
