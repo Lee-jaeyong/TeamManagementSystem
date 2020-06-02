@@ -15,6 +15,7 @@ const colors = [
 
 export default function Scheduler({
   plan,
+  customButtons,
   nextPrevBtn,
   showToday,
   editable,
@@ -93,6 +94,7 @@ export default function Scheduler({
         }}
         {...(dateClick ? { dateClick: dateClick } : null)}
         {...(eventClick ? { eventClick: eventClick } : null)}
+        {...(customButtons ? { customButtons: customButtons } : null)}
         droppable={droppable}
         editable={editable}
         header={{

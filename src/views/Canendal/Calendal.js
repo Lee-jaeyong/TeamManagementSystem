@@ -22,7 +22,7 @@ import {
 import CreatePlanDialog from "@commons/plan/component/insert/CreatePlanDialog";
 import SearchBar from "@commons/component/SearchBar";
 import PlanDialog from "@commons/plan/component/readOne/PlanDialog";
-import PlanListDialog from '@commons/plan/component/readList/PlanListDialog';
+import PlanListDialog from "@commons/plan/component/readList/PlanListDialog";
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
@@ -88,8 +88,8 @@ export default function Calendal(props) {
   const [searchState, setSearchState] = useState("");
   const [createPlanDialogState, setCreatePlanDialogState] = useState(false);
   const [readPlanDialogState, setReadPlanDialogState] = useState(false);
-  const [planListDialogState,setPlanListDialogState] = useState(false);
-  const [selectDatePlanList,setSelectDatePlanList] = useState([]);
+  const [planListDialogState, setPlanListDialogState] = useState(false);
+  const [selectDatePlanList, setSelectDatePlanList] = useState([]);
 
   async function _getPlanList() {
     let now = new Date();
@@ -134,13 +134,29 @@ export default function Calendal(props) {
   const dateClickHandle = (date) => {
     let result = [];
     const clickDate = new Date(date).getTime();
-    _planList.map((plan)=>{
-      if(new Date(plan['start']).getTime() <= clickDate && new Date(plan['end']).getTime() > clickDate )      
-      result.push(plan);
-    })
+    _planList.map((plan) => {
+      if (
+        new Date(plan["start"]).getTime() <= clickDate &&
+        new Date(plan['end']).getTime() >= clickDate
+      )
+        result.push(plan);
+    });
     setSelectDatePlanList(result);
     setPlanListDialogState(true);
-  }
+  };
+
+  const updatePlanToPlanListTab = () => {
+    let result = [];
+    selectDatePlanList.map((plan) => {
+      if (_plan["seq"] === plan["seq"]) result.push(_plan);
+      else result.push(plan);
+    });
+    setSelectDatePlanList(result);
+  };
+
+  useEffect(() => {
+    updatePlanToPlanListTab();
+  }, [_plan]);
 
   useEffect(() => {
     setSelectDatePlanList([]);
@@ -152,7 +168,7 @@ export default function Calendal(props) {
       <PlanListDialog
         data={selectDatePlanList ? selectDatePlanList : []}
         open={planListDialogState}
-        handleClose={()=>setPlanListDialogState(false)}
+        handleClose={() => setPlanListDialogState(false)}
       />
       <PlanDialog
         open={readPlanDialogState}
@@ -165,7 +181,11 @@ export default function Calendal(props) {
         handleClose={() => setCreatePlanDialogState(false)}
       />
       <Card>
-        <CardHeader color="info">
+        <CardHeader
+          color={
+            selectState === "all" && searchState.trim() === "" ? "info" : "rose"
+          }
+        >
           <Header
             {...{
               selectChange,
@@ -184,10 +204,18 @@ export default function Calendal(props) {
               right: "print addSchedule",
             }}
             editable
-            dateClick={(date)=>dateClickHandle(date['dateStr'])}
+            dateClick={(date) => dateClickHandle(date["dateStr"])}
             eventClick={({ event }) => showEvent(event["_def"]["groupId"])}
             droppable={true}
             plan={showPlan(_planList)}
+            customButtons={{
+              print: {
+                text: "일정 인쇄",
+                click: function() {
+                  window.print();
+                },
+              },
+            }}
           />
         </CardBody>
         <CardFooter chart></CardFooter>

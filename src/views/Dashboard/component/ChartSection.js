@@ -21,13 +21,11 @@ const ChartSection = memo(({ data }) => {
   const [value, setValue] = useState(0);
 
   const printChart = () => {
-    let mywindow = window.open('', '', 'height=400,width=600');
-    mywindow.document.write(document.getElementById("chartSection").innerHTML);
-    mywindow.document.close();
-    mywindow.focus();
-    mywindow.print();
-    mywindow.close();
-  }
+    window.frames[
+      "chartPrint"
+    ].document.body.innerHTML = document.getElementById("chart").innerHTML;
+    window.frames["chartPrint"].print();
+  };
 
   return (
     <Card chart>
@@ -40,7 +38,13 @@ const ChartSection = memo(({ data }) => {
         <h4 className={classes.cardTitle}>{title ? title : null}</h4>
         <p className={classes.cardCategory}>
           {content ? content : null}
-          <Button onClick={printChart} style={{marginLeft:30}} size="small" variant="outlined" color="primary">
+          <Button
+            onClick={printChart}
+            style={{ marginLeft: 30 }}
+            size="small"
+            variant="outlined"
+            color="primary"
+          >
             차트 인쇄
           </Button>
         </p>

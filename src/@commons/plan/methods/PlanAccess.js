@@ -63,6 +63,14 @@ export async function updatePlan(seq, plan) {
   return putAccess("http://localhost:8090/api/teamManage/plan/" + seq, plan);
 }
 
+export async function updateTodoIng(seq,type){
+  return putAccess("http://localhost:8090/api/teamManage/todoList/" + seq + "/" + type);
+}
+
+export async function updateTodoTitle(seq,data){
+  return putAccess("http://localhost:8090/api/teamManage/todoList/" + seq, data);
+}
+
 // delete
 
 export async function deletePlan(seq) {

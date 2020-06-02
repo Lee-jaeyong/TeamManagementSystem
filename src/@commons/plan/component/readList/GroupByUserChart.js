@@ -18,7 +18,7 @@ const parseChartData = (data) => {
 
 const GroupByUserChart = memo(({ data }) => {
   return (
-    <div>
+    <div id="chart">
       <Chart
         width={"100%"}
         height={"300px"}
@@ -30,6 +30,7 @@ const GroupByUserChart = memo(({ data }) => {
         }}
         rootProps={{ "data-testid": "2" }}
       />
+      <iframe name="chartPrint" style={{ display: "none" }} />
     </div>
   );
 });

@@ -27,7 +27,7 @@ import {
   insertTodo,
   updatePlan as _updatePlan,
   deleteTodo as _deleteTodo,
-  getPlan
+  getPlan,
 } from "@commons/plan/methods/PlanAccess";
 import { showConfirmHandle } from "@store/actions/ConfirmAction";
 import { updatePlan } from "@store/actions/Plan/PlanAction";
@@ -75,8 +75,8 @@ const OriginTodoList = ({ todoList, deleteTodoHandle }) => {
 
 export default function UpdatePlanDialog({ open, handleClose, plan }) {
   const classes = useStyles();
-  const [startDate, setStartDate] = useState(plan["start"]);
-  const [endDate, setEndDate] = useState(plan["end"]);
+  const [startDate, setStartDate] = useState(plan ? plan["start"] : null);
+  const [endDate, setEndDate] = useState(plan ? plan["end"] : null);
   const [checkDate, setCheckDate] = useState(true);
   const tag = useRef();
   const dispatch = useDispatch();
@@ -95,7 +95,7 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
       };
       const _todo = await insertTodo(res["seq"], todo);
     }
-    res = await getPlan(plan['seq']);
+    res = await getPlan(plan["seq"]);
     dispatch(updatePlan(res));
     messageBoxHandle(true, "일정 수정 완료", "success");
     handleClose();
@@ -167,10 +167,10 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
   };
 
   const init = useCallback(() => {
-    setStartDate(plan["start"]);
-    setEndDate(plan["end"]);
+    setStartDate(plan ? plan["start"] : null);
+    setEndDate(plan ? plan["end"] : null);
     setCheckDate(true);
-  }, []);
+  }, [plan]);
 
   useEffect(() => {
     if (open) {
@@ -228,13 +228,13 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
             fullWidth
             label="태그"
             id="tag"
-            defaultValue={plan["tag"]}
+            defaultValue={plan ? plan["tag"] : ""}
             inputRef={tag}
             style={{ marginTop: 15, marginBottom: 15 }}
             variant="outlined"
           />
           <OriginTodoList
-            todoList={plan["todoList"]}
+            todoList={plan ? plan["todoList"] : []}
             {...{ deleteTodoHandle }}
           />
           <CreateTodoList {...{ todoList, setTodoList }} />

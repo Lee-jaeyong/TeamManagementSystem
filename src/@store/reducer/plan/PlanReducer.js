@@ -22,6 +22,22 @@ const updatePlanListHandle = (originPlanList, plan) => {
   return result;
 };
 
+function parseDate(day) {
+  let date = new Date(day);
+  return (
+    date.getFullYear() +
+    "-" +
+    plusZeroDate(date.getMonth() + 1) +
+    "-" +
+    plusZeroDate(date.getDate())
+  );
+}
+
+function plusZeroDate(day) {
+  return day < 10 ? "0" + day : day;
+}
+
+
 export default function PlanReducer(state = init, action) {
   switch (action.type) {
     case READ_PLAN_LIST:
@@ -33,9 +49,14 @@ export default function PlanReducer(state = init, action) {
         planListCount: action["planListCount"],
       });
     case INSERT_PLAN:
-      return Object.assign({}, state, {
-        planList: state["planList"].concat(action["plan"]),
-        plan: action["plan"],
+      const _plan = {
+        ...action['plan'],
+        start : parseDate(action['plan']['start']),
+        end : parseDate(action['plan']['end']),
+      }
+    return Object.assign({}, state, {
+        planList: state["planList"].concat(_plan),
+        plan: _plan,
       });
     case READ_PLAN:
       return Object.assign({}, state, {
