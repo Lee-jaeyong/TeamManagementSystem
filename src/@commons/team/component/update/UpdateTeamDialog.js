@@ -10,12 +10,16 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import KeyBoardDatePickerSection from "@commons/component/KeyBoardDatePickerSection";
 import Typography from "@material-ui/core/Typography";
 import Card from "components/Card/Card.js";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import CardHeader from "components/Card/CardHeader.js";
 import { updateTeam } from "@commons/team/methods/TeamAccess";
 import { updateTeamList } from "@commons/team/methods/updateStore/TeamListUpdate";
 
-import { readTeamListHandle,updateTeamHandle } from "@store/actions/Team/TeamAction";
+import {
+  readTeamListHandle,
+  updateTeamHandle,
+} from "@store/actions/Team/TeamAction";
 
 export default function FormDialog({ team, open, handleClose }) {
   const dispatch = useDispatch();
@@ -69,9 +73,18 @@ export default function FormDialog({ team, open, handleClose }) {
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} PaperComponent="div">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperComponent={DragableComponent}
+        aria-labelledby="draggable-dialog-title"
+      >
         <Card>
-          <CardHeader color="success">
+          <CardHeader
+            color="success"
+            id="draggable-dialog-title"
+            style={{ cursor: "move" }}
+          >
             <Typography variant="h6" component="h6">
               팀 수정
             </Typography>

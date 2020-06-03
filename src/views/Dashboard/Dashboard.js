@@ -69,10 +69,12 @@ export default function Dashboard(props) {
   }
 
   const showTotoList = () => {
+    dispatch(readPlanListHandle([]));
     props["history"].push("/admin/todoList/" + props.match.params.idx);
   };
-
+  
   const showScheduler = () => {
+    dispatch(readPlanListHandle([]));
     props["history"].push("/admin/scheduler/" + props.match.params.idx);
   };
 

@@ -9,21 +9,26 @@ import { Typography, Grid } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import CardHeader from "components/Card/CardHeader.js";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import PlanListTab from "./PlanListTab";
 
 export const PlanListDialog = memo(({ open, handleClose, data }) => {
-
   return (
     <Dialog
-      PaperComponent="div"
+      PaperComponent={DragableComponent}
+      aria-labelledby="draggable-dialog-title"
       maxWidth={"md"}
       fullWidth
       open={open}
       onClose={handleClose}
     >
       <Card>
-        <CardHeader color="warning">
+        <CardHeader
+          color="warning"
+          id="draggable-dialog-title"
+          style={{ cursor: "move" }}
+        >
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">

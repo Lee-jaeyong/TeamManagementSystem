@@ -16,6 +16,7 @@ import Button from "@material-ui/core/Button";
 import CreateTodoList from "../insert/CreateTodoList";
 import KeyBoardDatePickerSection from "@commons/component/KeyBoardDatePickerSection";
 import CloseIcon from "@material-ui/icons/Close";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -81,7 +82,7 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
   const tag = useRef();
   const dispatch = useDispatch();
 
-  const [todoList, setTodoList] = useState([{ seq: 0, title: "" }]);
+  const [todoList, setTodoList] = useState([]);
 
   const messageBoxHandle = (open, content, level) => {
     dispatch(showMessageHandle({ open: open, content: content, level: level }));
@@ -174,7 +175,7 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
 
   useEffect(() => {
     if (open) {
-      setTodoList([{ seq: 0, title: "" }]);
+      setTodoList([]);
     }
     init();
   }, [open]);
@@ -185,10 +186,12 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
       maxWidth={"sm"}
       fullWidth
       open={open}
-      PaperComponent="div"
+      PaperComponent={DragableComponent}
+      aria-labelledby="draggable-dialog-title"
     >
       <Card>
-        <CardHeader color="info">
+        <CardHeader color="info" id="draggable-dialog-title"
+          style={{ cursor: "move" }}>
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">
@@ -246,7 +249,7 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
             variant="contained"
             onClick={createPlanHandle}
           >
-            일정등록하기
+            일정수정하기
           </Button>
         </CardFooter>
       </Card>

@@ -37,7 +37,7 @@ const BoardSection = memo(
       <React.Fragment>
         <div style={{ float: "right" }}>
           {checkAddBtn ? (
-            teamInfo ? (
+            teamInfo && teamInfo["teamLeader"]? (
               localStorage.getItem("ID") === teamInfo["teamLeader"]["id"] ? (
                 <Button
                   onClick={createBoardHandle}
@@ -90,8 +90,8 @@ export default function TableList(props) {
   const boardInfo = useSelector((state) => state["Board"]["board"], []);
   const boardList = useSelector((state) => state["Board"]["boardList"], []);
   const totalCount = useSelector((state) => state["Board"]["totalCount"], []);
-  const teamInfo = useSelector(({ Team }) => Team["team"]["data"]);
-
+  const teamInfo = useSelector(({ Team }) => Team["team"]);
+  
   async function _getBoardList(_page, _size, type) {
     setPage(_page);
     setSize(_size);

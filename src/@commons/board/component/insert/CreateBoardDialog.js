@@ -22,6 +22,7 @@ import { createBoard, insertFile } from "@commons/board/methods/BoardAccess";
 import { insertBoard } from "@store/actions/Board/BoardAction";
 
 import { showMessageHandle } from "@store/actions/MessageAction";
+import { showConfirmHandle } from "@store/actions/ConfirmAction";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -70,6 +71,30 @@ export default function CreateBoardDialog({ open, type, code, handleClose }) {
     setImgs(imgs.filter((value) => value["name"] !== name));
   };
 
+  async function _yseClick(createInfo) {
+    let res = await createBoard(type, code, createInfo);
+    if (imgs.length > 0) {
+      let data = new FormData();
+      for (let i = 0; i < imgs.length; i++) {
+        data.append("files", imgs[i]);
+      }
+      insertFile("IMG", res["seq"], type, data);
+    }
+    if (files.length > 0) {
+      let data = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        data.append("files", files[i]);
+      }
+      insertFile("FILE", res["seq"], type, data);
+    }
+    let _type = "공지사항";
+    if (type === "freeBoard") _type = "게시글";
+    else if (type === "referenceData") _type = "참고자료";
+    messageBoxHandle(true, _type + " 등록 완료", "success");
+    dispatch(insertBoard(res));
+    handleClose();
+  }
+
   async function createBoardHandle() {
     if (name.current.value.trim() === "") {
       messageBoxHandle(true, "제목을 입력해주세요", "error");
@@ -82,27 +107,14 @@ export default function CreateBoardDialog({ open, type, code, handleClose }) {
         title: name.current.value,
         content: content.current.value,
       };
-      let res = await createBoard(type, code, createInfo);
-      if (imgs.length > 0) {
-        let data = new FormData();
-        for (let i = 0; i < imgs.length; i++) {
-          data.append("files", imgs[i]);
-        }
-        insertFile("IMG", res["seq"], type, data);
-      }
-      if (files.length > 0) {
-        let data = new FormData();
-        for (let i = 0; i < files.length; i++) {
-          data.append("files", files[i]);
-        }
-        insertFile("FILE", res["seq"], type, data);
-      }
-      let _type = "공지사항";
-      if (type === "freeBoard") _type = "게시글";
-      else if (type === "referenceData") _type = "참고자료";
-      messageBoxHandle(true, _type + " 등록 완료", "success");
-      dispatch(insertBoard(res));
-      handleClose();
+      dispatch(
+        showConfirmHandle({
+          open: true,
+          title: "등록",
+          content: "정말 위 사항대로 등록하시겠습니까?",
+          yseClick: () => _yseClick(createInfo),
+        })
+      );
     }
   }
 

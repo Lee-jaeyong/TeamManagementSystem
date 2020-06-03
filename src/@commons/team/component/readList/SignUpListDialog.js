@@ -18,8 +18,7 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
-import PersonIcon from "@material-ui/icons/Person";
-import { blue } from "@material-ui/core/colors";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import {
   successJoinTeam,
@@ -31,8 +30,7 @@ import { showConfirmHandle } from "@store/actions/ConfirmAction";
 import { updateJoinTeam } from "@store/actions/Team/TeamAction";
 import { showForm } from "@store/actions/FormAction";
 
-const useStyles = makeStyles({
-});
+const useStyles = makeStyles({});
 
 export default function SignUpListDiloag({ open, signUpList, handleClose }) {
   const dispatch = useDispatch();
@@ -85,9 +83,18 @@ export default function SignUpListDiloag({ open, signUpList, handleClose }) {
   }
 
   return (
-    <Dialog PaperComponent="div" onClose={handleClose} open={open}>
+    <Dialog
+      PaperComponent={DragableComponent}
+      aria-labelledby="draggable-dialog-title"
+      onClose={handleClose}
+      open={open}
+    >
       <Card>
-        <CardHeader color="success">
+        <CardHeader
+          color="success"
+          id="draggable-dialog-title"
+          style={{ cursor: "move" }}
+        >
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">

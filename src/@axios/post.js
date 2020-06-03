@@ -71,7 +71,7 @@ export async function postAccessFileUpload(URL, formData) {
         " " +
         localStorage.getItem("access_token"),
     },
-  });
+  })
   return res.data;
 }
 

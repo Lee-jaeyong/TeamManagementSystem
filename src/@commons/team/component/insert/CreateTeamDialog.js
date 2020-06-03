@@ -17,6 +17,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import KeyBoardDatePickerSection from "@commons/component/KeyBoardDatePickerSection";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import * as TeamAccess from "@commons/team/methods/TeamAccess";
 import { insertTeamHandle } from "@store/actions/Team/TeamAction";
@@ -82,10 +83,15 @@ export const CreateTeamDialog = memo(({ open, handleClose }) => {
       <Dialog
         open={open}
         onClose={handleClose}
-        PaperComponent="div"
+        PaperComponent={DragableComponent}
+        aria-labelledby="draggable-dialog-title"
       >
         <Card>
-          <CardHeader color="success">
+          <CardHeader
+            color="success"
+            style={{ cursor: "move" }}
+            id="draggable-dialog-title"
+          >
             <Grid container justify="space-between">
               <Grid item>
                 <Typography variant="h6" component="h6">

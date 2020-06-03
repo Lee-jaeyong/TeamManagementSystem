@@ -23,12 +23,14 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import UpdateBoardDialog from "@commons/board/component/update/UpdateBoardDialog";
+import DragableComponent from '@commons/component/DragableComponent';
 
 import {
   deleteBoard as _deleteBoard,
   fileDownLoad as _fileDownLoad,
   fileAllDownload,
 } from "@commons/board/methods/BoardAccess";
+
 import { showConfirmHandle } from "@store/actions/ConfirmAction";
 import { showMessageHandle } from "@store/actions/MessageAction";
 import { deleteBoard } from "@store/actions/Board/BoardAction";
@@ -184,14 +186,16 @@ export const BoardReadDialog = memo(({ open, handleClose, board, type }) => {
   const updateHandle = () => {
     setUpdateBoardDialogState(true);
   };
+
   return (
     <Dialog
       scroll={"body"}
-      PaperComponent="div"
+      PaperComponent={DragableComponent}
       maxWidth={"md"}
       fullWidth
       open={open}
       onClose={handleClose}
+      aria-labelledby="draggable-dialog-title"
     >
       <UpdateBoardDialog
         open={updateBoardDialogState}
@@ -199,7 +203,11 @@ export const BoardReadDialog = memo(({ open, handleClose, board, type }) => {
         {...{ board, type }}
       />
       <Card>
-        <CardHeader color="info">
+        <CardHeader
+          id="draggable-dialog-title"
+          color="info"
+          style={{ cursor: "move" }}
+        >
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">

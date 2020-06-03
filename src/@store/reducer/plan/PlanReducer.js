@@ -15,6 +15,7 @@ const init = {
 
 const updatePlanListHandle = (originPlanList, plan) => {
   let result = [];
+  console.log(originPlanList);
   for (let i = 0; i < originPlanList.length; i++) {
     if (originPlanList[i]["seq"] === plan["seq"]) result.push(plan);
     else result.push(originPlanList[i]);

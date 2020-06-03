@@ -26,8 +26,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     backgroundColor: theme.palette.background.paper,
     position: "relative",
-    overflow: "auto",
-    maxHeight: 150,
+    overflowY: "auto",
   },
 }));
 
@@ -186,7 +185,7 @@ const TodoList = memo(({ todoList, isMy, _updateTodoList, plan }) => {
   };
 
   return (
-    <List className={classes.root} subheader={<li/>}>
+    <List className={classes.root} subheader={<li />}>
       {todoList.length !== 0 ? (
         todoList.map((todo, idx) => (
           <Fade key={idx} in={true} timeout={(idx + 1) * 300}>

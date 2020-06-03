@@ -91,7 +91,7 @@ const DataTable = ({ data }) => {
               return (
                 <TableRow hover key={idx}>
                   <TableCell>
-                    <ToolTip title={row['user']['name']}>
+                    <ToolTip title={row["user"]["name"]}>
                       <Avatar
                         src={"data:image/png;base64," + row["user"]["myImg"]}
                       />
@@ -160,8 +160,15 @@ export default function ExcelDataReadDialog({
 
   return (
     <div>
-      <Dialog maxWidth={"md"} fullWidth open={open} onClose={handleClose}>
-        <DialogTitle>{"엑셀 파일 업로드"}</DialogTitle>
+      <Dialog
+        maxWidth={"md"}
+        fullWidth
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle>
+          {"엑셀 파일 업로드"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             {data ? <DataTable {...{ data }} /> : null}

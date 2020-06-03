@@ -24,7 +24,7 @@ import {
   getBoard,
 } from "@commons/board/methods/BoardAccess";
 
-import { readBoard, updateBoard } from "@store/actions/Board/BoardAction";
+import { updateBoard } from "@store/actions/Board/BoardAction";
 
 import { showMessageHandle } from "@store/actions/MessageAction";
 import { showConfirmHandle } from "@store/actions/ConfirmAction";
@@ -121,6 +121,28 @@ export default function UpdateBoardDialog({ open, type, board, handleClose }) {
     );
   };
 
+  async function _yseClick(_type, updateInfo) {
+    let res = await _updateBoard(type, board["seq"], updateInfo);
+    if (imgs.length > 0) {
+      let data = new FormData();
+      for (let i = 0; i < imgs.length; i++) {
+        data.append("files", imgs[i]);
+      }
+      await insertFile("IMG", res["seq"], type, data);
+    }
+    if (files.length > 0) {
+      let data = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        data.append("files", files[i]);
+      }
+      await insertFile("FILE", res["seq"], type, data);
+    }
+    messageBoxHandle(true, _type + " 수정 완료", "success");
+    let updateRes = await getBoard(type, board["seq"]);
+    dispatch(updateBoard(updateRes));
+    handleClose();
+  }
+
   async function createBoardHandle() {
     let _type = "공지사항";
     if (type === "freeBoard") _type = "게시글";
@@ -132,11 +154,19 @@ export default function UpdateBoardDialog({ open, type, board, handleClose }) {
       imgs.length === 0 &&
       files.length === 0
     ) {
-      messageBoxHandle(true, _type + " 수정 완료", "success");
-      handleClose();
+      dispatch(
+        showConfirmHandle({
+          open: true,
+          title: "수정",
+          content: "정말 위 사항대로 수정하시겠습니까?",
+          yseClick: () => {
+            messageBoxHandle(true, _type + " 수정 완료", "success");
+            handleClose();
+          },
+        })
+      );
       return;
     }
-
     if (name.current.value.trim() === "") {
       messageBoxHandle(true, "제목을 입력해주세요", "error");
       name.current.focus();
@@ -148,25 +178,14 @@ export default function UpdateBoardDialog({ open, type, board, handleClose }) {
         title: name.current.value,
         content: content.current.value,
       };
-      let res = await _updateBoard(type, board["seq"], updateInfo);
-      if (imgs.length > 0) {
-        let data = new FormData();
-        for (let i = 0; i < imgs.length; i++) {
-          data.append("files", imgs[i]);
-        }
-        await insertFile("IMG", res["seq"], type, data);
-      }
-      if (files.length > 0) {
-        let data = new FormData();
-        for (let i = 0; i < files.length; i++) {
-          data.append("files", files[i]);
-        }
-        await insertFile("FILE", res["seq"], type, data);
-      }
-      messageBoxHandle(true, _type + " 수정 완료", "success");
-      let updateRes = await getBoard(type, board["seq"]);
-      dispatch(updateBoard(updateRes));
-      handleClose();
+      dispatch(
+        showConfirmHandle({
+          open: true,
+          title: "수정",
+          content: "정말 위 사항대로 수정하시겠습니까?",
+          yseClick: () => _yseClick(_type, updateInfo),
+        })
+      );
     }
   }
 

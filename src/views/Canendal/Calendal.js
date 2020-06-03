@@ -10,13 +10,9 @@ import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
+import Fade from "@material-ui/core/Fade";
 
 import Scheduler from "@commons/plan/component/readList/Scheduler";
-
-import {
-  readPlanListHandle,
-  readPlanHandle,
-} from "@store/actions/Plan/PlanAction";
 
 import CreatePlanDialog from "@commons/plan/component/insert/CreatePlanDialog";
 import SearchBar from "@commons/component/SearchBar";
@@ -24,6 +20,10 @@ import PlanDialog from "@commons/plan/component/readOne/PlanDialog";
 import PlanListDialog from "@commons/plan/component/readList/PlanListDialog";
 import ExcelDataReadDialog from "@commons/plan/component/readList/ExcelDataReadDialog";
 
+import {
+  readPlanListHandle,
+  readPlanHandle,
+} from "@store/actions/Plan/PlanAction";
 import {
   getExcelData,
   getPlanListAll,
@@ -69,12 +69,12 @@ const Header = ({
         setExcelData(res["_embedded"]["planByUserList"]);
       }
       setExcelDataDialogState(true);
-    } catch (error) {
+    } catch ({ response }) {
       setExcelDataFile(null);
       dispatch(
         showMessageHandle({
           open: true,
-          content: "엑셀 형식이 잘못되었습니다.",
+          content: response["data"]["message"],
           level: "error",
         })
       );
@@ -182,6 +182,7 @@ export default function Calendal(props) {
   const [readPlanDialogState, setReadPlanDialogState] = useState(false);
   const [planListDialogState, setPlanListDialogState] = useState(false);
   const [selectDatePlanList, setSelectDatePlanList] = useState([]);
+  const [print, setPrint] = useState(false);
 
   async function getTeamInfo(data) {
     let res = await getTeam(data);
@@ -232,12 +233,23 @@ export default function Calendal(props) {
     const clickDate = new Date(date).getTime();
     _planList.map((plan) => {
       if (
-        new Date(plan["start"]).getTime() <= clickDate &&
-        new Date(plan["end"]).getTime() > clickDate
+        (new Date(plan["start"]).getTime() <= clickDate &&
+          new Date(plan["end"]).getTime() > clickDate) ||
+        (new Date(plan["start"]).getTime() === clickDate &&
+          new Date(plan["end"]).getTime() === clickDate)
       )
         result.push(plan);
     });
-    setSelectDatePlanList(result);
+    if (searchState.trim() !== "") {
+      result = result.filter((plan) => plan["tag"].indexOf(searchState) != -1);
+    }
+    if (selectState === "all") {
+      setSelectDatePlanList(result);
+    } else {
+      setSelectDatePlanList(
+        result.filter((plan) => plan["user"]["id"] === selectState)
+      );
+    }
     setPlanListDialogState(true);
   };
 
@@ -255,7 +267,9 @@ export default function Calendal(props) {
   }, [_plan]);
 
   useEffect(() => {
-    if (!_teamInfo) getTeamInfo(props.match.params.idx);
+    if (!_teamInfo["code"]) {
+      getTeamInfo(props.match.params.idx);
+    }
     setSelectDatePlanList([]);
     _getPlanList();
   }, []);
@@ -278,25 +292,31 @@ export default function Calendal(props) {
         handleClose={() => setCreatePlanDialogState(false)}
       />
       <Card>
-        <CardHeader
-          color={
-            selectState === "all" && searchState.trim() === "" ? "info" : "rose"
-          }
-        >
-          <Header
-            {...{
-              selectChange,
-              selectState,
-              createPlanDialogHandle,
-              searchPlan,
-            }}
-            teamLeader={
-              _teamInfo["teamLeader"] ? _teamInfo["teamLeader"]["id"] : null
-            }
-            teamCode={props.match.params.idx}
-            userList={getPersonList(_planList)}
-          />
-        </CardHeader>
+        <Fade in={!print} timeout={500}>
+          <div>
+            <CardHeader
+              color={
+                selectState === "all" && searchState.trim() === ""
+                  ? "info"
+                  : "rose"
+              }
+            >
+              <Header
+                {...{
+                  selectChange,
+                  selectState,
+                  createPlanDialogHandle,
+                  searchPlan,
+                }}
+                teamLeader={
+                  _teamInfo["teamLeader"] ? _teamInfo["teamLeader"]["id"] : null
+                }
+                teamCode={props.match.params.idx}
+                userList={getPersonList(_planList)}
+              />
+            </CardHeader>
+          </div>
+        </Fade>
         <CardBody>
           <Scheduler
             header={{
@@ -313,7 +333,9 @@ export default function Calendal(props) {
               print: {
                 text: "일정 인쇄",
                 click: function() {
+                  setPrint(true);
                   window.print();
+                  setPrint(false);
                 },
               },
             }}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { CardContent, Divider } from "@material-ui/core";
@@ -8,6 +8,8 @@ import TodoList from "@commons/plan/component/readList/TodoList";
 import IconButton from "@material-ui/core/IconButton";
 import CreateIcon from "@material-ui/icons/Create";
 import CardHeader from "components/Card/CardHeader.js";
+
+import UpdatePlanDialog from "@commons/plan/component/update/UpdatePlanDialog";
 
 import { updatePlan as _updatePlan } from "@store/actions/Plan/PlanAction";
 
@@ -25,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 export default function MyTodoListCard({ plan }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [showReadDialogState, setShowReadDialogState] = useState(false);
 
   const countTodo = (todoList) => {
     let count = 0;
@@ -35,12 +38,16 @@ export default function MyTodoListCard({ plan }) {
   };
 
   const updatePlan = (value) => {
-    console.log(value);
     dispatch(_updatePlan(value));
   };
 
   return (
     <React.Fragment>
+      <UpdatePlanDialog
+        {...{ plan }}
+        open={showReadDialogState}
+        handleClose={() => setShowReadDialogState(false)}
+      />
       <Card>
         <CardHeader color="success">
           <Grid container justify="space-between">
@@ -48,7 +55,11 @@ export default function MyTodoListCard({ plan }) {
               <div style={{ fontSize: 15 }}>{plan ? plan["tag"] : ""}</div>
             </Grid>
             <Grid item>
-              <IconButton aria-label="delete" className={classes.margin}>
+              <IconButton
+                aria-label="delete"
+                className={classes.margin}
+                onClick={() => setShowReadDialogState(true)}
+              >
                 <CreateIcon fontSize="inherit" />
               </IconButton>
             </Grid>

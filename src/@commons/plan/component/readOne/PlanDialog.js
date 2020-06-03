@@ -9,6 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import CardBody from "components/Card/CardBody.js";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import { updatePlan } from "@store/actions/Plan/PlanAction";
 
@@ -16,9 +17,7 @@ import PlanInfo from "@commons/plan/component/readOne/PlanInfo";
 import TodoList from "@commons/plan/component/readList/TodoList";
 import PlanActionArea from "./PlanActionArea";
 
-const useStyles = makeStyles({
- 
-});
+const useStyles = makeStyles({});
 
 export default function PlanDialog({ open, handleClose, plan }) {
   const dispatch = useDispatch();
@@ -29,18 +28,21 @@ export default function PlanDialog({ open, handleClose, plan }) {
     };
     dispatch(updatePlan(_plan));
   };
-
-  const classes = useStyles();
   return (
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth={"sm"}
-        fullWidth
-        PaperComponent="div"
-      >
-        <Card>
-          <CardHeader color="rose">
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth={"sm"}
+      fullWidth
+      PaperComponent={DragableComponent}
+      aria-labelledby="draggable-dialog-title"
+    >
+      <Card>
+        <CardHeader
+          color="rose"
+          id="draggable-dialog-title"
+          style={{ cursor: "move" }}
+        >
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">
@@ -62,25 +64,23 @@ export default function PlanDialog({ open, handleClose, plan }) {
             </Grid>
           </Grid>
         </CardHeader>
-         
-          <CardBody>
-              <PlanInfo {...{ plan }} />
-              <TodoList
-                _updateTodoList={(todo) => updateTodoList(todo)}
-                todoList={plan["todoList"]}
-                isMy={
-                  plan["user"] &&
-                  localStorage.getItem("ID") === plan["user"]["id"]
-                    ? true
-                    : false
-                }
-              />
-            {plan["user"] &&
-            localStorage.getItem("ID") === plan["user"]["id"] ? (
-              <PlanActionArea {...{ plan, handleClose }} />
-            ) : null}
-          </CardBody>
-        </Card>
-      </Dialog>
+
+        <CardBody>
+          <PlanInfo {...{ plan }} />
+          <TodoList
+            _updateTodoList={(todo) => updateTodoList(todo)}
+            todoList={plan["todoList"]}
+            isMy={
+              plan["user"] && localStorage.getItem("ID") === plan["user"]["id"]
+                ? true
+                : false
+            }
+          />
+          {plan["user"] && localStorage.getItem("ID") === plan["user"]["id"] ? (
+            <PlanActionArea {...{ plan, handleClose }} />
+          ) : null}
+        </CardBody>
+      </Card>
+    </Dialog>
   );
 }

@@ -9,6 +9,9 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import GridContainer from "components/Grid/GridContainer.js";
 import TodoListArea from "./component/TodoListArea";
 
+import {
+  readPlanListHandle,
+} from "@store/actions/Plan/PlanAction";
 import { getPlanListMy } from "@commons/plan/methods/PlanAccess";
 import { getTeam } from "@commons/team/methods/TeamAccess";
 import { readTeamOneHandle } from "@store/actions/Team/TeamAction";
@@ -52,6 +55,7 @@ export default function TableList(props) {
     );
     setTotalPage(Math.ceil(res["page"]["totalElements"] / 6));
     setPlanList(planList.concat(res["content"]));
+    dispatch(readPlanListHandle(planList.concat(res['content'])));
   }
 
   const pageMove = () => {
@@ -62,6 +66,10 @@ export default function TableList(props) {
     let res = await getTeam(data);
     dispatch(readTeamOneHandle(res));
   }
+
+  useEffect(() => {
+    setPlanList(_planList);
+  }, [_planList]);
 
   useEffect(() => {
     if (!_teamInfo) getTeamInfo(props.match.params.idx);

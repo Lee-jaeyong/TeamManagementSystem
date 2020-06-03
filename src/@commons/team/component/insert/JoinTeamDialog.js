@@ -13,6 +13,7 @@ import { Typography, Grid } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import CardHeader from "components/Card/CardHeader.js";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import * as TeamAccess from "@commons/team/methods/TeamAccess";
 
@@ -50,9 +51,18 @@ export const JoinTeamDialog = memo(({ open, handleClose }) => {
   }
 
   return (
-    <Dialog PaperComponent="div" open={open} onClose={handleClose}>
+    <Dialog
+      PaperComponent={DragableComponent}
+      aria-labelledby="draggable-dialog-title"
+      open={open}
+      onClose={handleClose}
+    >
       <Card>
-        <CardHeader color="warning">
+        <CardHeader
+          color="warning"
+          id="draggable-dialog-title"
+          style={{ cursor: "move" }}
+        >
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">

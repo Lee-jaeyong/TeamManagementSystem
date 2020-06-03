@@ -1,19 +1,17 @@
 import React, { memo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
+
 import Dialog from "@material-ui/core/Dialog";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import { blue } from "@material-ui/core/colors";
 import CloseIcon from "@material-ui/icons/Close";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
-import UserListTable from './UserListTable';
+import UserListTable from "./UserListTable";
 
 const useStyles = makeStyles({
   avatar: {
@@ -22,12 +20,21 @@ const useStyles = makeStyles({
   },
 });
 
-const UserListDialog = memo(({ open, handleClose, userList}) => {
+const UserListDialog = memo(({ open, handleClose, userList }) => {
   const classes = useStyles();
   return (
-    <Dialog PaperComponent="div" onClose={handleClose} open={open}>
+    <Dialog
+      PaperComponent={DragableComponent}
+      aria-labelledby="draggable-dialog-title"
+      onClose={handleClose}
+      open={open}
+    >
       <Card>
-        <CardHeader color="rose">
+        <CardHeader
+          color="rose"
+          id="draggable-dialog-title"
+          style={{ cursor: "move" }}
+        >
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">
@@ -49,7 +56,7 @@ const UserListDialog = memo(({ open, handleClose, userList}) => {
             </Grid>
           </Grid>
         </CardHeader>
-        <UserListTable userList={userList}/>
+        <UserListTable userList={userList} />
       </Card>
     </Dialog>
   );

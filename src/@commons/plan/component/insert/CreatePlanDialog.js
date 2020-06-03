@@ -16,6 +16,7 @@ import Button from "@material-ui/core/Button";
 import CreateTodoList from "./CreateTodoList";
 import KeyBoardDatePickerSection from "@commons/component/KeyBoardDatePickerSection";
 import CloseIcon from "@material-ui/icons/Close";
+import DragableComponent from "@commons/component/DragableComponent";
 
 import { insertPlan, insertTodo } from "@commons/plan/methods/PlanAccess";
 import { showConfirmHandle } from "@store/actions/ConfirmAction";
@@ -138,10 +139,13 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
       maxWidth={"sm"}
       fullWidth
       open={open}
-      PaperComponent="div"
+      PaperComponent={DragableComponent}
+      aria-labelledby="draggable-dialog-title"
     >
       <Card>
-        <CardHeader color="info">
+        <CardHeader color="info"
+          id="draggable-dialog-title"
+          style={{ cursor: "move" }}>
           <Grid container justify="space-between">
             <Grid item>
               <Typography variant="h6" component="h6">
