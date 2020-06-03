@@ -9,7 +9,7 @@ import {
 const init = {
   teamList: [],
   team: {},
-  joinTeam : []
+  joinTeam: [],
 };
 
 function parseDate(day) {
@@ -44,19 +44,16 @@ const TeamReducer = (state = init, action) => {
     case UPDATE_TEAM:
       return Object.assign({}, state, {
         team: {
-          images: [...state["team"]["images"]],
-          data: {
-            ...state["team"]["data"],
-            description: action["team"]["description"],
-            name: action["team"]["name"],
-            startDate: parseDate(action["team"]["startDate"]),
-            endDate: parseDate(action["team"]["endDate"]),
-          },
+          ...state["team"]["data"],
+          description: action["team"]["description"],
+          name: action["team"]["name"],
+          startDate: parseDate(action["team"]["startDate"]),
+          endDate: parseDate(action["team"]["endDate"]),
         },
       });
     case UPDATE_JOIN_TEAM:
-      return Object.assign({},state,{
-        joinTeam : action['joinTeam']
+      return Object.assign({}, state, {
+        joinTeam: action["joinTeam"],
       });
     default:
       return state;

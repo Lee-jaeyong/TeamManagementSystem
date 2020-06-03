@@ -14,7 +14,7 @@ export default function UserListTable({ userList }) {
       <Table>
         <TableBody>
           {userList.map((user, idx) => (
-            <Fade key={idx} in={true} timeout={(idx + 1) * 200}>
+            <Fade key={idx} in={true} timeout={(idx + 1) * 100}>
               <TableRow hover>
                 <TableCell component="th" scope="row">
                   <Avatar src={"data:image/png;base64," + user["myImg"]} />

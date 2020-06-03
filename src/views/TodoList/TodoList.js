@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import { makeStyles } from "@material-ui/core/styles";
-import MessageBox from "components/MessageBox/MessageBox";
-import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 import GridContainer from "components/Grid/GridContainer.js";
-import TodoListArea from "./component/component_TodoList/TodoListArea";
+import TodoListArea from "./component/TodoListArea";
 
-import ShowSelectEvent from "../Canendal/components/ShowSelectEvent";
-import UpdatePlan from "../Canendal/components/UpdatePlan";
-
-import * as axiosGet from "@axios/get";
+import { getPlanListMy } from "@commons/plan/methods/PlanAccess";
+import { getTeam } from "@commons/team/methods/TeamAccess";
+import { readTeamOneHandle } from "@store/actions/Team/TeamAction";
 
 const styles = makeStyles((theme) => ({
   main: {
@@ -25,126 +24,54 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
+const filterMyPlans = (planList) => {
+  return planList.filter(
+    (plan) => plan["user"]["id"] === localStorage.getItem("ID")
+  );
+};
+
 export default function TableList(props) {
+  const dispatch = useDispatch();
   const classes = styles();
-  const [plan, setPlan] = useState([]);
+  const [planList, setPlanList] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
-  const [selectEvent, setSelectEvent] = useState();
-  const [showSelectEventState, setShowSelectEventState] = useState(false);
 
-  const [confirmDialogState, setConfirmDialogState] = useState({
-    open: false,
-    title: "",
-    content: "",
-    handleYesClick: () => {},
-    handleClose: () => {},
-  });
+  const _teamInfo = useSelector((state) => state["Team"]["team"]);
+  const _planList = useSelector((state) => state["Plan"]["planList"]);
 
-  const [showMessageState, setShowMessageState] = useState(false);
-  const [MessageBoxState, setMessageBoxState] = useState({
-    content: "",
-    level: "success",
-    time: 2000,
-  });
-
-  const dateMonthCheck = (value) => {
-    const check = value + "";
-    if (check.length === 1) return "0" + check;
-    return check;
-  };
-
-  const getPlanListUnFinished = (number) => {
+  async function getPlanListUnFinished(number) {
     setPage(number);
-    let data = {
-      year: new Date().getFullYear(),
-      month: dateMonthCheck(new Date().getMonth() + 1),
-      day: dateMonthCheck(new Date().getDate()),
+    const data = {
       page: number,
       size: 6,
     };
-    axiosGet.getContainsData(
-      "http://localhost:8090/api/teamManage/plan/" +
-        props.match.params.idx +
-        "/search",
-      getPlanListUnFinishedSuccess,
-      data,
-      true
+    let res = await getPlanListMy(
+      _teamInfo["code"] ? _teamInfo["code"] : props.match.params.idx,
+      data
     );
-  };
-
-  const getPlanListUnFinishedSuccess = (res) => {
-    setPlan(plan.concat(res["content"]));
-    setTotalPage(res["page"]["totalPages"]);
-  };
+    setTotalPage(Math.ceil(res["page"]["totalElements"] / 6));
+    setPlanList(planList.concat(res["content"]));
+  }
 
   const pageMove = () => {
     getPlanListUnFinished(page + 1);
   };
 
-  const messageBoxHandle = (show, content, time, level) => {
-    setShowMessageState(show);
-    setMessageBoxState({
-      content: content,
-      time: time,
-      level: level,
-    });
-  };
-
-  const confirmDialogHandle = useCallback(
-    (open, title, content, handleYesClick) => {
-      setConfirmDialogState({
-        open: open,
-        title: title,
-        content: content,
-        handleYesClick: handleYesClick,
-        handleClose: () => {
-          setConfirmDialogState({
-            open: false,
-            title: title,
-            content: content,
-          });
-        },
-      });
-    },
-    []
-  );
-
-  const showUpdateDialog = (plan) => {
-    setSelectEvent(plan);
-    setShowSelectEventState(true);
-  };
-
-  const updatePlan = useCallback(
-    (value,type) => {
-      let resultPlan = [];
-      for (let i = 0; i < plan.length; i++) {
-        if (plan[i]["seq"] === value["seq"]) {
-          if(type === 'delete'){
-            continue;
-          }else{
-            resultPlan.push(value);
-          }
-        } else {
-          resultPlan.push(plan[i]);
-        }
-      }
-      messageBoxHandle(true, "변경 완료", 2000, "success");
-      setPlan(resultPlan);
-    },
-    [plan]
-  );
+  async function getTeamInfo(data) {
+    let res = await getTeam(data);
+    dispatch(readTeamOneHandle(res));
+  }
 
   useEffect(() => {
+    if (!_teamInfo) getTeamInfo(props.match.params.idx);
     getPlanListUnFinished(0);
   }, []);
 
   return (
     <div className={classes.main}>
       <GridContainer>
-        <TodoListArea
-          {...{ plan, confirmDialogHandle, updatePlan, showUpdateDialog }}
-        />
+        <TodoListArea plan={filterMyPlans(planList)} />
         {totalPage === page + 1 ? null : (
           <div className={classes.moreButton}>
             <IconButton onClick={pageMove}>
@@ -153,36 +80,6 @@ export default function TableList(props) {
           </div>
         )}
       </GridContainer>
-      <MessageBox
-        open={showMessageState}
-        content={MessageBoxState["content"]}
-        level={MessageBoxState["level"]}
-        time={MessageBoxState["time"]}
-        handleClose={() => setShowMessageState(false)}
-      />
-      <UpdatePlan
-        headerColor={"rose"}
-        btnColor={"linear-gradient(45deg, #ec407a 30%, #d81b60 90%)"}
-        updatePlanList={updatePlan}
-        messageBoxHandle={messageBoxHandle}
-        plan={selectEvent}
-        open={showSelectEventState}
-        handleClose={() => setShowSelectEventState(false)}
-        notUpdate={true}
-      />
-      <ConfirmDialog
-        open={confirmDialogState["open"]}
-        title={confirmDialogState["title"]}
-        content={confirmDialogState["content"]}
-        yseClick={confirmDialogState["handleYesClick"]}
-        handleClose={() =>
-          setConfirmDialogState({
-            open: false,
-            title: confirmDialogState["title"],
-            content: confirmDialogState["content"],
-          })
-        }
-      />
     </div>
   );
 }

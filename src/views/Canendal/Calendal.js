@@ -13,7 +13,6 @@ import FormControl from "@material-ui/core/FormControl";
 
 import Scheduler from "@commons/plan/component/readList/Scheduler";
 
-import { getPlanListAll, getPlan } from "@commons/plan/methods/PlanAccess";
 import {
   readPlanListHandle,
   readPlanHandle,
@@ -23,6 +22,19 @@ import CreatePlanDialog from "@commons/plan/component/insert/CreatePlanDialog";
 import SearchBar from "@commons/component/SearchBar";
 import PlanDialog from "@commons/plan/component/readOne/PlanDialog";
 import PlanListDialog from "@commons/plan/component/readList/PlanListDialog";
+import ExcelDataReadDialog from "@commons/plan/component/readList/ExcelDataReadDialog";
+
+import {
+  getExcelData,
+  getPlanListAll,
+  getPlan,
+  excelFormDown,
+} from "@commons/plan/methods/PlanAccess";
+import { showConfirmHandle } from "@store/actions/ConfirmAction";
+import { showMessageHandle } from "@store/actions/MessageAction";
+
+import { getTeam } from "@commons/team/methods/TeamAccess";
+import { readTeamOneHandle } from "@store/actions/Team/TeamAction";
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
@@ -35,10 +47,67 @@ const Header = ({
   selectState,
   createPlanDialogHandle,
   searchPlan,
+  teamCode,
+  teamLeader,
 }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [fileSection, setFileSection] = useState(true);
+  const [excelDataDialgState, setExcelDataDialogState] = useState(false);
+  const [excelDataFile, setExcelDataFile] = useState();
+  const [ecelData, setExcelData] = useState([]);
+
+  async function upload(file) {
+    if (!file) return;
+    setFileSection(false);
+    const data = new FormData();
+    data.append("file", file);
+    setExcelDataFile(file);
+    try {
+      let res = await getExcelData(teamCode, data);
+      if (res["_embedded"]) {
+        setExcelData(res["_embedded"]["planByUserList"]);
+      }
+      setExcelDataDialogState(true);
+    } catch (error) {
+      setExcelDataFile(null);
+      dispatch(
+        showMessageHandle({
+          open: true,
+          content: "엑셀 형식이 잘못되었습니다.",
+          level: "error",
+        })
+      );
+    }
+    setFileSection(true);
+  }
+
+  const excelFileUpload = ({ target }) => {
+    upload(target.files[0]);
+  };
+
+  const excelFormDownload = () => {
+    dispatch(
+      showConfirmHandle({
+        open: true,
+        title: "엑셀 양식 다운로드",
+        content: "엑셀 양식을 다운로드 하시겠습니까?",
+        yseClick: () => excelFormDown(),
+      })
+    );
+  };
+
   return (
     <React.Fragment>
+      <ExcelDataReadDialog
+        {...{ excelDataFile, setExcelDataFile, teamCode }}
+        open={excelDataDialgState}
+        handleClose={() => {
+          setExcelDataDialogState(false);
+          setExcelDataFile(null);
+        }}
+        data={ecelData}
+      />
       <FormControl variant="outlined">
         <Select value={selectState} onChange={selectChange}>
           <MenuItem value={"all"}>전체 보기</MenuItem>
@@ -53,8 +122,29 @@ const Header = ({
         <SearchBar title={"일정"} onClick={searchPlan} />
       </div>
       <div style={{ float: "right", marginTop: 10 }}>
-        <Button variant="contained">엑셀 양식 다운로드</Button>{" "}
-        <Button variant="contained">엑셀 파일 업로드</Button>{" "}
+        {teamLeader &&
+          (teamLeader === localStorage.getItem("ID") ? (
+            <React.Fragment>
+              <Button variant="contained" onClick={excelFormDownload}>
+                엑셀 양식 다운로드
+              </Button>{" "}
+              {fileSection ? (
+                <input
+                  accept="xlsx/*"
+                  style={{ display: "none" }}
+                  id="contained-button-file"
+                  multiple
+                  type="file"
+                  onChange={excelFileUpload}
+                />
+              ) : null}
+              <label htmlFor="contained-button-file">
+                <Button variant="contained" color="primary" component="span">
+                  엑셀 파일 업로드
+                </Button>
+              </label>{" "}
+            </React.Fragment>
+          ) : null)}
         <Button variant="contained" onClick={createPlanDialogHandle}>
           일정 등록
         </Button>
@@ -84,6 +174,8 @@ export default function Calendal(props) {
   const dispatch = useDispatch();
   const _planList = useSelector((state) => state["Plan"]["planList"]);
   const _plan = useSelector((state) => state["Plan"]["plan"]);
+  const _teamInfo = useSelector((state) => state["Team"]["team"]);
+
   const [selectState, setSelectState] = useState("all");
   const [searchState, setSearchState] = useState("");
   const [createPlanDialogState, setCreatePlanDialogState] = useState(false);
@@ -91,8 +183,12 @@ export default function Calendal(props) {
   const [planListDialogState, setPlanListDialogState] = useState(false);
   const [selectDatePlanList, setSelectDatePlanList] = useState([]);
 
+  async function getTeamInfo(data) {
+    let res = await getTeam(data);
+    dispatch(readTeamOneHandle(res));
+  }
+
   async function _getPlanList() {
-    let now = new Date();
     let data = {
       size: 200,
       page: 0,
@@ -137,7 +233,7 @@ export default function Calendal(props) {
     _planList.map((plan) => {
       if (
         new Date(plan["start"]).getTime() <= clickDate &&
-        new Date(plan['end']).getTime() >= clickDate
+        new Date(plan["end"]).getTime() > clickDate
       )
         result.push(plan);
     });
@@ -159,6 +255,7 @@ export default function Calendal(props) {
   }, [_plan]);
 
   useEffect(() => {
+    if (!_teamInfo) getTeamInfo(props.match.params.idx);
     setSelectDatePlanList([]);
     _getPlanList();
   }, []);
@@ -193,6 +290,10 @@ export default function Calendal(props) {
               createPlanDialogHandle,
               searchPlan,
             }}
+            teamLeader={
+              _teamInfo["teamLeader"] ? _teamInfo["teamLeader"]["id"] : null
+            }
+            teamCode={props.match.params.idx}
             userList={getPersonList(_planList)}
           />
         </CardHeader>

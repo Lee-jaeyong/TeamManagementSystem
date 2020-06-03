@@ -1,5 +1,5 @@
-import { getAccess } from "@axios/get";
-import { postAccess } from "@axios/post";
+import { getAccess, getAccessFileDownLoad } from "@axios/get";
+import { postAccess, postAccessFileUpload } from "@axios/post";
 import { deleteAccess } from "@axios/delete";
 import { putAccess } from "@axios/put";
 
@@ -16,6 +16,17 @@ export const getPlan = (seq) => {
 export async function getPlanCount(data) {
   return getAccess(
     "http://localhost:8090/api/teamManage/plan/" + data + "/group-by-user"
+  ).then((res) => res);
+}
+
+export async function getPlanListMy(data,pageable){
+  return getAccess(
+    "http://localhost:8090/api/teamManage/plan/" +
+      data +
+      "/all/my?page=" +
+      pageable["page"] +
+      "&size=" +
+      pageable["size"]
   ).then((res) => res);
 }
 
@@ -43,12 +54,30 @@ export async function getPlanList(data, pageable) {
   ).then((res) => res);
 }
 
+export async function getExcelData(code,file){
+  return postAccessFileUpload(
+    "http://localhost:8090/api/teamManage/plan/" + code + "/excel-data",
+    file
+  );
+}
+
 // insert
 export async function insertPlan(code, data) {
   return postAccess(
     "http://localhost:8090/api/teamManage/plan/" + code,
     data
   ).then((res) => res);
+}
+
+export async function excelUpload(code, file) {
+  return postAccessFileUpload(
+    "http://localhost:8090/api/teamManage/plan/" + code + "/excel-upload",
+    file
+  );
+}
+
+export async function excelFormDown() {
+  return getAccessFileDownLoad("http://localhost:8090/api/teamManage/plan/excel-form","엑셀 양식.xlsx");
 }
 
 export async function insertTodo(seq, todo) {
@@ -63,12 +92,17 @@ export async function updatePlan(seq, plan) {
   return putAccess("http://localhost:8090/api/teamManage/plan/" + seq, plan);
 }
 
-export async function updateTodoIng(seq,type){
-  return putAccess("http://localhost:8090/api/teamManage/todoList/" + seq + "/" + type);
+export async function updateTodoIng(seq, type) {
+  return putAccess(
+    "http://localhost:8090/api/teamManage/todoList/" + seq + "/" + type
+  );
 }
 
-export async function updateTodoTitle(seq,data){
-  return putAccess("http://localhost:8090/api/teamManage/todoList/" + seq, data);
+export async function updateTodoTitle(seq, data) {
+  return putAccess(
+    "http://localhost:8090/api/teamManage/todoList/" + seq,
+    data
+  );
 }
 
 // delete

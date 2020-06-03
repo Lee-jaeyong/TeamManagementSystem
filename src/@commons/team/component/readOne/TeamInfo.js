@@ -39,11 +39,11 @@ const ColorButton = withStyles((theme) => ({
 
 const useStyles = makeStyles(styles);
 
-const totalJoinPerson = (leader, data, images) => {
+const totalJoinPerson = (leader, data) => {
   let result = [];
   const _data = {
     ...leader,
-    myImg: images[images.length - 1],
+    myImg: leader['myImg'],
   };
   result.push(_data);
   if (data)
@@ -51,7 +51,7 @@ const totalJoinPerson = (leader, data, images) => {
       if (dataInfo["state"] !== "NO") {
         const _data = {
           ...dataInfo["user"],
-          myImg: images[idx],
+          myImg: dataInfo['user']['myImg'],
         };
         result.push(_data);
       }
@@ -59,7 +59,7 @@ const totalJoinPerson = (leader, data, images) => {
   return result;
 };
 
-const TeamInfo = memo(({ teamInfo, joinListImg }) => {
+const TeamInfo = memo(({ teamInfo }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [updateTeam, setUpdateTeam] = useState(false);
@@ -170,15 +170,13 @@ const TeamInfo = memo(({ teamInfo, joinListImg }) => {
                     max={
                       totalJoinPerson(
                         teamInfo["teamLeader"],
-                        teamInfo["joinPerson"],
-                        joinListImg
+                        teamInfo["joinPerson"]
                       ).length + 1
                     }
                   >
                     {totalJoinPerson(
                       teamInfo["teamLeader"],
-                      teamInfo["joinPerson"],
-                      joinListImg
+                      teamInfo["joinPerson"]
                     ).map((person, idx) => (
                       <Avatar
                         key={idx}
@@ -225,7 +223,6 @@ const TeamInfo = memo(({ teamInfo, joinListImg }) => {
         userList={totalJoinPerson(
           teamInfo["teamLeader"],
           teamInfo["joinPerson"],
-          joinListImg
         )}
       />
     </div>

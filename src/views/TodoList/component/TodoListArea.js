@@ -1,22 +1,22 @@
-import React, { memo,useEffect } from "react";
-import TodoCard from "./TodoCard";
+import React, { memo } from "react";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import Grow from '@material-ui/core/Grow';
+import Grow from "@material-ui/core/Grow";
+import MyTodoListCard from "@commons/plan/component/readOne/MyTodoListCard";
 
-const TodoListArea = memo(({ plan,confirmDialogHandle,updatePlan,showUpdateDialog }) => {
+const TodoListArea = memo(({ plan }) => {
   return (
     <React.Fragment>
       <Grid container spacing={3}>
-        {plan.map((_data, idx) => (
+        {plan ? plan.map((plan, idx) => (
           <Grid key={idx} item md={12} lg={4} xs={12} sm={12}>
             <Grow in {...{ timeout: ((idx % 6) + 1) * 600 }}>
               <Paper>
-                <TodoCard todo={_data} {...{confirmDialogHandle,updatePlan,showUpdateDialog}}/>
+                <MyTodoListCard {...{plan}} />
               </Paper>
             </Grow>
           </Grid>
-        ))}
+        )) : null}
       </Grid>
     </React.Fragment>
   );

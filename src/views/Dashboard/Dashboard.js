@@ -40,7 +40,6 @@ export default function Dashboard(props) {
   const [todayPlan, setTodayPlan] = useState([]);
   const [todayPlanCount, setTodayPlanCount] = useState([]);
   const [teamInfo, setTeamInfo] = useState();
-  const [joinListImg, setJoinListImg] = useState();
 
   const _teamInfo = useSelector((state) => state["Team"]["team"]);
   const _planList = useSelector((state) => state["Plan"]["planList"]);
@@ -87,8 +86,7 @@ export default function Dashboard(props) {
   }, [_planList]);
 
   useEffect(() => {
-    setTeamInfo(_teamInfo["data"]);
-    setJoinListImg(_teamInfo["images"]);
+    setTeamInfo(_teamInfo);
   }, [_teamInfo]);
 
   useEffect(() => {
@@ -108,7 +106,6 @@ export default function Dashboard(props) {
         <Fade in timeout={500}>
           <div>
             <TeamInfo
-              joinListImg={joinListImg}
               updateTeamInfo={getTeamInfo}
               teamInfo={teamInfo}
             />

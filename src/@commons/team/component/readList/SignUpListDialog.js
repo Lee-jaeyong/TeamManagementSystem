@@ -21,7 +21,10 @@ import CardHeader from "components/Card/CardHeader.js";
 import PersonIcon from "@material-ui/icons/Person";
 import { blue } from "@material-ui/core/colors";
 
-import { successJoinTeam,faildJoinTeam } from "@commons/team/methods/TeamAccess";
+import {
+  successJoinTeam,
+  faildJoinTeam,
+} from "@commons/team/methods/TeamAccess";
 import { deleteJoinTeamData } from "@commons/team/methods/updateStore/TeamListUpdate";
 import { showMessageHandle } from "@store/actions/MessageAction";
 import { showConfirmHandle } from "@store/actions/ConfirmAction";
@@ -29,16 +32,11 @@ import { updateJoinTeam } from "@store/actions/Team/TeamAction";
 import { showForm } from "@store/actions/FormAction";
 
 const useStyles = makeStyles({
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
-  },
 });
 
 export default function SignUpListDiloag({ open, signUpList, handleClose }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-
   const showConfirmDialog = (id) => {
     dispatch(
       showConfirmHandle({
@@ -75,7 +73,7 @@ export default function SignUpListDiloag({ open, signUpList, handleClose }) {
   }, [signUpList]);
 
   async function _falidJoinTeam(value, idx) {
-    let res = await faildJoinTeam(idx,value);
+    let res = await faildJoinTeam(idx, value);
     let _updateJoinTeam = deleteJoinTeamData(signUpList, { seq: idx });
     dispatch(updateJoinTeam(_updateJoinTeam));
   }
@@ -115,9 +113,13 @@ export default function SignUpListDiloag({ open, signUpList, handleClose }) {
           {signUpList.map((user, idx) => (
             <ListItem key={idx}>
               <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  <PersonIcon />
-                </Avatar>
+                <Avatar
+                  src={
+                    user["user"]["myImg"]
+                      ? "data:image/png;base64," + user["user"]["myImg"]
+                      : null
+                  }
+                />
               </ListItemAvatar>
               <ListItemText>
                 <span style={{ marginRight: 30 }}>{user["user"]["id"]}</span>
