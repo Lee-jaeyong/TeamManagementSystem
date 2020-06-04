@@ -44,7 +44,7 @@ const TeamReducer = (state = init, action) => {
     case UPDATE_TEAM:
       return Object.assign({}, state, {
         team: {
-          ...state["team"]["data"],
+          ...state["team"],
           description: action["team"]["description"],
           name: action["team"]["name"],
           startDate: parseDate(action["team"]["startDate"]),

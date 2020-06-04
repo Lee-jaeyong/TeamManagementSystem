@@ -110,7 +110,7 @@ export default function PlanListTab({ data }) {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} >
       <Tabs
         orientation="vertical"
         variant="scrollable"

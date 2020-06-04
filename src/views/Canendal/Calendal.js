@@ -49,6 +49,8 @@ const Header = ({
   searchPlan,
   teamCode,
   teamLeader,
+  showType,
+  showTypeChange
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -118,6 +120,12 @@ const Header = ({
           ))}
         </Select>
       </FormControl>
+      <FormControl style={{marginLeft:20}} variant="outlined">
+        <Select value={showType} onChange={showTypeChange}>
+          <MenuItem value={"dayGridMonth"}>월 단위로 보기</MenuItem>
+          <MenuItem value={"dayGridWeek"}>주 단위로 보기</MenuItem>
+        </Select>
+      </FormControl>
       <div style={{ float: "left", marginRight: 30, marginTop: 5 }}>
         <SearchBar title={"일정"} onClick={searchPlan} />
       </div>
@@ -182,6 +190,7 @@ export default function Calendal(props) {
   const [readPlanDialogState, setReadPlanDialogState] = useState(false);
   const [planListDialogState, setPlanListDialogState] = useState(false);
   const [selectDatePlanList, setSelectDatePlanList] = useState([]);
+  const [showType,setShowType] = useState("dayGridMonth");
   const [print, setPrint] = useState(false);
 
   async function getTeamInfo(data) {
@@ -262,6 +271,10 @@ export default function Calendal(props) {
     setSelectDatePlanList(result);
   };
 
+  const showTypeChange = ({ target }) => {
+    setShowType(target.value);
+  }
+
   useEffect(() => {
     updatePlanToPlanListTab();
   }, [_plan]);
@@ -303,6 +316,8 @@ export default function Calendal(props) {
             >
               <Header
                 {...{
+                  showType,
+                  showTypeChange,
                   selectChange,
                   selectState,
                   createPlanDialogHandle,
@@ -319,6 +334,7 @@ export default function Calendal(props) {
         </Fade>
         <CardBody>
           <Scheduler
+            defaultView={showType}
             header={{
               left: "prev,next today",
               center: "title",

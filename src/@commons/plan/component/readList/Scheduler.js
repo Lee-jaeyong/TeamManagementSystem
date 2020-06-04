@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import Fade from "@material-ui/core/Fade";
 
 const colors = [
   "#D9418C",
@@ -23,6 +24,7 @@ export default function Scheduler({
   eventClick,
   droppable,
   header,
+  defaultView,
 }) {
   const [planList, setPlanList] = useState([]);
   const parsePlan = (planValue, name, isMyPlan, users) => {
@@ -78,31 +80,65 @@ export default function Scheduler({
 
   return (
     <div>
-      <FullCalendar
-        rerenderEvent={planList}
-        events={planList}
-        buttonText={{
-          today: "today",
-        }}
-        titleFormat={{ year: "numeric", month: "long" }}
-        defaultView="dayGridMonth"
-        plugins={[dayGridPlugin, interactionPlugin]}
-        titleFormat={{
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }}
-        {...(dateClick ? { dateClick: dateClick } : null)}
-        {...(eventClick ? { eventClick: eventClick } : null)}
-        {...(customButtons ? { customButtons: customButtons } : null)}
-        droppable={droppable}
-        editable={editable}
-        header={{
-          left: header ? header["left"] : "",
-          center: header ? header["center"] : "",
-          right: header ? header["right"] : "",
-        }}
-      />
+      {defaultView === "dayGridMonth" ? (
+        <Fade in={defaultView === "dayGridMonth" ? true : false} timeout={1000}>
+          <div>
+            <FullCalendar
+              rerenderEvent={planList}
+              events={planList}
+              buttonText={{
+                today: "today",
+              }}
+              titleFormat={{ year: "numeric", month: "long" }}
+              defaultView={"dayGridMonth"}
+              plugins={[dayGridPlugin, interactionPlugin]}
+              titleFormat={{
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              }}
+              {...(dateClick ? { dateClick: dateClick } : null)}
+              {...(eventClick ? { eventClick: eventClick } : null)}
+              {...(customButtons ? { customButtons: customButtons } : null)}
+              droppable={droppable}
+              editable={editable}
+              header={{
+                left: header ? header["left"] : "",
+                center: header ? header["center"] : "",
+                right: header ? header["right"] : "",
+              }}
+            />
+          </div>
+        </Fade>
+      ) : (
+        <Fade in={true} timeout={1000}>
+          <FullCalendar
+            rerenderEvent={planList}
+            events={planList}
+            buttonText={{
+              today: "today",
+            }}
+            titleFormat={{ year: "numeric", month: "long" }}
+            defaultView={"dayGridWeek"}
+            plugins={[dayGridPlugin, interactionPlugin]}
+            titleFormat={{
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }}
+            {...(dateClick ? { dateClick: dateClick } : null)}
+            {...(eventClick ? { eventClick: eventClick } : null)}
+            {...(customButtons ? { customButtons: customButtons } : null)}
+            droppable={droppable}
+            editable={editable}
+            header={{
+              left: header ? header["left"] : "",
+              center: header ? header["center"] : "",
+              right: header ? header["right"] : "",
+            }}
+          />
+        </Fade>
+      )}
     </div>
   );
 }

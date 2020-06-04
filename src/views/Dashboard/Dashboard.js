@@ -44,9 +44,7 @@ export default function Dashboard(props) {
   const _teamInfo = useSelector((state) => state["Team"]["team"]);
   const _planList = useSelector((state) => state["Plan"]["planList"]);
   const _planListCount = useSelector((state)=>state['Plan']['planListCount']);
-
   const [plan, setPlan] = useState([]);
-
   const [chartData, setChartData] = useState([]);
 
   async function _getPlanList() {

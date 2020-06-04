@@ -13,7 +13,7 @@ import Card from "components/Card/Card.js";
 import DragableComponent from "@commons/component/DragableComponent";
 
 import CardHeader from "components/Card/CardHeader.js";
-import { updateTeam } from "@commons/team/methods/TeamAccess";
+import { updateTeam,getTeam } from "@commons/team/methods/TeamAccess";
 import { updateTeamList } from "@commons/team/methods/updateStore/TeamListUpdate";
 
 import {
@@ -53,9 +53,15 @@ export default function FormDialog({ team, open, handleClose }) {
         description: description.current.value,
       };
       let res = await updateTeam(team["code"], updateTeamData);
-      let updateList = updateTeamList(teamList, res);
+      const _updateTeam = {
+        ...team,
+        description : res['description'],
+        startDate : res['startDate'],
+        endDate : res['endDate'],
+      }
+      let updateList = updateTeamList(teamList, _updateTeam);
       dispatch(readTeamListHandle(updateList));
-      dispatch(updateTeamHandle(res));
+      dispatch(updateTeamHandle(_updateTeam));
       messageBoxHandle(true, "팀 수정 완료.", "success");
       handleClose();
     }

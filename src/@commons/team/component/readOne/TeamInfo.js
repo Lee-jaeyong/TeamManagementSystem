@@ -9,13 +9,11 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import Grid from "@material-ui/core/Grid";
-import CardIcon from "components/Card/CardIcon.js";
 import CardFooter from "components/Card/CardFooter.js";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import Avatar from "@material-ui/core/Avatar";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import IconButton from "@material-ui/core/IconButton";
-import Slider from "@material-ui/core/Slider";
 import CreateIcon from "@material-ui/icons/Create";
 import Tooltip from "@material-ui/core/Tooltip";
 import Button from "@material-ui/core/Button";
@@ -43,7 +41,7 @@ const totalJoinPerson = (leader, data) => {
   let result = [];
   const _data = {
     ...leader,
-    myImg: leader['myImg'],
+    myImg: leader["myImg"],
   };
   result.push(_data);
   if (data)
@@ -51,7 +49,7 @@ const totalJoinPerson = (leader, data) => {
       if (dataInfo["state"] !== "NO") {
         const _data = {
           ...dataInfo["user"],
-          myImg: dataInfo['user']['myImg'],
+          myImg: dataInfo["user"]["myImg"],
         };
         result.push(_data);
       }
@@ -178,10 +176,12 @@ const TeamInfo = memo(({ teamInfo }) => {
                       teamInfo["teamLeader"],
                       teamInfo["joinPerson"]
                     ).map((person, idx) => (
-                      <Avatar
-                        key={idx}
-                        src={"data:image/png;base64," + person["myImg"]}
-                      />
+                      <Tooltip title={person["name"]}>
+                        <Avatar
+                          key={idx}
+                          src={"data:image/png;base64," + person["myImg"]}
+                        />
+                      </Tooltip>
                     ))}
                   </AvatarGroup>
                   <Button
@@ -222,7 +222,7 @@ const TeamInfo = memo(({ teamInfo }) => {
         handleClose={() => setUserListDialogState(false)}
         userList={totalJoinPerson(
           teamInfo["teamLeader"],
-          teamInfo["joinPerson"],
+          teamInfo["joinPerson"]
         )}
       />
     </div>

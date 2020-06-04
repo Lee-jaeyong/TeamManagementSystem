@@ -28,7 +28,7 @@ const classes = useStyles();
             <br />
           </CardHeader>
           <CardBody>
-            <Scheduler {...{plan}}/>
+            <Scheduler {...{plan}} defaultView={"dayGridMonth"}/>
           </CardBody>
           <CardFooter chart></CardFooter>
         </CardActionArea>

@@ -13,6 +13,9 @@ import UpdateIcon from "@material-ui/icons/Update";
 import TextField from "@material-ui/core/TextField";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import Tooltip from "@material-ui/core/Tooltip";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
 import {
   updateTodoIng,
@@ -92,6 +95,16 @@ const Todo = memo(({ todo, isMy, changeTodo }) => {
   }
 
   const updateTitleHandle = () => {
+    if(updateTitle.trim() === ''){
+      dispatch(
+        showMessageHandle({
+          open: true,
+          content: "단건 일정을 입력해주세요",
+          level: "error",
+        })
+      );
+      return;
+    }
     dispatch(
       showConfirmHandle({
         open: true,
@@ -166,6 +179,7 @@ const Todo = memo(({ todo, isMy, changeTodo }) => {
 
 const TodoList = memo(({ todoList, isMy, _updateTodoList, plan }) => {
   const classes = useStyles();
+  const [showMore, setShowMore] = useState(true);
 
   const changeTodoList = (_todo) => {
     let result = [];
@@ -184,16 +198,70 @@ const TodoList = memo(({ todoList, isMy, _updateTodoList, plan }) => {
     _updateTodoList(_plan);
   };
 
+  const beforeTodoList = () => {
+    let result = [];
+    let count = todoList.length;
+    if (todoList.length >= 3) {
+      count = 3;
+    }
+    for (let i = 0; i < count; i++) {
+      result.push(todoList[i]);
+    }
+    return result;
+  };
+
+  const afterTodoList = () => {
+    let result = [];
+    for (let i = 3; i < todoList.length; i++) {
+      result.push(todoList[i]);
+    }
+    return result;
+  };
+
   return (
-    <List className={classes.root} subheader={<li />}>
+    <List className={classes.root} subheader={<li/>}>
       {todoList.length !== 0 ? (
-        todoList.map((todo, idx) => (
-          <Fade key={idx} in={true} timeout={(idx + 1) * 300}>
-            <div>
-              <Todo {...{ todo, isMy, changeTodo }} />
-            </div>
-          </Fade>
-        ))
+        <React.Fragment>
+          {beforeTodoList(todoList).map((todo, idx) => (
+            <Fade key={idx} in={true} timeout={(idx + 1) * 300}>
+              <div>
+                <Todo {...{ todo, isMy, changeTodo }} />
+              </div>
+            </Fade>
+          ))}
+          {!showMore ? (
+            <Fade in={true} timeout={1000}>
+              <div>
+                {afterTodoList(todoList).map((todo, idx) => (
+                  <Fade key={idx} in={true} timeout={(idx + 1) * 50}>
+                    <div>
+                      <Todo {...{ todo, isMy, changeTodo }} />
+                    </div>
+                  </Fade>
+                ))}
+              </div>
+            </Fade>
+          ) : null}
+          {todoList.length > 3 ? (
+            showMore ? (
+              <div style={{ textAlign: "center" }}>
+                <Tooltip title={"더보기"}>
+                  <IconButton onClick={() => setShowMore(false)}>
+                    <ArrowDropDownIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            ) : (
+              <div style={{ textAlign: "center" }}>
+                <Tooltip title={"접기"}>
+                  <IconButton onClick={() => setShowMore(true)}>
+                    <ArrowDropUpIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            )
+          ) : null}
+        </React.Fragment>
       ) : (
         <h6>TODO리스트가 존재하지 않습니다.</h6>
       )}

@@ -19,14 +19,22 @@ export async function getPlanCount(data) {
   ).then((res) => res);
 }
 
-export async function getPlanListMy(data,pageable){
+export async function getPlanListMy(data, pageable) {
   return getAccess(
     "http://localhost:8090/api/teamManage/plan/" +
       data +
       "/all/my?page=" +
       pageable["page"] +
       "&size=" +
-      pageable["size"]
+      pageable["size"] +
+      "&tag=" +
+      pageable["tag"] +
+      "&title=" +
+      pageable["title"] +
+      "&start=" +
+      pageable["start"] +
+      "&end=" +
+      pageable["end"]
   ).then((res) => res);
 }
 
@@ -54,7 +62,7 @@ export async function getPlanList(data, pageable) {
   ).then((res) => res);
 }
 
-export async function getExcelData(code,file){
+export async function getExcelData(code, file) {
   return postAccessFileUpload(
     "http://localhost:8090/api/teamManage/plan/" + code + "/excel-data",
     file
@@ -77,7 +85,10 @@ export async function excelUpload(code, file) {
 }
 
 export async function excelFormDown() {
-  return getAccessFileDownLoad("http://localhost:8090/api/teamManage/plan/excel-form","엑셀 양식.xlsx");
+  return getAccessFileDownLoad(
+    "http://localhost:8090/api/teamManage/plan/excel-form",
+    "엑셀 양식.xlsx"
+  );
 }
 
 export async function insertTodo(seq, todo) {
