@@ -26,8 +26,8 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
     const _chat = {
       code: team["code"],
       message: text.current.value,
-      user: "dlwodyd202",
-      userImg: "x",
+      user: user["id"],
+      userImg: "X",
     };
     dispatch(sendMessage(_chat));
     text.current.value = "";
@@ -69,11 +69,10 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
                       <ListItemAvatar>
                         <Avatar
                           alt="Remy Sharp"
-                          src="/static/images/avatar/1.jpg"
                         />
                       </ListItemAvatar>
                       <ListItemText
-                        primary="Brunch this weekend?"
+                        primary={chat["user"]}
                         secondary={
                           <React.Fragment>
                             <Typography
@@ -81,7 +80,7 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
                               variant="body2"
                               color="textPrimary"
                             >
-                              안녕하세요
+                              {chat["message"]}
                             </Typography>
                           </React.Fragment>
                         }

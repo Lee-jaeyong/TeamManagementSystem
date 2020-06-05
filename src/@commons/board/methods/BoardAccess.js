@@ -6,13 +6,13 @@ import { putAccess } from "@axios/put";
 // readOne
 export async function getBoard(type, seq) {
   return getAccess(
-    "http://localhost:8090/api/teamManage/" + type + "/" + seq
+    "http://172.30.1.37:8090/api/teamManage/" + type + "/" + seq
   ).then((res) => res);
 }
 
 export function fileDownLoad(type, seq, fileName) {
   return getAccessFileDownLoad(
-    "http://localhost:8090/api/teamManage/" +
+    "http://172.30.1.37:8090/api/teamManage/" +
       type +
       "/" +
       seq +
@@ -24,7 +24,7 @@ export function fileDownLoad(type, seq, fileName) {
 
 export function fileAllDownload(type, seq, fileName) {
   return getAccessFileDownLoad(
-    "http://localhost:8090/api/teamManage/" +
+    "http://172.30.1.37:8090/api/teamManage/" +
       type +
       "/" +
       seq +
@@ -36,7 +36,7 @@ export function fileAllDownload(type, seq, fileName) {
 // readList
 export async function getBoardList(type, code, pageable) {
   return getAccess(
-    "http://localhost:8090/api/teamManage/" +
+    "http://172.30.1.37:8090/api/teamManage/" +
       type +
       "/" +
       code +
@@ -50,14 +50,14 @@ export async function getBoardList(type, code, pageable) {
 // insert
 export async function createBoard(type, code, data) {
   return postAccess(
-    "http://localhost:8090/api/teamManage/" + type + "/" + code,
+    "http://172.30.1.37:8090/api/teamManage/" + type + "/" + code,
     data
   ).then((res) => res);
 }
 
 export async function insertFile(fileType, seq, type, formData) {
   return postAccessFileUpload(
-    "http://localhost:8090/api/teamManage/" +
+    "http://172.30.1.37:8090/api/teamManage/" +
       type +
       "/" +
       seq +
@@ -70,7 +70,7 @@ export async function insertFile(fileType, seq, type, formData) {
 //update
 export async function updateBoard(type, seq, data) {
   return putAccess(
-    "http://localhost:8090/api/teamManage/" + type + "/" + seq,
+    "http://172.30.1.37:8090/api/teamManage/" + type + "/" + seq,
     data
   );
 }
@@ -78,13 +78,13 @@ export async function updateBoard(type, seq, data) {
 //delete
 export async function deleteBoard(type, seq) {
   return deleteAccess(
-    "http://localhost:8090/api/teamManage/" + type + "/" + seq
+    "http://172.30.1.37:8090/api/teamManage/" + type + "/" + seq
   );
 }
 
 export async function deleteFile(type, seq, fileName) {
   return postAccessFileUpload(
-    "http://localhost:8090/api/teamManage/" +
+    "http://172.30.1.37:8090/api/teamManage/" +
       type +
       "/" +
       seq +

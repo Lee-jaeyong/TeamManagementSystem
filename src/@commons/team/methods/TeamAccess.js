@@ -6,7 +6,7 @@ import * as axiosPut from "@axios/put";
 
 export async function getTeam(data) {
   return axiosGet
-    .getAccess("http://localhost:8090/api/teamManage/" + data)
+    .getAccess("http://172.30.1.37:8090/api/teamManage/" + data)
     .then((res) => res);
 }
 
@@ -14,13 +14,13 @@ export async function getTeam(data) {
 
 export async function getTeamList() {
   return axiosGet
-    .getAccess("http://localhost:8090/api/teamManage")
+    .getAccess("http://172.30.1.37:8090/api/teamManage")
     .then((res) => res);
 }
 
 export async function getJoinTeamList(data) {
   return axiosGet
-    .getAccess("http://localhost:8090/api/teamManage/" + data + "/signUpList")
+    .getAccess("http://172.30.1.37:8090/api/teamManage/" + data + "/signUpList")
     .then((res) => res);
 }
 
@@ -28,32 +28,32 @@ export async function getJoinTeamList(data) {
 
 export async function createTeam(data) {
   return axiosPost
-    .postAccess("http://localhost:8090/api/teamManage", data)
+    .postAccess("http://172.30.1.37:8090/api/teamManage", data)
     .then((res) => res);
 }
 
 export async function joinTeam(data) {
   return axiosPost
-    .postAccess("http://localhost:8090/api/teamManage/" + data + "/joinTeam")
+    .postAccess("http://172.30.1.37:8090/api/teamManage/" + data + "/joinTeam")
     .then((res) => res);
 }
 
 // update
 export async function updateTeam(data, updateData) {
   return axiosPut.putAccess(
-    "http://localhost:8090/api/teamManage/" + data,
+    "http://172.30.1.37:8090/api/teamManage/" + data,
     updateData
   );
 }
 
 export async function successJoinTeam(data) {
   return axiosPut.putAccess(
-    "http://localhost:8090/api/teamManage/" + data + "/joinTeam/success"
+    "http://172.30.1.37:8090/api/teamManage/" + data + "/joinTeam/success"
   );
 }
 
 export async function faildJoinTeam(seq, reson) {
   return axiosPut.putAccess(
-    "http://localhost:8090/api/teamManage/" + seq + "/joinTeam/faild?reson=" + reson
+    "http://172.30.1.37:8090/api/teamManage/" + seq + "/joinTeam/faild?reson=" + reson
   );
 }

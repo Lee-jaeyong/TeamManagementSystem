@@ -33,6 +33,7 @@ import FormDialog from "@commons/component/FormDialog";
 import Chat from "@commons/component/Chat";
 
 import { getTeamList } from "@commons/team/methods/TeamAccess";
+import { getUserInfo } from "@commons/users/methods/UserAccess";
 
 let ps;
 
@@ -184,7 +185,12 @@ export default function Admin({ ...rest }) {
         )}
         {getRoute() ? <Footer /> : null}
       </div>
-      <Chat teamList={createMenu(myPjtList)} />
+      <Chat
+        user={{
+          id: localStorage.getItem("ID"),
+        }}
+        teamList={createMenu(myPjtList)}
+      />
     </div>
   );
 }

@@ -43,21 +43,21 @@ export default function MyPage(props) {
 
   const getUserInfo = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/users",
+      "http://172.30.1.37:8090/api/users",
       getUserInfoSuccess
     );
   };
 
   const unFinishedPjt = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage",
+      "http://172.30.1.37:8090/api/teamManage",
       getUnFinishedSuccess
     );
   };
 
   const getMySignUpList = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage/signUpList",
+      "http://172.30.1.37:8090/api/teamManage/signUpList",
       getMySignUpListSuccess
     );
   };
@@ -78,14 +78,14 @@ export default function MyPage(props) {
 
   const finishedPjt = () => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage?flag=finished",
+      "http://172.30.1.37:8090/api/teamManage?flag=finished",
       getFinishedSuccess
     );
   };
 
   const getPlanList = (page) => {
     axiosGet.getNotContainsData(
-      "http://localhost:8090/api/teamManage/plan/all?size=10&page=" + page,
+      "http://172.30.1.37:8090/api/teamManage/plan/all?size=10&page=" + page,
       getPlanListSuccess
     );
   };

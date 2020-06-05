@@ -1,4 +1,8 @@
-import { SEND_MESSAGE, INIT_CHAT_ROOM } from "@store/actions/SocketAction";
+import {
+  SEND_MESSAGE,
+  INIT_CHAT_ROOM,
+  INIT,
+} from "@store/actions/SocketAction";
 
 const init = {
   socket: {
@@ -42,14 +46,22 @@ export default function SocketReducer(
       return Object.assign({}, state, {
         chatRoom: chat(state["chatRoom"], socket),
         socket: {
-          type: "message",
-          code: socket["code"],
-          message: socket,
+          type: socket["socket"] ? "" : "message",
+          code: socket["socket"] ? "" : socket["code"],
+          message: socket["socket"] ? "" : socket,
         },
       });
     case INIT_CHAT_ROOM:
       return Object.assign({}, state, {
         chatRoom: chatRoom,
+      });
+    case INIT:
+      return Object.assign({}, state, {
+        socket: {
+          type: "",
+          code: "",
+          message: "",
+        },
       });
     default:
       return state;

@@ -80,6 +80,7 @@ export default function Chat({ teamList, user }) {
         ))}
       </SpeedDial>
       <ChatDialog
+        user={user}
         message={message}
         team={_team}
         open={chatOpenState}

@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SockJsClient from "react-stomp";
-import { sendMessage, initChatRoom } from "@store/actions/SocketAction";
+import {
+  sendMessage,
+  initChatRoom,
+} from "@store/actions/SocketAction";
 
 const SocketSection = ({ pjtCodeArr }) => {
   const dispatch = useDispatch();
   const socket = useSelector((state) => state["Sockcet"]["socket"]);
   const [conn, setConn] = useState();
 
-  const socketBloker = (value) => {
+  async function socketBloker(value){
     if (
       value["type"] === "message" &&
       value["message"]["user"] !== localStorage.getItem("ID")
@@ -18,8 +21,9 @@ const SocketSection = ({ pjtCodeArr }) => {
         user: value["message"]["user"],
         userImg: value["message"]["userImg"],
         message: value["message"]["message"],
+        socket : true
       };
-      dispatch(sendMessage(_message));
+      await dispatch(sendMessage(_message));
     }
   };
 
@@ -32,9 +36,11 @@ const SocketSection = ({ pjtCodeArr }) => {
   };
 
   useEffect(() => {
-    if (socket["code"]) {
-      conn.sendMessage("/topics/" + socket["code"], JSON.stringify(socket));
-    }
+    try{
+      if (socket["type"] || socket["type"] === "message") {
+        conn.sendMessage("/topics/" + socket["code"], JSON.stringify(socket));
+      }
+    }catch{}
   }, [socket]);
 
   useEffect(() => {
@@ -52,7 +58,7 @@ const SocketSection = ({ pjtCodeArr }) => {
           localStorage.getItem("access_token"),
       }}
       ref={(client) => setConn(client)}
-      url="http://localhost:8090/chat"
+      url="http://172.30.1.37:8090/chat"
       topics={pjtCodeArr}
       onMessage={socketBloker}
     />
