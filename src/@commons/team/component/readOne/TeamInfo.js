@@ -176,9 +176,8 @@ const TeamInfo = memo(({ teamInfo }) => {
                       teamInfo["teamLeader"],
                       teamInfo["joinPerson"]
                     ).map((person, idx) => (
-                      <Tooltip title={person["name"]}>
+                      <Tooltip key={idx} title={person["name"]}>
                         <Avatar
-                          key={idx}
                           src={"data:image/png;base64," + person["myImg"]}
                         />
                       </Tooltip>

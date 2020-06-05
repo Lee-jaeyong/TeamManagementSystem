@@ -20,7 +20,7 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/logo.png";
-import SockJsClient from "react-stomp";
+import SocketSection from "@commons/component/SocketSection";
 
 import PeopleIcon from "@material-ui/icons/People";
 import ContactsIcon from "@material-ui/icons/Contacts";
@@ -30,6 +30,7 @@ import DashboardPage from "views/Dashboard/Dashboard.js";
 import MessageBox from "@commons/component/MessageBox";
 import ConfirmDialog from "@commons/component/ConfirmDialog";
 import FormDialog from "@commons/component/FormDialog";
+import Chat from "@commons/component/Chat";
 
 import { getTeamList } from "@commons/team/methods/TeamAccess";
 
@@ -117,21 +118,6 @@ export default function Admin({ ...rest }) {
     dispatch(readTeamListHandle(res["content"]));
   }
 
-  const planBloker = (value) => {
-    for (let i = 0; i < pjtList.length; i++) {
-      if (pjtList[i]["code"] === value["code"]) {
-        for (let j = 0; j < alarm.length; j++) {
-          if (alarm[j]["code"] === value["code"]) {
-            return;
-          }
-        }
-        let result = pjtList[i];
-        setAlarm([...alarm, result]);
-        return;
-      }
-    }
-  };
-
   const showAlarm = (value) => {
     setAlarm([
       ...alarm.filter((alarmInfo) => alarmInfo["code"] !== value["code"]),
@@ -169,19 +155,7 @@ export default function Admin({ ...rest }) {
       <FormDialog />
       <MessageBox />
       <ConfirmDialog />
-      {pjtCodeArr.length !== 0 ? (
-        <SockJsClient
-          headers={{
-            Authorization:
-              localStorage.getItem("token_type") +
-              " " +
-              localStorage.getItem("access_token"),
-          }}
-          url="http://localhost:8090/chat"
-          topics={pjtCodeArr}
-          onMessage={planBloker}
-        />
-      ) : null}
+      <SocketSection {...{ pjtCodeArr }} />
       <Sidebar
         routes={pjtList}
         logoText={"Planner System"}
@@ -210,6 +184,7 @@ export default function Admin({ ...rest }) {
         )}
         {getRoute() ? <Footer /> : null}
       </div>
+      <Chat teamList={createMenu(myPjtList)} />
     </div>
   );
 }

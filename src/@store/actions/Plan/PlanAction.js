@@ -4,6 +4,7 @@ export const READ_PLAN = "READ_PLAN";
 export const INSERT_PLAN = "INSERT_PLAN";
 export const DELETE_PLAN = "DELETE_PLAN";
 export const UPDATE_PLAN = "UPDATE_PLAN";
+export const READ_PLAN_PROGRESS = "READ_PLAN_PROGRESS";
 
 export const readPlanHandle = (plan) => {
   return {
@@ -17,6 +18,10 @@ export const readPlanListHandle = (planList) => {
     type: READ_PLAN_LIST,
     planList: planList,
   };
+};
+
+export const readPlanListProgressHandle = (planProgress) => {
+  return { type: READ_PLAN_PROGRESS, planProgress: planProgress };
 };
 
 export const readPlanListCountHandle = (planListCount) => {

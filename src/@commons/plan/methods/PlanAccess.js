@@ -13,6 +13,12 @@ export const getPlan = (seq) => {
 
 // readList
 
+export async function getPlanProgress(data) {
+  return getAccess(
+    "http://localhost:8090/api/teamManage/plan/" + data + "/progress-all"
+  ).then((res) => res);
+}
+
 export async function getPlanCount(data) {
   return getAccess(
     "http://localhost:8090/api/teamManage/plan/" + data + "/group-by-user"

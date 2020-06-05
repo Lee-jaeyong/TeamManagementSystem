@@ -20,16 +20,22 @@ import Fade from "@material-ui/core/Fade";
 
 import TeamInfo from "@commons/team/component/readOne/TeamInfo";
 import SchedulerSection from "./component/SchedulerSection";
+import ProgressChartSection from "./component/ProgressChartSection";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 
 import { getTeam } from "@commons/team/methods/TeamAccess";
 import { readTeamOneHandle } from "@store/actions/Team/TeamAction";
 
-import { getPlanList, getPlanCount } from "@commons/plan/methods/PlanAccess";
+import {
+  getPlanList,
+  getPlanCount,
+  getPlanProgress,
+} from "@commons/plan/methods/PlanAccess";
 import {
   readPlanListHandle,
   readPlanListCountHandle,
+  readPlanListProgressHandle,
 } from "@store/actions/Plan/PlanAction";
 
 const useStyles = makeStyles(styles);
@@ -43,7 +49,10 @@ export default function Dashboard(props) {
 
   const _teamInfo = useSelector((state) => state["Team"]["team"]);
   const _planList = useSelector((state) => state["Plan"]["planList"]);
-  const _planListCount = useSelector((state)=>state['Plan']['planListCount']);
+  const _planListCount = useSelector((state) => state["Plan"]["planListCount"]);
+  const _planListProgress = useSelector(
+    (state) => state["Plan"]["planProgress"]
+  );
   const [plan, setPlan] = useState([]);
   const [chartData, setChartData] = useState([]);
 
@@ -57,7 +66,10 @@ export default function Dashboard(props) {
     };
     const planList = await getPlanList(props.match.params.idx, data);
     const planCount = await getPlanCount(props.match.params.idx);
-    dispatch(readPlanListCountHandle(planCount['content']));
+    const allProgress = await getPlanProgress(props.match.params.idx);
+
+    dispatch(readPlanListProgressHandle(allProgress));
+    dispatch(readPlanListCountHandle(planCount["content"]));
     dispatch(readPlanListHandle(planList["content"]));
   }
 
@@ -70,7 +82,7 @@ export default function Dashboard(props) {
     dispatch(readPlanListHandle([]));
     props["history"].push("/admin/todoList/" + props.match.params.idx);
   };
-  
+
   const showScheduler = () => {
     dispatch(readPlanListHandle([]));
     props["history"].push("/admin/scheduler/" + props.match.params.idx);
@@ -105,10 +117,7 @@ export default function Dashboard(props) {
       <GridItem xs={12} sm={12} md={12}>
         <Fade in timeout={500}>
           <div>
-            <TeamInfo
-              updateTeamInfo={getTeamInfo}
-              teamInfo={teamInfo}
-            />
+            <TeamInfo updateTeamInfo={getTeamInfo} teamInfo={teamInfo} />
           </div>
         </Fade>
       </GridItem>
@@ -142,7 +151,11 @@ export default function Dashboard(props) {
                   </GridItem>
                 </GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
-                  <ChartSection data={chartData} />
+                  <ChartSection
+                    planChartData={_planList}
+                    progressData={_planListProgress}
+                    data={chartData}
+                  />
                 </GridItem>
               </div>
             </Fade>
@@ -160,7 +173,11 @@ export default function Dashboard(props) {
                   </GridItem>
                 </GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
-                  <ChartSection data={chartData} />
+                  <ChartSection
+                    planChartData={_planList}
+                    progressData={_planListProgress}
+                    data={chartData}
+                  />
                 </GridItem>
               </div>
             </Fade>
