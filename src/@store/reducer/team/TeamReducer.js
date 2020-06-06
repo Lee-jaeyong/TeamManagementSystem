@@ -1,6 +1,8 @@
 import {
   READ_TEAM_LIST,
   READ_TEAM,
+  READ_MY_SIGNUP_LIST,
+  READ_FINISHED_TEAM_LIST,
   UPDATE_TEAM,
   INSERT_TEAM,
   UPDATE_JOIN_TEAM,
@@ -10,6 +12,8 @@ const init = {
   teamList: [],
   team: {},
   joinTeam: [],
+  finishedTeamList: [],
+  mySignup: [],
 };
 
 function parseDate(day) {
@@ -36,6 +40,14 @@ const TeamReducer = (state = init, action) => {
     case READ_TEAM:
       return Object.assign({}, state, {
         team: action["team"],
+      });
+    case READ_MY_SIGNUP_LIST:
+      return Object.assign({}, state, {
+        mySignUp: action["mySignUp"],
+      });
+    case READ_FINISHED_TEAM_LIST:
+      return Object.assign({},state, {
+        finishedTeamList: action["finishedTeamList"], //res["content"]
       });
     case INSERT_TEAM:
       return Object.assign({}, state, {
