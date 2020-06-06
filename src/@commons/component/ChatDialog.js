@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -33,6 +33,13 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
     text.current.value = "";
     text.current.focus();
   };
+
+  useEffect(()=>{
+    if(document.getElementById("chatArea")){
+      document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
+    }
+  },[message])
+
   return (
     <div>
       <Dialog
@@ -43,7 +50,7 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
         onClose={handleClose}
       >
         <DialogTitle>{team ? team["name"] : ""}</DialogTitle>
-        <DialogContent style={{ height: 300 }}>
+        <DialogContent id="chatArea" style={{ height: 300 }}>
           <DialogContentText>
             {message[0] && message[0]["message"]
               ? message[0]["message"].map((chat, idx) =>

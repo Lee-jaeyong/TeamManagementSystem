@@ -12,7 +12,7 @@ const init = {
   },
   chatRoom: [
     {
-      code: "C81E728D",
+      code: "",
       message: [],
     },
   ],
