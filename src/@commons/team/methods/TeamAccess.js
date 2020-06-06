@@ -12,9 +12,21 @@ export async function getTeam(data) {
 
 // readList
 
+export async function getMySignUpList(){
+  return axiosGet
+  .getAccess("http://localhost:8090/api/teamManage/signUpList")
+  .then((res) => res);
+}
+
 export async function getTeamList() {
   return axiosGet
     .getAccess("http://172.30.1.37:8090/api/teamManage")
+    .then((res) => res);
+}
+
+export async function getFinishedTeamList(){
+  return axiosGet
+    .getAccess("http://localhost:8090/api/teamManage?flag=finished")
     .then((res) => res);
 }
 

@@ -1,5 +1,6 @@
 import { getAccess } from "@axios/get";
 
-export function getUserInfo(){
-    return getAccess("http://172.30.1.37:8090/api/users").then(res=>res);
+export async function getUser() {
+  const res = await getAccess("http://localhost:8090/api/users");
+  return res.data;
 }
