@@ -18,6 +18,7 @@ const KeyBoardDatePickerSection = memo(({
   const [startDateError, setStartDateError] = useState("");
   const [endDateError, setEndDateError] = useState("");
   const handleStartDateChange = useCallback((date) => {
+
     if (date.toString() === "Invalid Date") {
       setStartDateError(error['start']);
       setStartDate(null);

@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-//프로젝트의 리스트를 불러옴(프로젝트명, 시작일~종료일, 해당프로젝트로링크, 삭제기능)
+//마감된 프로젝트의 리스트를 불러옴(프로젝트명, 시작일~종료일, 삭제기능? )
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import List from "@material-ui/core/List";
@@ -9,6 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import CheckCircleSharpIcon from '@material-ui/icons/CheckCircleSharp';
 
 function dateAddZero(number) {
   return number < 10 ? "0" + number : number;
@@ -25,12 +26,12 @@ function parseToDate(data) {
   );
 }
 
-const ProjectList = memo(({ teamList, isSetting }) => {
+const FinishedProjectList = memo(({ finishedTeamList, isSetting }) => {
   return (
     <List>
-      {teamList
-        ? teamList.map((data, idx) => (
-            <ListItem button={!isSetting}>
+      {finishedTeamList
+        ? finishedTeamList['content'].map((data, idx) => (
+            <ListItem>
               <Grid
                 container
                 justify="space-between"
@@ -38,7 +39,7 @@ const ProjectList = memo(({ teamList, isSetting }) => {
               >
                 <Grid item>
                   <div style={{ float: "left", marginRight: 10 }}>
-                    <LinkIcon />
+                    <CheckCircleSharpIcon />
                   </div>
                   <div style={{ float: "left" }}>{data["name"]}</div>
                 </Grid>
@@ -66,4 +67,4 @@ const ProjectList = memo(({ teamList, isSetting }) => {
   );
 });
 
-export default ProjectList;
+export default FinishedProjectList;

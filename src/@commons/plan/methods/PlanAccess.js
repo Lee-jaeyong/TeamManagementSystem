@@ -6,7 +6,7 @@ import { putAccess } from "@axios/put";
 // readOne
 
 export const getPlan = (seq) => {
-  return getAccess("http://172.30.1.37:8090/api/teamManage/plan/" + seq).then(
+  return getAccess("http://localhost:8090/api/teamManage/plan/" + seq).then(
     (res) => res
   );
 };
@@ -15,19 +15,19 @@ export const getPlan = (seq) => {
 
 export async function getPlanProgress(data) {
   return getAccess(
-    "http://172.30.1.37:8090/api/teamManage/plan/" + data + "/progress-all"
+    "http://localhost:8090/api/teamManage/plan/" + data + "/progress-all"
   ).then((res) => res);
 }
 
 export async function getPlanCount(data) {
   return getAccess(
-    "http://172.30.1.37:8090/api/teamManage/plan/" + data + "/group-by-user"
+    "http://localhost:8090/api/teamManage/plan/" + data + "/group-by-user"
   ).then((res) => res);
 }
 
 export async function getPlanListMy(data, pageable) {
   return getAccess(
-    "http://172.30.1.37:8090/api/teamManage/plan/" +
+    "http://localhost:8090/api/teamManage/plan/" +
       data +
       "/all/my?page=" +
       pageable["page"] +
@@ -46,7 +46,7 @@ export async function getPlanListMy(data, pageable) {
 
 export async function getPlanListAll(data, pageable) {
   return getAccess(
-    "http://172.30.1.37:8090/api/teamManage/plan/" +
+    "http://localhost:8090/api/teamManage/plan/" +
       data +
       "/all?page=" +
       pageable["page"] +
@@ -57,7 +57,7 @@ export async function getPlanListAll(data, pageable) {
 
 export async function getPlanList(data, pageable) {
   return getAccess(
-    "http://172.30.1.37:8090/api/teamManage/plan/" +
+    "http://localhost:8090/api/teamManage/plan/" +
       data +
       "/search/all?page=" +
       pageable["page"] +
@@ -70,7 +70,7 @@ export async function getPlanList(data, pageable) {
 
 export async function getExcelData(code, file) {
   return postAccessFileUpload(
-    "http://172.30.1.37:8090/api/teamManage/plan/" + code + "/excel-data",
+    "http://localhost:8090/api/teamManage/plan/" + code + "/excel-data",
     file
   );
 }
@@ -78,46 +78,46 @@ export async function getExcelData(code, file) {
 // insert
 export async function insertPlan(code, data) {
   return postAccess(
-    "http://172.30.1.37:8090/api/teamManage/plan/" + code,
+    "http://localhost:8090/api/teamManage/plan/" + code,
     data
   ).then((res) => res);
 }
 
 export async function excelUpload(code, file) {
   return postAccessFileUpload(
-    "http://172.30.1.37:8090/api/teamManage/plan/" + code + "/excel-upload",
+    "http://localhost:8090/api/teamManage/plan/" + code + "/excel-upload",
     file
   );
 }
 
 export async function excelFormDown() {
   return getAccessFileDownLoad(
-    "http://172.30.1.37:8090/api/teamManage/plan/excel-form",
+    "http://localhost:8090/api/teamManage/plan/excel-form",
     "엑셀 양식.xlsx"
   );
 }
 
 export async function insertTodo(seq, todo) {
   return postAccess(
-    "http://172.30.1.37:8090/api/teamManage/todoList/" + seq,
+    "http://localhost:8090/api/teamManage/todoList/" + seq,
     todo
   ).then((res) => res);
 }
 
 // update
 export async function updatePlan(seq, plan) {
-  return putAccess("http://172.30.1.37:8090/api/teamManage/plan/" + seq, plan);
+  return putAccess("http://localhost:8090/api/teamManage/plan/" + seq, plan);
 }
 
 export async function updateTodoIng(seq, type) {
   return putAccess(
-    "http://172.30.1.37:8090/api/teamManage/todoList/" + seq + "/" + type
+    "http://localhost:8090/api/teamManage/todoList/" + seq + "/" + type
   );
 }
 
 export async function updateTodoTitle(seq, data) {
   return putAccess(
-    "http://172.30.1.37:8090/api/teamManage/todoList/" + seq,
+    "http://localhost:8090/api/teamManage/todoList/" + seq,
     data
   );
 }
@@ -125,13 +125,13 @@ export async function updateTodoTitle(seq, data) {
 // delete
 
 export async function deletePlan(seq) {
-  return deleteAccess("http://172.30.1.37:8090/api/teamManage/plan/" + seq).then(
+  return deleteAccess("http://localhost:8090/api/teamManage/plan/" + seq).then(
     (res) => res
   );
 }
 
 export async function deleteTodo(seq) {
   return deleteAccess(
-    "http://172.30.1.37:8090/api/teamManage/todoList/" + seq
+    "http://localhost:8090/api/teamManage/todoList/" + seq
   ).then((res) => res);
 }

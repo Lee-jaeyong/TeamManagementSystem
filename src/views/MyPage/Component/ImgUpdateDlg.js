@@ -80,11 +80,11 @@ export default function ImgUpdateDlg(props) {
     const data = new FormData();
     data.append('file',files);
     if(props['originImage']){
-      axiosDelete.deleteNotContainsData('http://172.30.1.37:8090/api/users/image',()=>{
-        axiosPost.postFileUpload('http://172.30.1.37:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
+      axiosDelete.deleteNotContainsData('http://localhost:8090/api/users/image',()=>{
+        axiosPost.postFileUpload('http://localhost:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
       });
     }else{
-      axiosPost.postFileUpload('http://172.30.1.37:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
+      axiosPost.postFileUpload('http://localhost:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
     }
   }
 

@@ -60,7 +60,7 @@ const TodoItem = ({
       title: updateTitle,
     };
     axiosPut.putContainsData(
-      "http://172.30.1.37:8090/api/teamManage/todoList/" + todo["seq"],
+      "http://localhost:8090/api/teamManage/todoList/" + todo["seq"],
       () => {
         updateTodo({ ...todo, title: updateTitle });
         messageBoxHandle(true, "변경 완료", 2000, "success");
@@ -74,7 +74,7 @@ const TodoItem = ({
   const updateIngHandle = () => {
     if (updateIng) {
       axiosPut.putNotContainsData(
-        "http://172.30.1.37:8090/api/teamManage/todoList/" +
+        "http://localhost:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/faild",
         () => {
@@ -85,7 +85,7 @@ const TodoItem = ({
       );
     } else {
       axiosPut.putNotContainsData(
-        "http://172.30.1.37:8090/api/teamManage/todoList/" +
+        "http://localhost:8090/api/teamManage/todoList/" +
           todo["seq"] +
           "/success",
         () => {

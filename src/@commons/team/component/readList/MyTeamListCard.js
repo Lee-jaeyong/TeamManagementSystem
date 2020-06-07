@@ -26,7 +26,10 @@ import LinkIcon from "@material-ui/icons/Link";
 import List from "@material-ui/core/List";
 import InboxIcon from "@material-ui/icons/Inbox";
 import DraftsIcon from "@material-ui/icons/Drafts";
-import ProjectList from '@commons/team/component/readList/ProjectList';
+import ProjectList from "@commons/team/component/readList/ProjectList";
+import CheckSharpIcon from '@material-ui/icons/CheckSharp';
+import FinishedProjectList from './FinishedProjectList';
+import MySignUpList from './MySignUpList';
 // import MySignUpListDialog from "./component_MyPageProject/MySignUpList";
 
 const styles = {
@@ -73,7 +76,7 @@ const useStyles = makeStyles(styles);
 //   );
 // });
 
-const MyTeamListCard = memo(({ teamList,mySignUpList,finishedTeamList }) => {
+const MyTeamListCard = memo(({ teamList, mySignUpList, finishedTeamList }) => {
   const classes = useStyles();
   const [projectTabValue, setProjectTabValue] = useState(0);
   const [settingValue, setSettingValue] = useState(false);
@@ -84,6 +87,8 @@ const MyTeamListCard = memo(({ teamList,mySignUpList,finishedTeamList }) => {
   const [notSuccessPjtDialogState, setNotSuccessPjtDialogState] = useState(
     false
   );
+
+  const [isSetting, setIsSetting] = useState(false);
 
   //   const progressTabHandle = (event, newValue) => {
   //     if (newValue === 2) {
@@ -114,6 +119,7 @@ const MyTeamListCard = memo(({ teamList,mySignUpList,finishedTeamList }) => {
   //   };
 
   const progressTabHandle = (event, newValue) => {
+    setIsSetting(false)
     setProjectTabValue(newValue);
   };
 
@@ -170,14 +176,22 @@ const MyTeamListCard = memo(({ teamList,mySignUpList,finishedTeamList }) => {
             <IconButton
               size={"small"}
               onClick={() => {
-                alert("setting");
+                setIsSetting(!isSetting);
               }}
             >
-              <SettingsIcon
-                style={{
-                  color: "white",
-                }}
-              />
+              {isSetting ? (
+                <CheckSharpIcon
+                  style={{
+                    color: "white",
+                  }}
+                />
+              ) : (
+                <SettingsIcon
+                  style={{
+                    color: "white",
+                  }}
+                />
+              )}
             </IconButton>
           </Grid>
         </Grid>
@@ -198,8 +212,10 @@ const MyTeamListCard = memo(({ teamList,mySignUpList,finishedTeamList }) => {
             <Divider />
           </Grid>
           <Grid item xs={12} style={{ paddingLeft: 10, paddingRight: 10 }}>
-            {console.log(teamList)}
-            <ProjectList {...{ teamList }} />
+            {console.log(mySignUpList)}
+            {projectTabValue===0 && <ProjectList {...{ teamList, isSetting }} /> }
+            {projectTabValue===1 && <FinishedProjectList {...{ finishedTeamList, isSetting }}/> }
+            {projectTabValue===2 && <MySignUpList {...{mySignUpList}}/> }
           </Grid>
         </Grid>
       </CardBody>

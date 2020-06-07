@@ -185,7 +185,7 @@ export default function UpdatePlan(props) {
         end:dateFormat(endDate),
         progress:progressValue
       }
-      axiosPut.putContainsData("http://172.30.1.37:8090/api/teamManage/plan/"+props['plan']['seq'],updatePlanSuccess,updatePlanError,updatePlan);
+      axiosPut.putContainsData("http://localhost:8090/api/teamManage/plan/"+props['plan']['seq'],updatePlanSuccess,updatePlanError,updatePlan);
     }
   }
 

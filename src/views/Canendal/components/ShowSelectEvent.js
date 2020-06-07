@@ -99,7 +99,7 @@ export default function ShowSelectEvent(props) {
       : props["event"]["seq"];
     if (confirmState)
       axiosDelete.deleteNotContainsData(
-        "http://172.30.1.37:8090/api/teamManage/plan/" + seq,
+        "http://localhost:8090/api/teamManage/plan/" + seq,
         deletePlanSuccess
       );
   };

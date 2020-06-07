@@ -157,7 +157,7 @@ export default function MyPageProject(props) {
 
   const deleteYesClick = () => {
     axiosDelete.deleteNotContainsData(
-      "http://172.30.1.37:8090/api/teamManage/" + deleteTeamCode + "/out",
+      "http://localhost:8090/api/teamManage/" + deleteTeamCode + "/out",
       deleteSuccess
     );
   };

@@ -8,20 +8,18 @@ import MyAllPlan from "./Component/MyAllPlan.js";
 import ShowSelectEvent from "../Canendal/components/ShowSelectEvent";
 import MessageBox from "components/MessageBox/MessageBox";
 
-import UserCard from '@commons/users/component/readOne/UserCard';
-import MyTeamListCard from '@commons/team/component/readList/MyTeamListCard';
+import UserCard from "@commons/users/component/readOne/UserCard";
+import MyTeamListCard from "@commons/team/component/readList/MyTeamListCard";
 import Profile from "./Component/Profile.js";
 import * as axiosGet from "@axios/get";
 
-import { getUser } from '@commons/users/methods/UserAccess';
-import {getMySignUpList} from '@commons/team/methods/TeamAccess';
-import {getFinishedTeamList} from '@commons/team/methods/TeamAccess';
+import { getUser } from "@commons/users/methods/UserAccess";
+import { getMySignUpList } from "@commons/team/methods/TeamAccess";
+import { getFinishedTeamList } from "@commons/team/methods/TeamAccess";
 import { useSelector, useDispatch } from "react-redux";
 import { readUserOne } from "@store/actions/User/UserAction.js";
 import { readMySignupList } from "@store/actions/Team/TeamAction.js";
 import { readFinishedTeamList } from "@store/actions/Team/TeamAction.js";
-
-
 
 export default function MyPage(props) {
   const [finishedPjtList, setFinishedPjtList] = useState([]);
@@ -45,62 +43,68 @@ export default function MyPage(props) {
   });
   const dispatch = useDispatch();
 
-  const _userInfo = useSelector((state)=> state['User']['user']);
+  
+  const _userInfo = useSelector((state) => state["User"]["user"]);
   const _teamList = useSelector((state) => state["Team"]["teamList"], []);
   const _mySignUpList = useSelector((state) => state["Team"]["mySignUp"]);
-  const _finishedTeamList = useSelector((state)=> state["Team"]["finishedTeamList"]);
+  const _finishedTeamList = useSelector(
+    (state) => state["Team"]["finishedTeamList"]
+    );
+    
+    const [userInfo, setUserInfo] = useState();
+    const [teamList, setTeamList] = useState();
+    const [mySignUpList, setMySignUpList] = useState();
+    const [finishedTeamList, setFinishedTeamList] = useState();
 
-  const [userInfo,setUserInfo] = useState();
-  const [teamList,setTeamList] = useState();
-  const [mySignUpList,setMySignUpList] = useState();
-  const [finishedTeamList,setFinishedTeamList] = useState();
 
-  async function _getUser(){
+  async function _getUser() {
     const res = await getUser();
     dispatch(readUserOne(res));
   }
 
-  async function _getMySignUpList(){
+  async function _getMySignUpList() {
     const res = await getMySignUpList();
     dispatch(readMySignupList(res));
   }
 
-  async function _getFinishedTeamList(){
+  async function _getFinishedTeamList() {
     const res = await getFinishedTeamList();
     dispatch(readFinishedTeamList(res));
   }
 
-
-  useEffect(()=>{
+  useEffect(() => {
     _getUser();
     _getMySignUpList();
     _getFinishedTeamList();
-  },[])
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setUserInfo(_userInfo);
-  },[_userInfo]);
+  }, [_userInfo]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setTeamList(_teamList);
-  },[_teamList]);
+  }, [_teamList]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setMySignUpList(_mySignUpList);
-  },[_mySignUpList]);
+  }, [_mySignUpList]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setFinishedTeamList(_finishedTeamList);
-  },[_finishedTeamList]);
+  }, [_finishedTeamList]);
 
   const getMySignUpListSuccess = (res) => {
     let mySingUpList_ready = [];
     let notSuccessPjtList = [];
     for (let i = 0; i < res["content"].length; i++) {
-      if(res['content'][i]['state'] === 'NO' && res['content'][i]['reson'] !== null){
-        notSuccessPjtList.push(res['content'][i]);
-      }else if(res['content'][i]['state'] === 'NO'){
-        mySingUpList_ready.push(res['content'][i]);
+      if (
+        res["content"][i]["state"] === "NO" &&
+        res["content"][i]["reson"] !== null
+      ) {
+        notSuccessPjtList.push(res["content"][i]);
+      } else if (res["content"][i]["state"] === "NO") {
+        mySingUpList_ready.push(res["content"][i]);
       }
     }
     setNotSuccessPjt(notSuccessPjtList);
@@ -165,22 +169,21 @@ export default function MyPage(props) {
   };
 
   return (
-    
     <Grid container style={{ padding: 20 }} spacing={5}>
       <Hidden only={["lg", "md", "xl", "sm"]}>
         <Grid item md={4} sm={4} xs={12}>
           <Fade in {...{ timeout: 1000 }}>
             <div>
-            <UserCard
-    {...{userInfo}}
-      updateImage={updateImage}
-      originImage={user["img"]}
-      history={props["history"]}
-      userName={user["name"]}
-      userId={user["id"]}
-      userEmail={user["email"]}
-      userImgSrc={userImg}
-    />
+              <UserCard
+                {...{ userInfo }}
+                updateImage={updateImage}
+                originImage={user["img"]}
+                history={props["history"]}
+                userName={user["name"]}
+                userId={user["id"]}
+                userEmail={user["email"]}
+                userImgSrc={userImg}
+              />
             </div>
           </Fade>
         </Grid>
@@ -190,7 +193,9 @@ export default function MyPage(props) {
           <Grid item md={12}>
             <Fade in {...{ timeout: 1000 }}>
               <div>
-                <MyTeamListCard {...{teamList,mySignUpList, finishedTeamList}}/>
+                <MyTeamListCard
+                  {...{ teamList, mySignUpList, finishedTeamList }}
+                />
                 {/* <MyPageProject
                   messageBoxHandle={messageBoxHandle}
                   history={props["history"]}
@@ -222,16 +227,16 @@ export default function MyPage(props) {
         <Grid item md={4} sm={4} xs={12}>
           <Fade in {...{ timeout: 1000 }}>
             <div>
-            <UserCard
-    {...{userInfo}}
-      updateImage={updateImage}
-      originImage={user["img"]}
-      history={props["history"]}
-      userName={user["name"]}
-      userId={user["id"]}
-      userEmail={user["email"]}
-      userImgSrc={userImg}
-    />
+              <UserCard
+                {...{ userInfo }}
+                updateImage={updateImage}
+                originImage={user["img"]}
+                history={props["history"]}
+                userName={user["name"]}
+                userId={user["id"]}
+                userEmail={user["email"]}
+                userImgSrc={userImg}
+              />
             </div>
           </Fade>
         </Grid>
