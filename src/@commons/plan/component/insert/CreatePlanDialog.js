@@ -108,7 +108,6 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
         start: parseDate(startDate),
         end: parseDate(endDate),
       };
-      console.log(createPlan)
       dispatch(
         showConfirmHandle({
           open: true,
