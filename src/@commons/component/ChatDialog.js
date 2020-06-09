@@ -13,6 +13,7 @@ import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
+import DragableComponentPaper from "@commons/component/DragableComponentPaper";
 
 import { sendMessage } from "@store/actions/SocketAction";
 
@@ -34,11 +35,13 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
     text.current.focus();
   };
 
-  useEffect(()=>{
-    if(document.getElementById("chatArea")){
-      document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
+  useEffect(() => {
+    if (document.getElementById("chatArea")) {
+      document.getElementById("chatArea").scrollTop = document.getElementById(
+        "chatArea"
+      ).scrollHeight;
     }
-  },[message])
+  }, [message]);
 
   return (
     <div>
@@ -48,8 +51,12 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
         disableBackdropClick={true}
         open={open}
         onClose={handleClose}
+        PaperComponent={DragableComponentPaper}
+        aria-labelledby="draggable-dialog-title"
       >
-        <DialogTitle>{team ? team["name"] : ""}</DialogTitle>
+        <DialogTitle id="draggable-dialog-title" style={{ cursor: "move" }}>
+          {team ? team["name"] : ""}
+        </DialogTitle>
         <DialogContent id="chatArea" style={{ height: 300 }}>
           <DialogContentText>
             {message[0] && message[0]["message"]
@@ -74,9 +81,7 @@ export default function ChatDialog({ handleClose, open, team, user, message }) {
                   ) : (
                     <ListItem key={idx} alignItems="flex-start">
                       <ListItemAvatar>
-                        <Avatar
-                          alt="Remy Sharp"
-                        />
+                        <Avatar alt="Remy Sharp" />
                       </ListItemAvatar>
                       <ListItemText
                         primary={chat["user"]}

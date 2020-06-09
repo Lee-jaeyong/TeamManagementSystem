@@ -89,7 +89,7 @@ export default function Chat({ teamList, user }) {
   }, [_chatData]);
 
   const handleOpen = () => {
-    setOpen(true);
+    setOpen(!open);
   };
 
   const handleClose = () => {
@@ -109,8 +109,7 @@ export default function Chat({ teamList, user }) {
         className={classes.speedDial}
         hidden={hidden}
         icon={<SpeedDialIcon />}
-        onClose={handleClose}
-        onOpen={handleOpen}
+        onClick={handleOpen}
         open={open}
       >
         {teamList.map((team, idx) => {
