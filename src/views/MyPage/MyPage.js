@@ -22,10 +22,7 @@ import { readMySignupList } from "@store/actions/Team/TeamAction.js";
 import { readFinishedTeamList } from "@store/actions/Team/TeamAction.js";
 
 export default function MyPage(props) {
-  const [finishedPjtList, setFinishedPjtList] = useState([]);
-  const [unFinishedPjtList, setUnFinishedPjtList] = useState([]);
   const [notSuccessPjt, setNotSuccessPjt] = useState([]);
-
   const [totalPage, setTotalPage] = useState(0);
   const [planList, setPlanList] = useState([]);
   const [originPlanList, setOriginPlanList] = useState([]);
@@ -195,16 +192,8 @@ export default function MyPage(props) {
               <div>
                 <MyTeamListCard
                   {...{ teamList, mySignUpList, finishedTeamList }}
+                  history={props.history}
                 />
-                {/* <MyPageProject
-                  messageBoxHandle={messageBoxHandle}
-                  history={props["history"]}
-                  notSuccessPjt={notSuccessPjt}
-                  mySignUpList={mySignUpList}
-                  joinProject={unFinishedPjtList} //참여중인프로젝트
-                  unfinishedProject={finishedPjtList} //진행중인프로젝트
-                  outTeam={outTeam}
-                /> */}
               </div>
             </Fade>
           </Grid>
@@ -215,7 +204,6 @@ export default function MyPage(props) {
                   selectPlan={selectEventHandle}
                   tableData={planList}
                   totalPage={totalPage}
-                  // pageMove={planPageMove}
                   isFinal={totalPage - 1 === planPage}
                 />
               </div>

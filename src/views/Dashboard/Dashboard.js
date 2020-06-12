@@ -44,8 +44,6 @@ const useStyles = makeStyles(styles);
 export default function Dashboard(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [todayPlan, setTodayPlan] = useState([]);
-  const [todayPlanCount, setTodayPlanCount] = useState([]);
   const [teamInfo, setTeamInfo] = useState();
 
   const _teamInfo = useSelector((state) => state["Team"]["team"]);
