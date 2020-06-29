@@ -10,6 +10,7 @@ import MessageBox from "components/MessageBox/MessageBox";
 
 import UserCard from "@commons/users/component/readOne/UserCard";
 import MyTeamListCard from "@commons/team/component/readList/MyTeamListCard";
+import MyAllPlanCard from '@commons/plan/component/readList/MyAllPlanCard';
 import Profile from "./Component/Profile.js";
 import * as axiosGet from "@axios/get";
 
@@ -200,11 +201,11 @@ export default function MyPage(props) {
           <Grid item md={12}>
             <Fade in {...{ timeout: 1000 }}>
               <div>
-                <MyAllPlan
-                  selectPlan={selectEventHandle}
-                  tableData={planList}
-                  totalPage={totalPage}
-                  isFinal={totalPage - 1 === planPage}
+                <MyAllPlanCard
+                  // selectPlan={selectEventHandle}
+                  // tableData={planList}
+                  // totalPage={totalPage}
+                  // isFinal={totalPage - 1 === planPage}
                 />
               </div>
             </Fade>
