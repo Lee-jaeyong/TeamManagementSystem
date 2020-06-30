@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import {useDispatch} from 'react-redux';
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -17,6 +18,7 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import MessageBox from "components/MessageBox/MessageBox";
+import { showMessageHandle } from "@store/actions/MessageAction";
 
 import * as axiosPost from "@axios/post";
 import * as axiosGet from "@axios/get";
@@ -56,6 +58,8 @@ const StyledBadge = withStyles((theme) => ({
 const useStyles = makeStyles(styles);
 
 export default function FormDialog(props) {
+  const dispatch = useDispatch();
+
   const id = useRef();
   const pass = useRef();
   const passCheck = useRef();
@@ -91,9 +95,8 @@ export default function FormDialog(props) {
     handleClose();
   };
 
-  const joinError = () => {
-    messageBoxHandle(true, "이메일 형식이 잘못되었습니다.", 2000, "error");
-    email.current.focus();
+  const joinError = ({response}) => {
+    props.messageBoxHandle(true, response["data"]["errors"][0]['reason'], 2000, "error");
   };
 
   const checkDupId = (input) => {

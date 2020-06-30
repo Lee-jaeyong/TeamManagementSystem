@@ -33,9 +33,9 @@ export async function getPlanListMy(data, pageable) {
       pageable["page"] +
       "&size=" +
       pageable["size"] +
-      "&tag=" +
-      pageable["tag"] +
       "&title=" +
+      pageable["tag"] +
+      "&todo=" +
       pageable["title"] +
       "&start=" +
       pageable["start"] +
@@ -62,9 +62,7 @@ export async function getPlanList(data, pageable) {
       "/search/all?page=" +
       pageable["page"] +
       "&size=" +
-      pageable["size"] +
-      "&date=" +
-      pageable["date"]
+      pageable["size"]
   ).then((res) => res);
 }
 

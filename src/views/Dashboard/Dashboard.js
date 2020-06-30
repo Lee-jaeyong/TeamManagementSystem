@@ -60,8 +60,6 @@ export default function Dashboard(props) {
   async function _getPlanList() {
     let now = new Date();
     let data = {
-      date:
-        now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
       size: 100,
       page: 0,
     };

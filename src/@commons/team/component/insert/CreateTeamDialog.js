@@ -55,16 +55,26 @@ export const CreateTeamDialog = memo(({ open, handleClose }) => {
         endDate: endDate,
         description: description.current.value,
       };
-      let successTeam = await TeamAccess.createTeam(team);
-      dispatch(insertTeamHandle(successTeam));
-      dispatch(
-        showMessageHandle({
-          open: true,
-          content: "팀 등록 완료",
-          level: "success",
-        })
-      );
-      handleClose();
+      try{
+        let successTeam = await TeamAccess.createTeam(team);
+        dispatch(insertTeamHandle(successTeam));
+        dispatch(
+          showMessageHandle({
+            open: true,
+            content: "팀 등록 완료",
+            level: "success",
+          })
+        );
+        handleClose();
+      }catch({ response }){
+        dispatch(
+          showMessageHandle({
+            open: true,
+            content: response["data"]["errors"][0]['reason'],
+            level: "error",
+          })
+        );
+      }
     }
   }
 
