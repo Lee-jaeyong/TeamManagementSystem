@@ -10,6 +10,7 @@ import MessageBox from "components/MessageBox/MessageBox";
 
 import UserCard from "@commons/users/component/readOne/UserCard";
 import MyTeamListCard from "@commons/team/component/readList/MyTeamListCard";
+import MyAllPlanCard from '@commons/plan/component/readList/MyAllPlanCard';
 import Profile from "./Component/Profile.js";
 import * as axiosGet from "@axios/get";
 
@@ -22,10 +23,7 @@ import { readMySignupList } from "@store/actions/Team/TeamAction.js";
 import { readFinishedTeamList } from "@store/actions/Team/TeamAction.js";
 
 export default function MyPage(props) {
-  const [finishedPjtList, setFinishedPjtList] = useState([]);
-  const [unFinishedPjtList, setUnFinishedPjtList] = useState([]);
   const [notSuccessPjt, setNotSuccessPjt] = useState([]);
-
   const [totalPage, setTotalPage] = useState(0);
   const [planList, setPlanList] = useState([]);
   const [originPlanList, setOriginPlanList] = useState([]);
@@ -195,28 +193,19 @@ export default function MyPage(props) {
               <div>
                 <MyTeamListCard
                   {...{ teamList, mySignUpList, finishedTeamList }}
+                  history={props.history}
                 />
-                {/* <MyPageProject
-                  messageBoxHandle={messageBoxHandle}
-                  history={props["history"]}
-                  notSuccessPjt={notSuccessPjt}
-                  mySignUpList={mySignUpList}
-                  joinProject={unFinishedPjtList} //참여중인프로젝트
-                  unfinishedProject={finishedPjtList} //진행중인프로젝트
-                  outTeam={outTeam}
-                /> */}
               </div>
             </Fade>
           </Grid>
           <Grid item md={12}>
             <Fade in {...{ timeout: 1000 }}>
               <div>
-                <MyAllPlan
-                  selectPlan={selectEventHandle}
-                  tableData={planList}
-                  totalPage={totalPage}
-                  // pageMove={planPageMove}
-                  isFinal={totalPage - 1 === planPage}
+                <MyAllPlanCard
+                  // selectPlan={selectEventHandle}
+                  // tableData={planList}
+                  // totalPage={totalPage}
+                  // isFinal={totalPage - 1 === planPage}
                 />
               </div>
             </Fade>
