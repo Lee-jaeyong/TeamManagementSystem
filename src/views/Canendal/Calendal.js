@@ -200,7 +200,7 @@ export default function Calendal(props) {
 
   async function _getPlanList() {
     let data = {
-      size: 200,
+      size: 400,
       page: 0,
     };
     const planList = await getPlanListAll(props.match.params.idx, data);

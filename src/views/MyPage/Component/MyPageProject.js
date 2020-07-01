@@ -118,7 +118,7 @@ const ProjectList = ({
 
 export default function MyPageProject(props) {
   const classes = useStyles();
-  const [projectTabValue, setProjectTabValue] = useState(0);
+  const [projectTabValue, setProjectTabValue] = useState(-1);
   const [settingValue, setSettingValue] = useState(false);
   const [comfirmState, setComfirmState] = useState(false);
   const [deleteTeamCode, setDeleteTeamCode] = useState("");
@@ -129,13 +129,13 @@ export default function MyPageProject(props) {
   );
 
   const progressTabHandle = (event, newValue) => {
-    if (newValue === 2) {
+    if (newValue === 3) {
       if(props['mySignUpList'].length === 0){
         props['messageBoxHandle'](true,"신청 현황이 존재하지 않습니다.",2000,'error');
       }else{
         handleMySignUpDialogState(true);
       }
-    } else if (newValue === 3) {
+    } else if (newValue === 4) {
       if(props['notSuccessPjt'].length === 0){
         props['messageBoxHandle'](true,"반려 현황이 존재하지 않습니다.",2000,'error');
       }else{
@@ -182,9 +182,11 @@ export default function MyPageProject(props) {
     if (projectTabValue === 0) {
       setUnfinishedProjectTapData(props["joinProject"]);
     } else if (projectTabValue === 1) {
-      setUnfinishedProjectTapData(props["unfinishedProject"]);
+      setUnfinishedProjectTapData(props["unfinishedProject"].filter(value=>value['flag'] !== 'FINISHED'));
+    } else if(projectTabValue === 2){
+      setUnfinishedProjectTapData(props["unfinishedProject"].filter(value=>value['flag'] === 'FINISHED'));
     }
-  });
+  },[projectTabValue]);
 
   return (
     <Card style={{height:600}}>
@@ -203,6 +205,7 @@ export default function MyPageProject(props) {
               onChange={progressTabHandle}
             >
               <Tab label="진행중인 프로젝트" />
+              <Tab label="일정이 지난 프로젝트" />
               <Tab label="마감된 프로젝트" />
               <Tab label="프로젝트 신청 현황" />
               <Tab label="반려 현황" />

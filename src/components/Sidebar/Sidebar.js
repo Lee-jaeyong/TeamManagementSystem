@@ -13,9 +13,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Icon from "@material-ui/core/Icon";
 // core components
 import AdminNavbarLinks from "components/Navbars/AdminNavbarLinks.js";
-import RTLNavbarLinks from "components/Navbars/RTLNavbarLinks.js";
-
 import styles from "assets/jss/material-dashboard-react/components/sidebarStyle.js";
+import Divider from "@material-ui/core/Divider";
+import Chip from "@material-ui/core/Chip";
+import SchoolIcon from '@material-ui/icons/School';
 
 const useStyles = makeStyles(styles);
 
@@ -26,10 +27,28 @@ export default function Sidebar(props) {
     return window.location.href.indexOf(routeName) > -1 ? true : false;
   }
 
-  function topScroll(){
-    try{
-      document.getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0].scrollTo(0,0)
-    }catch{}
+  function topScroll() {
+    try {
+      document
+        .getElementsByClassName("makeStyles-mainPanel-2 ps ps--active-y")[0]
+        .scrollTo(0, 0);
+    } catch {}
+  }
+
+  const sendRedirectKm = () => {
+    const link = document.createElement("a");
+    link.href = "http://www.kyungmin.ac.kr/index.html";
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+  }
+
+  const sendRedirectK1 = () => {
+    const link = document.createElement("a");
+    link.href = "https://k1.kyungmin.ac.kr/";
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
   }
 
   const { color, logo, image, logoText, routes } = props;
@@ -39,10 +58,10 @@ export default function Sidebar(props) {
         var activePro = " ";
         var listItemClasses;
         listItemClasses = classNames({
-          [" " + classes[color]]: activeRoute(prop.layout + prop.path)
+          [" " + classes[color]]: activeRoute(prop.layout + prop.path),
         });
         const whiteFontClasses = classNames({
-          [" " + classes.whiteFont]: activeRoute(prop.layout + prop.path)
+          [" " + classes.whiteFont]: activeRoute(prop.layout + prop.path),
         });
         return (
           <NavLink
@@ -56,7 +75,7 @@ export default function Sidebar(props) {
               {typeof prop.icon === "string" ? (
                 <Icon
                   className={classNames(classes.itemIcon, whiteFontClasses, {
-                    [classes.itemIconRTL]: props.rtlActive
+                    [classes.itemIconRTL]: props.rtlActive,
                   })}
                 >
                   {prop.icon}
@@ -64,14 +83,14 @@ export default function Sidebar(props) {
               ) : (
                 <prop.icon
                   className={classNames(classes.itemIcon, whiteFontClasses, {
-                    [classes.itemIconRTL]: props.rtlActive
+                    [classes.itemIconRTL]: props.rtlActive,
                   })}
                 />
               )}
               <ListItemText
                 primary={props.rtlActive ? prop.rtlName : prop.name}
                 className={classNames(classes.itemText, whiteFontClasses, {
-                  [classes.itemTextRTL]: props.rtlActive
+                  [classes.itemTextRTL]: props.rtlActive,
                 })}
                 disableTypography={true}
               />
@@ -86,11 +105,12 @@ export default function Sidebar(props) {
       <a
         href=""
         className={classNames(classes.logoLink, {
-          [classes.logoLinkRTL]: props.rtlActive
+          [classes.logoLinkRTL]: props.rtlActive,
         })}
-        onClick={(e)=>{
-          props['history'].push("/admin/main");
-          e.preventDefault()}}
+        onClick={(e) => {
+          props["history"].push("/admin/main");
+          e.preventDefault();
+        }}
       >
         <div className={classes.logoImage}>
           <img src={logo} alt="logo" className={classes.img} />
@@ -108,17 +128,17 @@ export default function Sidebar(props) {
           open={props.open}
           classes={{
             paper: classNames(classes.drawerPaper, {
-              [classes.drawerPaperRTL]: props.rtlActive
-            })
+              [classes.drawerPaperRTL]: props.rtlActive,
+            }),
           }}
           onClose={props.handleDrawerToggle}
           ModalProps={{
-            keepMounted: true // Better open performance on mobile.
+            keepMounted: true, // Better open performance on mobile.
           }}
         >
           {brand}
           <div className={classes.sidebarWrapper}>
-           <AdminNavbarLinks history={props["history"]}/>
+            <AdminNavbarLinks history={props["history"]} />
             {links}
           </div>
           {image !== undefined ? (
@@ -136,16 +156,25 @@ export default function Sidebar(props) {
           open={false}
           classes={{
             paper: classNames(classes.drawerPaper, {
-              [classes.drawerPaperRTL]: props.rtlActive
-            })
+              [classes.drawerPaperRTL]: props.rtlActive,
+            }),
           }}
         >
           {brand}
-          <div className={classes.sidebarWrapper}>{links}</div>
+          <div className={classes.sidebarWrapper}>
+            {links}
+            <Divider />
+            <div style={{textAlign:"center", marginTop:30}}>
+              <Chip color={"primary"} onClick={sendRedirectKm} style={{ cursor:'pointer' }} icon={<SchoolIcon />} label={<strong> 경민 대학교 바로가기</strong>} />
+            </div>
+            <div style={{textAlign:"center", marginTop:10}}>
+              <Chip color={"primary"} onClick={sendRedirectK1} style={{ cursor:'pointer' }} icon={<SchoolIcon />} label={<strong> K1 월매칭 시스템 바로가기</strong>} />
+            </div>
+          </div>
           {image !== undefined ? (
             <div
               className={classes.background}
-              style={{ backgroundImage: "url(" + image + ")" }}
+              style={{ backgroundImage: "url(https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=http%3A%2F%2Fcfile4.uf.tistory.com%2Fimage%2F99E8F93A5C1CD4DA1F31B6)" }}
             />
           ) : null}
         </Drawer>
@@ -162,5 +191,5 @@ Sidebar.propTypes = {
   image: PropTypes.string,
   logoText: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.object),
-  open: PropTypes.bool
+  open: PropTypes.bool,
 };

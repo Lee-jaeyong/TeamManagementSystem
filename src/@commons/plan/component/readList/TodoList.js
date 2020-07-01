@@ -133,7 +133,7 @@ const Todo = memo(({ todo, isMy, changeTodo }) => {
   return (
     <ListItem dense>
       {isMy ? (
-        <ListItemIcon>
+        <ListItemIcon style={{marginTop:20}}>
           {isUpdate ? (
             <React.Fragment>
               <IconButton onClick={updateTitleHandle}>
@@ -157,7 +157,7 @@ const Todo = memo(({ todo, isMy, changeTodo }) => {
           )}
         </ListItemIcon>
       ) : (
-        <ListItemIcon>
+        <ListItemIcon style={{marginTop:20}}>
           <React.Fragment>
             <CheckBoxOutlineBlankIcon />
           </React.Fragment>
@@ -171,7 +171,7 @@ const Todo = memo(({ todo, isMy, changeTodo }) => {
           onChange={(event) => setUpdateTitle(event.target.value)}
         />
       ) : (
-        <ListItemText primary={todo["title"]} />
+        <ListItemText {...(!isMy ? {style:{marginTop:20}} : {style:{marginTop:20}})}  primary={todo["title"]} />
       )}
     </ListItem>
   );

@@ -13,6 +13,7 @@ import Container from "@material-ui/core/Container";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import CreateIcon from "@material-ui/icons/Create";
+import Chip from '@material-ui/core/Chip';
 
 import UpdatePlanDialog from "@commons/plan/component/update/UpdatePlanDialog";
 import { getPlan } from "@commons/plan/methods/PlanAccess";
@@ -136,6 +137,7 @@ export default function PlanListTab({ data }) {
       </Tabs>
       {data.map((plan, idx) => (
         <TabPanel value={value} index={idx} key={idx} user={plan['user']} planSeq={plan["seq"]}>
+          <Chip style={{marginLeft:20}} label={<strong>단건 일정 리스트</strong>} />
           <TodoList
             {...{ _updateTodoList, plan }}
             isMy={

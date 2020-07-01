@@ -35,7 +35,6 @@ export default function SignUpList(props) {
 
   async function getSignUpList() {
     let res = await getJoinTeamList(props["code"]);
-    console.log(res['content']);
     dispatch(updateJoinTeam(res["content"].filter(value=>!value['reson'] && value['state'] === 'NO')));
   }
 

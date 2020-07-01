@@ -19,6 +19,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
+import Chip from '@material-ui/core/Chip';
 
 import UpdateTeamDialog from "../update/UpdateTeamDialog";
 import UserListDialog from "@commons/users/component/readList/UserListDialog";
@@ -26,6 +27,22 @@ import UserListDialog from "@commons/users/component/readList/UserListDialog";
 import { purple } from "@material-ui/core/colors";
 
 import { finishTeam,unFinishTeam } from '@commons/team/methods/TeamAccess';
+
+function parseDate(day) {
+  let date = new Date(day);
+  return (
+    date.getFullYear() +
+    "-" +
+    plusZeroDate(date.getMonth() + 1) +
+    "-" +
+    plusZeroDate(date.getDate())
+  );
+}
+
+function plusZeroDate(day) {
+  return day < 10 ? "0" + day : day;
+}
+
 
 const ColorButton = withStyles((theme) => ({
   root: {
@@ -58,6 +75,16 @@ const totalJoinPerson = (leader, data) => {
     });
   return result;
 };
+
+function compareDate(date){
+  let before = new Date(parseDate(date));
+  let now = new Date(parseDate(new Date()));
+  if((now.getTime() - before.getTime()) > 0){
+    return "";
+  }else{
+    return (now.getTime() - before.getTime()) * - 1 / 86400000;
+  }
+}
 
 const TeamInfo = memo(({ teamInfo }) => {
   const dispatch = useDispatch();
@@ -181,6 +208,7 @@ const TeamInfo = memo(({ teamInfo }) => {
                 <span style={{ fontSize: 15 }}>Since...</span>{" "}
                 {teamInfo ? teamInfo["startDate"] : null} ~{" "}
                 {teamInfo ? teamInfo["endDate"] : null}
+                {teamInfo ? <Chip style={{marginLeft:10}} label={<span>{"[ " + compareDate(teamInfo['endDate']) + " ] 일 남음"}</span>} /> : null}
               </span>
               {teamInfo ? (
                 teamInfo["teamLeader"]["id"] === localStorage.getItem("ID") ? (

@@ -169,30 +169,6 @@ export default function Admin({ ...rest }) {
                     if (window.event.keyCode === 13) loginHandle();
                   }}
                 />
-                <FormGroup row style={{display: 'flex', justifyContent: 'center'}}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={state.checkedA}
-                        onChange={handleChange}
-                        name="checkedA"
-                        color="primary"
-                      />
-                    }
-                    label="아이디 저장"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={state.checkedB}
-                        onChange={handleChange}
-                        name="checkedB"
-                        color="primary"
-                      />
-                    }
-                    label="자동 로그인"
-                  />
-                </FormGroup>
                 <Button
                   color="primary"
                   round

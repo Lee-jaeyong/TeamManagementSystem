@@ -33,7 +33,21 @@ import FormDialog from "@commons/component/FormDialog";
 import Chat from "@commons/component/Chat";
 
 import { getTeamList } from "@commons/team/methods/TeamAccess";
-import { getUserInfo } from "@commons/users/methods/UserAccess";
+
+function parseDate(day) {
+  let date = new Date(day);
+  return (
+    date.getFullYear() +
+    "-" +
+    plusZeroDate(date.getMonth() + 1) +
+    "-" +
+    plusZeroDate(date.getDate())
+  );
+}
+
+function plusZeroDate(day) {
+  return day < 10 ? "0" + day : day;
+}
 
 let ps;
 
@@ -90,9 +104,13 @@ export default function Admin({ ...rest }) {
     const content = data;
     let contentArr = [];
     for (let i = 0; i < content.length; i++) {
+      let name = content[i]["name"];
+      if(parseDate(new Date) === parseDate(content[i]['endDate'])){
+        name += " ☜ 금일 마감";
+      }
       contentArr.push({
         path: "/dashboard/" + content[i]["code"],
-        name: content[i]["name"],
+        name: name,
         code: content[i]["code"],
         icon:
           content[i]["teamLeader"]["id"] === localStorage.getItem("ID")
@@ -127,6 +145,9 @@ export default function Admin({ ...rest }) {
 
   useEffect(() => {
     getTeams();
+    if(localStorage.getItem("ID") === ""){
+      window.location.href = "http://localhost:3000/login";
+    }
   }, []);
 
   useEffect(() => {

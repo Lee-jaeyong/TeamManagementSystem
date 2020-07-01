@@ -26,7 +26,6 @@ const ProgressChartSection = memo(({ data }) => {
     ].document.body.innerHTML = document.getElementById("progressChartSection").innerHTML;
     window.frames["progressChartPrint"].print();
   };
-  console.log(data);
   return (
     <Card chart>
       <CardHeader color={value === 0 ? "primary" : "success"}>

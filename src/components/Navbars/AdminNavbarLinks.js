@@ -27,7 +27,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 
 import JoinTeamDialog from "@commons/team/component/insert/JoinTeamDialog";
 import CreateTeamDialog from "@commons/team/component/insert/CreateTeamDialog";
-import MessageBox from "components/MessageBox/MessageBox";
+import Timer from 'components/Timer/Timer';
+import TextPanel from 'components/TextPanel/TextPanel';
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 
@@ -90,6 +91,8 @@ export default function AdminNavbarLinks(props) {
   return (
     <div>
       <div className={classes.manager}>
+        <TextPanel/>
+        <Timer/>
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
@@ -239,12 +242,6 @@ export default function AdminNavbarLinks(props) {
                       className={classes.dropdownItem}
                     >
                       내 정보
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleCloseProfile}
-                      className={classes.dropdownItem}
-                    >
-                      나의 모든 일정 보기
                     </MenuItem>
                     <Divider light />
                     <MenuItem onClick={logout} className={classes.dropdownItem}>
