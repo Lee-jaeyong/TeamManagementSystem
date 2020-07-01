@@ -33,9 +33,9 @@ export async function getPlanListMy(data, pageable) {
       pageable["page"] +
       "&size=" +
       pageable["size"] +
-      "&tag=" +
-      pageable["tag"] +
       "&title=" +
+      pageable["tag"] +
+      "&todo=" +
       pageable["title"] +
       "&start=" +
       pageable["start"] +

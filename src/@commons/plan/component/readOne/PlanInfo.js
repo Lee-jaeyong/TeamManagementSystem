@@ -27,9 +27,11 @@ const PlanInfo = React.memo(({ plan }) => {
         </ListItemAvatar>
         <ListItemText
           primary={
-            <strong>
-              {plan ? (plan["tag"] ? "##" + plan["tag"] : plan["title"]) : null}
-            </strong>
+            <React.Fragment>
+              <strong>
+                {plan ? (plan["tag"] ? "##" + plan["tag"] : plan["title"]) : null}
+              </strong>
+            </React.Fragment>
           }
           secondary={
             <React.Fragment>

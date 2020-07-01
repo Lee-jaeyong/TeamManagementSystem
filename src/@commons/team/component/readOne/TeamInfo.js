@@ -25,6 +25,8 @@ import UserListDialog from "@commons/users/component/readList/UserListDialog";
 
 import { purple } from "@material-ui/core/colors";
 
+import { finishTeam,unFinishTeam } from '@commons/team/methods/TeamAccess';
+
 const ColorButton = withStyles((theme) => ({
   root: {
     color: theme.palette.getContrastText(purple[500]),
@@ -72,6 +74,16 @@ const TeamInfo = memo(({ teamInfo }) => {
     document.body.removeChild(dummy);
     messageBoxHandle(true, "팀 코드가 복사되었습니다.", "success");
   }, []);
+
+  async function finishedTeam(){
+    let res = await finishTeam(teamInfo['code']);
+    window.location.href = '../admin/main';
+  };
+
+  async function restartTeam(){
+    let res = await unFinishTeam(teamInfo['code']);
+    window.location.href = '../admin/main';
+  }
 
   const messageBoxHandle = useCallback((open, content, level) => {
     dispatch(showMessageHandle({ open: open, content: content, level: level }));
@@ -123,15 +135,38 @@ const TeamInfo = memo(({ teamInfo }) => {
             <Grid item>
               {teamInfo ? (
                 teamInfo["teamLeader"]["id"] === localStorage.getItem("ID") ? (
-                  <ColorButton
-                    variant="contained"
-                    color="primary"
-                    className={classes.margin}
-                    style={{ marginLeft: 10 }}
-                    onClick={copyCode}
-                  >
-                    복사하기
-                  </ColorButton>
+                  <React.Fragment>
+                    <ColorButton
+                      variant="contained"
+                      color="primary"
+                      className={classes.margin}
+                      style={{ marginLeft: 10 }}
+                      onClick={copyCode}
+                    >
+                      복사하기
+                    </ColorButton>
+                    {teamInfo['flag'] === 'FINISHED' ? (
+                      <Button
+                        variant="contained"
+                        color="default"
+                        className={classes.margin}
+                        style={{ marginLeft: 10 }}
+                        onClick={restartTeam}
+                      >
+                        팀 되돌리기
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        className={classes.margin}
+                        style={{ marginLeft: 10 }}
+                        onClick={finishedTeam}
+                      >
+                        팀 마감 하기
+                      </Button>
+                    )}
+                  </React.Fragment>
                 ) : (
                   ""
                 )

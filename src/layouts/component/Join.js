@@ -91,9 +91,8 @@ export default function FormDialog(props) {
     handleClose();
   };
 
-  const joinError = () => {
-    messageBoxHandle(true, "이메일 형식이 잘못되었습니다.", 2000, "error");
-    email.current.focus();
+  const joinError = ({response}) => {
+    messageBoxHandle(true, response['data']['errors'][0]['reason'], 2000, "error");
   };
 
   const checkDupId = (input) => {

@@ -89,31 +89,6 @@ export default function AdminNavbarLinks(props) {
 
   return (
     <div>
-      <div className={classes.searchWrapper}>
-        <CustomInput
-          enterClick={showSearchResult}
-          inputRef={inputRef}
-          formControlProps={{
-            className: classes.margin + " " + classes.search,
-          }}
-          inputProps={{
-            placeholder: "내 모든 일정 검색",
-            inputProps: {
-              "aria-label": "Search",
-            },
-          }}
-          id="searchFilled"
-        />
-        <Button
-          color="white"
-          aria-label="edit"
-          justIcon
-          round
-          onClick={showSearchResult}
-        >
-          <Search />
-        </Button>
-      </div>
       <div className={classes.manager}>
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}

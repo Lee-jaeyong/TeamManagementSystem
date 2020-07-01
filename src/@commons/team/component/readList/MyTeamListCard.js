@@ -53,29 +53,6 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-// const ProjectList = memo(({ teamList }) => {
-//   return (
-//     <List>
-//       {teamList
-//         ? teamList.map((data, idx) => (
-//             <ListItem button key={idx}>
-//               <ListItemIcon>
-//                 <LinkIcon />
-//               </ListItemIcon>
-//               <ListItemText primary={data["name"]} />
-//             </ListItem>
-//           ))
-//         : null}
-//       <ListItem button>
-//         <ListItemIcon>
-//           <LinkIcon />
-//         </ListItemIcon>
-//         <ListItemText primary="d아니야이거" />
-//       </ListItem>
-//     </List>
-//   );
-// });
-
 const MyTeamListCard = memo(({ teamList, mySignUpList, finishedTeamList }) => {
   const classes = useStyles();
   const [projectTabValue, setProjectTabValue] = useState(0);
@@ -89,34 +66,6 @@ const MyTeamListCard = memo(({ teamList, mySignUpList, finishedTeamList }) => {
   );
 
   const [isSetting, setIsSetting] = useState(false);
-
-  //   const progressTabHandle = (event, newValue) => {
-  //     if (newValue === 2) {
-  //       if (props["mySignUpList"].length === 0) {
-  //         props["messageBoxHandle"](
-  //           true,
-  //           "신청 현황이 존재하지 않습니다.",
-  //           2000,
-  //           "error"
-  //         );
-  //       } else {
-  //         handleMySignUpDialogState(true);
-  //       }
-  //     } else if (newValue === 3) {
-  //       if (props["notSuccessPjt"].length === 0) {
-  //         props["messageBoxHandle"](
-  //           true,
-  //           "반려 현황이 존재하지 않습니다.",
-  //           2000,
-  //           "error"
-  //         );
-  //       } else {
-  //         handleNotSuccessDialogState(true);
-  //       }
-  //     } else {
-  //       setProjectTabValue(newValue);
-  //     }
-  //   };
 
   const progressTabHandle = (event, newValue) => {
     setIsSetting(false)
@@ -212,7 +161,6 @@ const MyTeamListCard = memo(({ teamList, mySignUpList, finishedTeamList }) => {
             <Divider />
           </Grid>
           <Grid item xs={12} style={{ paddingLeft: 10, paddingRight: 10 }}>
-            {console.log(mySignUpList)}
             {projectTabValue===0 && <ProjectList {...{ teamList, isSetting }} /> }
             {projectTabValue===1 && <FinishedProjectList {...{ finishedTeamList, isSetting }}/> }
             {projectTabValue===2 && <MySignUpList {...{mySignUpList}}/> }

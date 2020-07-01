@@ -52,18 +52,22 @@ export default function FormDialog({ team, open, handleClose }) {
         endDate: endDate,
         description: description.current.value,
       };
-      let res = await updateTeam(team["code"], updateTeamData);
-      const _updateTeam = {
-        ...team,
-        description : res['description'],
-        startDate : res['startDate'],
-        endDate : res['endDate'],
+      try{
+        let res = await updateTeam(team["code"], updateTeamData);
+        const _updateTeam = {
+          ...team,
+          description : res['description'],
+          startDate : res['startDate'],
+          endDate : res['endDate'],
+        }
+        let updateList = updateTeamList(teamList, _updateTeam);
+        dispatch(readTeamListHandle(updateList));
+        dispatch(updateTeamHandle(_updateTeam));
+        messageBoxHandle(true, "팀 수정 완료.", "success");
+        handleClose();
+      }catch({response}){
+        messageBoxHandle(true, response['data']['errors'][0]['reason'], "error");
       }
-      let updateList = updateTeamList(teamList, _updateTeam);
-      dispatch(readTeamListHandle(updateList));
-      dispatch(updateTeamHandle(_updateTeam));
-      messageBoxHandle(true, "팀 수정 완료.", "success");
-      handleClose();
     }
   }
 

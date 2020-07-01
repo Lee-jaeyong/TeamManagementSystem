@@ -40,10 +40,10 @@ export const JoinTeamDialog = memo(({ open, handleClose }) => {
           })
         );
         handleClose();
-      } catch {
+      } catch({response}) {
         messageBoxHandle(
           true,
-          "등록 되지 않은 팀이거나 이미 신청한 팀, 자신이 팀장인 팀입니다.",
+          response['data']['message'],
           "error"
         );
       }

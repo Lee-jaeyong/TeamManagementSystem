@@ -26,7 +26,8 @@ function remainToken(user) {
     .then((res) => {
       accessToken(res["data"], user);
       setTimeout(() => {
-        remainToken(user); 
+        alert('로그인 기한이 만료되었습니다. 로그인 화면으로 돌아갑니다.');
+        window.location.href="http://localhost:3000/login";
       }, res["data"]["expires_in"] * 1000);
     });
 }

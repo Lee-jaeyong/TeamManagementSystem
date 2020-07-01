@@ -89,17 +89,21 @@ export default function UpdatePlanDialog({ open, handleClose, plan }) {
   };
 
   async function yseClick(_plan) {
-    let res = await _updatePlan(plan["seq"], _plan);
-    for (let i = 0; i < todoList.length; i++) {
-      const todo = {
-        title: todoList[i]["title"],
-      };
-      const _todo = await insertTodo(res["seq"], todo);
+    try{
+      let res = await _updatePlan(plan["seq"], _plan);
+      for (let i = 0; i < todoList.length; i++) {
+        const todo = {
+          title: todoList[i]["title"],
+        };
+        const _todo = await insertTodo(res["seq"], todo);
+      }
+      res = await getPlan(plan["seq"]);
+      dispatch(updatePlan(res));
+      messageBoxHandle(true, "일정 수정 완료", "success");
+      handleClose();
+    }catch({response}){
+      messageBoxHandle(true, response['data']['errors'][0]['defaultMessage'], "error");
     }
-    res = await getPlan(plan["seq"]);
-    dispatch(updatePlan(res));
-    messageBoxHandle(true, "일정 수정 완료", "success");
-    handleClose();
   }
 
   function parseDate(day) {

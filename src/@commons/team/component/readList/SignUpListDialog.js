@@ -80,6 +80,7 @@ export default function SignUpListDiloag({ open, signUpList, handleClose }) {
     let res = await successJoinTeam(idx);
     let _updateJoinTeam = deleteJoinTeamData(signUpList, res);
     dispatch(updateJoinTeam(_updateJoinTeam));
+    window.location.reload();
   }
 
   return (

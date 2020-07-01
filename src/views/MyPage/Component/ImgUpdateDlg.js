@@ -86,6 +86,9 @@ export default function ImgUpdateDlg(props) {
     }else{
       axiosPost.postFileUpload('http://localhost:8090/api/users/image',(res)=>{successUpdateImage(res)},data);
     }
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   }
 
   const DialogTitle = withStyles(styles)((props) => {

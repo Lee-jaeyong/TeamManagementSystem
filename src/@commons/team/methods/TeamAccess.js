@@ -1,6 +1,7 @@
 import * as axiosPost from "@axios/post";
 import * as axiosGet from "@axios/get";
 import * as axiosPut from "@axios/put";
+import * as axiosPatch from '@axios/patch';
 
 // readOne
 
@@ -67,5 +68,17 @@ export async function successJoinTeam(data) {
 export async function faildJoinTeam(seq, reson) {
   return axiosPut.putAccess(
     "http://localhost:8090/api/teamManage/" + seq + "/joinTeam/faild?reson=" + reson
+  );
+}
+
+export async function finishTeam(code){
+  return axiosPatch.patchAccess(
+    "http://localhost:8090/api/teamManage/finish/" + code
+  );
+}
+
+export async function unFinishTeam(code){
+  return axiosPatch.patchAccess(
+    "http://localhost:8090/api/teamManage/unfinish/" + code
   );
 }

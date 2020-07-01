@@ -99,22 +99,6 @@ export default function Profile(props) {
           />
         </Grid>
       </Grid>
-      <Grid
-        container
-        alignItems="flex-start"
-        justify="flex-end"
-        direction="row"
-        style={{ paddingRight: 10, paddingBottom: 10 }}
-      >
-        <IconButton
-          aria-label="setting"
-          onClick={() => {
-            setUpdateOpen(true);
-          }}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </Grid>
       <UpdateProfileDlg
         userImgSrc={props["userImgSrc"]}
         name={props.userName}

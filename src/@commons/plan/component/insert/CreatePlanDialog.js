@@ -45,22 +45,26 @@ export default function CreatePlanDialog({ open, handleClose, teamCode }) {
   };
 
   async function yseClick(plan) {
-    let _todoList = [];
-    let res = await insertPlan(teamCode, plan);
-    for (let i = 0; i < todoList.length; i++) {
-      const todo = {
-        title: todoList[i]["title"],
-      };
-      const _todo = await insertTodo(res["seq"], todo);
-      _todoList.push(_todo);
+    try{
+      let _todoList = [];
+      let res = await insertPlan(teamCode, plan);
+      for (let i = 0; i < todoList.length; i++) {
+        const todo = {
+          title: todoList[i]["title"],
+        };
+        const _todo = await insertTodo(res["seq"], todo);
+        _todoList.push(_todo);
+      }
+      res = {
+        ...res,
+        todoList : _todoList
+      }
+      dispatch(insertPlanList(res));
+      messageBoxHandle(true, "일정 등록 완료", "success");
+      handleClose();
+    }catch({response}){
+      messageBoxHandle(true, response['data']['errors'][0]['reason'], "error");
     }
-    res = {
-      ...res,
-      todoList : _todoList
-    }
-    dispatch(insertPlanList(res));
-    messageBoxHandle(true, "일정 등록 완료", "success");
-    handleClose();
   }
 
   function parseDate(day) {

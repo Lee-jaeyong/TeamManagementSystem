@@ -31,7 +31,8 @@ export default function TemporaryDrawer({
   useEffect(()=>{
     setSearchStart('');
     setSearchEnd('');
-  },[]);
+  });
+  
   return (
     <div>
       {["top"].map((anchor) => (

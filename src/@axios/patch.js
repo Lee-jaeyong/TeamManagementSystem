@@ -15,3 +15,19 @@ export async function patchNotContainsData(URL,func){
         }
     }).then(res=>func(res.data)).catch(res=>alert(res));
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export async function patchAccess(URL, data) {
+    let res = await axios.patch(URL, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          localStorage.getItem("token_type") +
+          " " +
+          localStorage.getItem("access_token"),
+      },
+    });
+    return res.data;
+  }
+  

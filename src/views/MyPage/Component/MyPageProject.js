@@ -187,7 +187,7 @@ export default function MyPageProject(props) {
   });
 
   return (
-    <Card className={classes.cardSize}>
+    <Card style={{height:600}}>
       <CardHeader color="warning">
         <Typography variant="h6" component="h6">
           프로젝트 현황
