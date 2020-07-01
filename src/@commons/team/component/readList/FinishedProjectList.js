@@ -26,7 +26,7 @@ function parseToDate(data) {
   );
 }
 
-const FinishedProjectList = memo(({ finishedTeamList, isSetting }) => {
+const FinishedProjectList = memo(({ finishedTeamList }) => {
   return (
     <List>
       {finishedTeamList
@@ -48,16 +48,6 @@ const FinishedProjectList = memo(({ finishedTeamList, isSetting }) => {
                     {parseToDate(data["startDate"])} ~{" "}
                     {parseToDate(data["endDate"])}
                   </div>
-                  {isSetting ? (
-                    <div style={{ float: "left" }}>
-                      <IconButton
-                        color="secondary"
-                        style={{ position: "relative", top: -12 }}
-                      >
-                        <DeleteForeverIcon />
-                      </IconButton>
-                    </div>
-                  ) : null}
                 </Grid>
               </Grid>
             </ListItem>

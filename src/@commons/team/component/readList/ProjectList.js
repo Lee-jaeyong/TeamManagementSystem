@@ -25,12 +25,12 @@ function parseToDate(data) {
   );
 }
 
-const ProjectList = memo(({ teamList, isSetting }) => {
+const ProjectList = memo(({ teamList, isSetting,redirect }) => {
   return (
     <List>
       {teamList
         ? teamList.map((data, idx) => (
-            <ListItem button={!isSetting}>
+            <ListItem button={!isSetting} onClick={()=>redirect(data['code'])}>
               <Grid
                 container
                 justify="space-between"
