@@ -165,7 +165,7 @@ export default function Sidebar(props) {
             {links}
             <Divider />
             <div style={{textAlign:"center", marginTop:30}}>
-              <Chip color={"primary"} onClick={sendRedirectKm} style={{ cursor:'pointer' }} icon={<SchoolIcon />} label={<strong> 경민 대학교 바로가기</strong>} />
+              <Chip color={"primary"} onClick={sendRedirectKm} style={{ cursor:'pointer' }} icon={<SchoolIcon />} label={<strong> 경민 대학교 </strong>} />
             </div>
             <div style={{textAlign:"center", marginTop:10}}>
               <Chip color={"primary"} onClick={sendRedirectK1} style={{ cursor:'pointer' }} icon={<SchoolIcon />} label={<strong> K1 월매칭 시스템 바로가기</strong>} />
