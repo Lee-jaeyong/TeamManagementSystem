@@ -125,29 +125,6 @@ export default function AdminNavbarLinks(props) {
             <p className={classes.linkText}>팀 신청</p>
           </Hidden>
         </Button>
-        <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-owns={openNotification ? "notification-menu-list-grow" : null}
-          aria-haspopup="true"
-          onClick={handleClickNotification}
-          className={classes.buttonLink}
-        >
-          <Notifications className={classes.icons} />
-          {props["alarm"] ? (
-            props["alarm"].length !== 0 ? (
-              <span className={classes.notifications}>
-                {props["alarm"].length}
-              </span>
-            ) : null
-          ) : null}
-          <Hidden mdUp implementation="css">
-            <p onClick={handleCloseNotification} className={classes.linkText}>
-              알 림
-            </p>
-          </Hidden>
-        </Button>
         <Poppers
           open={Boolean(openNotification)}
           anchorEl={openNotification}

@@ -151,7 +151,7 @@ const Todo = ({
     confirmDialogHandle(true, "삭제", "정말 삭제하시겠습니까?", () => {
       if (todo["ing"]) {
         axiosDelete.deleteNotContainsData(
-          "http://localhost:8090/api/teamManage/todoList/" + todo["seq"],
+          "http://192.168.43.179:8090/api/teamManage/todoList/" + todo["seq"],
           deleteSuccess
         );
         deleteSuccess("origin");
@@ -360,7 +360,7 @@ export default function UpdatePlan(props) {
         ? props["plan"]["groupId"]
         : props["plan"]["seq"];
       axiosPut.putContainsData(
-        "http://localhost:8090/api/teamManage/plan/" + seq,
+        "http://192.168.43.179:8090/api/teamManage/plan/" + seq,
         updatePlanSuccess,
         updatePlanError,
         updatePlan
@@ -374,7 +374,7 @@ export default function UpdatePlan(props) {
       let _todoList = {
         title: insertTodoList[i]["title"],
       };
-      const saveData = await axiosPost.awitPostContainsData("http://localhost:8090/api/teamManage/todoList/" + res["seq"],_todoList).then(res => res);
+      const saveData = await axiosPost.awitPostContainsData("http://192.168.43.179:8090/api/teamManage/todoList/" + res["seq"],_todoList).then(res => res);
       saveTodo.push(saveData);
     }
     props.messageBoxHandle(true, "일정 수정 완료.", 2000, "success");

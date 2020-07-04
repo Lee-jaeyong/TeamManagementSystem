@@ -12,7 +12,7 @@ export async function getAccessToken(user, callBack, error) {
   axios.defaults.headers.common["Authorization"] = "Basic S01hcHA6cGFzcw==";
   axios
     .post(
-      "http://localhost:8090/oauth/token?grant_type=password&username=" +
+      "http://192.168.43.179:8090/oauth/token?grant_type=password&username=" +
         user.id +
         "&password=" +
         user.pass +
@@ -33,7 +33,7 @@ export async function getAccessToken(user, callBack, error) {
         localStorage.setItem("expires_in", "");
         localStorage.setItem("refresh_token", "");
         localStorage.setItem("ID", "");
-        window.location.href="http://localhost:3000/login";
+        window.location.href="http://192.168.43.179:3000/login";
       }, res["data"]["expires_in"] * 1000);
     })
     .catch((res) => {
@@ -42,7 +42,7 @@ export async function getAccessToken(user, callBack, error) {
 }
 
 export async function revokeToken() {
-  axios.get("http://localhost:8090/api/users/oauth/revoke-token", {
+  axios.get("http://192.168.43.179:8090/api/users/oauth/revoke-token", {
     headers: {
       Authorization: localStorage.getItem("access_token"),
     },

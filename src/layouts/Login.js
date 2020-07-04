@@ -136,12 +136,9 @@ export default function Admin({ ...rest }) {
           <GridItem xs={12} sm={12} md={4} />
           <GridItem xs={12} sm={12} md={4}>
             <Card profile>
-              <CardAvatar profile>
-                <img src={avatar} style={{ height: 130 }} />
-              </CardAvatar>
               <CardBody profile>
-                <h4>프로젝트 일정 관리 시스템</h4>
-                Team Management System{" "}
+                <h4><strong>K튜터링 시스템</strong></h4>
+                경민대학교 튜터링 관리 시스템{" "}
                 <span style={{ fontSize: 15 }}>Since 2020-04-14</span>
                 <br />
                 <br />
@@ -177,9 +174,6 @@ export default function Admin({ ...rest }) {
                   style={{ marginTop: 20 }}
                 >
                   로그인
-                </Button>
-                <Button round fullWidth>
-                  아이디 및 비밀번호 찾기
                 </Button>
                 <Button onClick={() => setJoinDialogOpen(true)} round fullWidth>
                   회원가입

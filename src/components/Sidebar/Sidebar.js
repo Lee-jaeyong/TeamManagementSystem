@@ -112,8 +112,8 @@ export default function Sidebar(props) {
           e.preventDefault();
         }}
       >
-        <div className={classes.logoImage}>
-          <img src={logo} alt="logo" className={classes.img} />
+        <div className={classes.logoImage} style={{textAlign:'center', marginBottom:40}}>
+          <img style={{width:180}} src={logo} alt="logo" className={classes.img} />
         </div>
         {logoText}
       </a>

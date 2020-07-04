@@ -101,7 +101,7 @@ export default function FormDialog(props) {
       return;
     }
     axiosGet.getContainsData(
-      "http://localhost:8090/api/users/dupId",
+      "http://192.168.43.179:8090/api/users/dupId",
       getResponse,
       { id: input.target.value },
       false
@@ -146,7 +146,7 @@ export default function FormDialog(props) {
         name: name.current.value,
       };
       axiosPost.postContainsData(
-        "http://localhost:8090/api/users",
+        "http://192.168.43.179:8090/api/users",
         joinSuccess,
         joinError,
         user

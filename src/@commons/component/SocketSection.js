@@ -58,7 +58,7 @@ const SocketSection = ({ pjtCodeArr }) => {
           localStorage.getItem("access_token"),
       }}
       ref={(client) => setConn(client)}
-      url="http://localhost:8090/chat"
+      url="http://192.168.43.179:8090/chat"
       topics={pjtCodeArr}
       onMessage={socketBloker}
     />

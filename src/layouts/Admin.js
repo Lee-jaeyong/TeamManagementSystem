@@ -19,7 +19,7 @@ import routes from "routes.js";
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "assets/img/sidebar-2.jpg";
-import logo from "assets/img/logo.png";
+import logo from "assets/img/kmlogo.png";
 import SocketSection from "@commons/component/SocketSection";
 
 import PeopleIcon from "@material-ui/icons/People";
@@ -146,7 +146,7 @@ export default function Admin({ ...rest }) {
   useEffect(() => {
     getTeams();
     if(localStorage.getItem("ID") === ""){
-      window.location.href = "http://localhost:3000/login";
+      window.location.href = "http://192.168.43.179:3000/login";
     }
   }, []);
 
@@ -180,7 +180,6 @@ export default function Admin({ ...rest }) {
       <SocketSection {...{ pjtCodeArr }} />
       <Sidebar
         routes={pjtList}
-        logoText={"Planner System"}
         logo={logo}
         image={image}
         handleDrawerToggle={handleDrawerToggle}
