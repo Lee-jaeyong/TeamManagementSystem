@@ -31,7 +31,7 @@ export default function FreeBoard(props) {
           </CardIcon>
           <p className={classes.cardCategory}>Board</p>
           <h3 className={classes.cardTitle}>
-            자유
+            소통
             <br />
             게시판
           </h3>

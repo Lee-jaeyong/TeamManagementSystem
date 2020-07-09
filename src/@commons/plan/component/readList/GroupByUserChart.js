@@ -3,7 +3,7 @@ import Chart from "react-google-charts";
 
 const parseChartData = (data) => {
   let result = [];
-  result.push(["", "전체 일정", "전체 TodoList", "완료 TodoList"]);
+  result.push(["", "전체 일정", "전체 단건 일정", "완료 단건 일정"]);
   data.map((dataInfo) => {
     result.push([
       dataInfo["name"],

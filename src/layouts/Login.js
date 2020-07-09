@@ -24,7 +24,7 @@ import routes from "routes.js";
 
 import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
-import bgImage from "assets/img/sidebar-5.jpg";
+import bgImage from "assets/img/km.jpg";
 
 import MessageBox from "components/MessageBox/MessageBox";
 import * as Oauth from "@oauth/oauth";

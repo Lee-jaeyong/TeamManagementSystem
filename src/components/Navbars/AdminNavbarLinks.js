@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
-import {useDispatch} from 'react-redux';
+import { useDispatch } from "react-redux";
 
-import {showMessageHandle} from '@store/actions/MessageAction';
+import { showMessageHandle } from "@store/actions/MessageAction";
 
 import classNames from "classnames";
 // @material-ui/core components
@@ -27,8 +27,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 
 import JoinTeamDialog from "@commons/team/component/insert/JoinTeamDialog";
 import CreateTeamDialog from "@commons/team/component/insert/CreateTeamDialog";
-import Timer from 'components/Timer/Timer';
-import TextPanel from 'components/TextPanel/TextPanel';
+import Timer from "components/Timer/Timer";
+import TextPanel from "components/TextPanel/TextPanel";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 
@@ -75,7 +75,13 @@ export default function AdminNavbarLinks(props) {
 
   const showSearchResult = () => {
     if (inputRef.current.value.trim() === "") {
-      dispatch(showMessageHandle({open:true,content:"검색어를 입력해주세요",level:"error"}))
+      dispatch(
+        showMessageHandle({
+          open: true,
+          content: "검색어를 입력해주세요",
+          level: "error",
+        })
+      );
       return;
     }
     const search = encodeURI("/admin/search/" + inputRef.current.value);
@@ -91,8 +97,8 @@ export default function AdminNavbarLinks(props) {
   return (
     <div>
       <div className={classes.manager}>
-        <TextPanel/>
-        <Timer/>
+        <TextPanel />
+        <Timer />
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
@@ -135,46 +141,7 @@ export default function AdminNavbarLinks(props) {
             " " +
             classes.popperNav
           }
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              id="notification-menu-list-grow"
-              style={{
-                transformOrigin:
-                  placement === "bottom" ? "center top" : "center bottom",
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleCloseNotification}>
-                  <MenuList role="menu">
-                    {props["alarm"] ? (
-                      props["alarm"].length === 0 ? (
-                        <MenuItem
-                          onClick={() => handleCloseNotification()}
-                          className={classes.dropdownItem}
-                        >
-                          {"등록된 일정이 존재하지 않습니다."}
-                        </MenuItem>
-                      ) : (
-                        props["alarm"].map((alarm, idx) => (
-                          <MenuItem
-                            onClick={() => handleCloseNotification(alarm)}
-                            className={classes.dropdownItem}
-                          >
-                            {"< " +
-                              alarm["name"] +
-                              " > 팀의 일정이 등록되었습니다."}
-                          </MenuItem>
-                        ))
-                      )
-                    ) : null}
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Poppers>
+        ></Poppers>
       </div>
       <div className={classes.manager}>
         <Button
@@ -186,7 +153,9 @@ export default function AdminNavbarLinks(props) {
           onClick={handleClickProfile}
           className={classes.buttonLink}
         >
-          <Person className={classes.icons} />
+          <Tooltip title="내 정보">
+            <Person className={classes.icons} />
+          </Tooltip>
           <Hidden mdUp implementation="css">
             <p className={classes.linkText}>Profile</p>
           </Hidden>
